@@ -32,7 +32,19 @@ App.StructureEditorField = Backbone.View.extend({
         this.render();
     },
 
+    check_for_multilines: function(){
+        if ( this.structure_editor.model.has('multilines') ){
+            this.structure_editor.model.set('multiple_series', 2);
+            this.type_options = [
+                {value: 'select', label: "single selection"},
+                {value: 'all-values', label: "all values"},
+                {value: 'ignore', label: "ignore"}
+            ]
+        } 
+    },
+
     render: function() {
+        this.check_for_multilines();
         var context = _({
             type_options: _(this.type_options).map(function(opt) {
                 var selected = this.model.get('type') == opt['value'];
@@ -166,11 +178,14 @@ App.StructureEditor = Backbone.View.extend({
 
     render: function() {
         var context = _({
-            chart_is_multidim: this.chart_is_multidim()
+            chart_is_multidim: this.chart_is_multidim(),
+            chart_has_multilines: this.model.has('multilines')
         }).extend(this.model.toJSON());
         this.$el.html(this.template(context));
         this.$el.find('[name="categories-by"]').html(this.categoryby.el);
-        this.$el.find('[name="multiple-series-slot"]').html(this.multipleseries.el);
+        if (! this.model.has('multilines') ){
+            this.$el.find('[name="multiple-series-slot"]').html(this.multipleseries.el);
+        }
         this.categoryby.delegateEvents();
         this.multipleseries.delegateEvents();
         this.model.facets.forEach(function(facet_model) {
