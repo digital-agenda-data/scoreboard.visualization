@@ -115,6 +115,11 @@ App.Editor = Backbone.View.extend({
         evt.preventDefault();
         var step_cid = $(evt.target).data('step-cid');
         this.step = _(this.all_steps).where({cid: step_cid})[0];
+        // readding multidim = 2 if save has been clicked
+        // and further changes are being done
+        if ( this.model.has('multilines') ){
+            this.model.set('multidim', 2);
+        }
         this.render();
     }
 
