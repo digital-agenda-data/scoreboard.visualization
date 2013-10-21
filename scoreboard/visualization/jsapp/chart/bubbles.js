@@ -130,7 +130,10 @@ App.chart_library['bubbles'] = function(view, options) {
             bubble: {
                 dataLabels: {
                     enabled: true,
-                    color: '#555555'
+                    color: '#555555',
+                    style: {
+                        textShadow: '0px'
+                    }
                 }
             },
             scatter: {
