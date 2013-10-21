@@ -39,9 +39,22 @@ App.ScenarioChartView = Backbone.View.extend({
         this.load_chart();
     },
 
+    remove_loading_add_msg: function(txt){
+        $("#the-chart").removeClass("loading-small").css({
+            'font-size': '1.3em',
+            'margin': '30px 0',
+            'text-align': 'center'
+        }).text(txt);
+    },
+
     render: function() {
         if(this.data) {
-            this.scenario_chart(this, this.data, this.data.meta_data);
+            if ( this.data.series.length != 0 ) {
+                this.remove_loading_add_msg('No data.');
+            } else {
+                this.scenario_chart(this, this.data, this.data.meta_data);
+            }
+
         }
     },
 
@@ -371,6 +384,8 @@ App.ScenarioChartView = Backbone.View.extend({
 
         this.requests_in_flight = requests;
 
+        var that = this;
+
         var ajax_calls = $.when.apply($, requests);
         ajax_calls.done(_.bind(function() {
             var responses = _(arguments).toArray();
@@ -401,7 +416,9 @@ App.ScenarioChartView = Backbone.View.extend({
             );
             this.data = chart_data;
             this.render();
-        }, this));
+        }, this)).fail(function(){
+            that.remove_loading_add_msg('Error occured. Please refresh the page.');
+        });
     }
 
 });
