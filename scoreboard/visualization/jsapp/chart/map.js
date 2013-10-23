@@ -87,7 +87,6 @@ App.chart_library['map'] = function(view, options) {
     $(container).addClass('map-chart');
 
     // add a form to request a png download
-    $(container).css('position', 'relative');
     $(container).append(
         $('<form method="POST" action="' + App.URL + '/svg2png"></form>').append(
             $("<input/>").attr("type", "hidden").attr("name", "svg")
