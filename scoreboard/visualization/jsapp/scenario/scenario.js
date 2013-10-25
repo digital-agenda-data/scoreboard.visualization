@@ -53,6 +53,7 @@ App.ScenarioChartView = Backbone.View.extend({
                 this.remove_loading_add_msg('No data.');
             } else {
                 this.scenario_chart(this, this.data, this.data.meta_data);
+                $("#sharerWrap").show();
             }
 
         }
