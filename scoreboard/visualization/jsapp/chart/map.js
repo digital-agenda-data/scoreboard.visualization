@@ -68,7 +68,7 @@ function draw_legend(paper, colorscale, x0, y0, min, max, unit, orientation) {
     });
     //paper.text(x0 + box_width * (n_boxes + 1/2), y0 + box_height + 10, unit);
     if (orientation == 'vertical'){
-        paper.text(x0 + box_width + 20, y0 + box_height * n_boxes + 20, multiply + unit.text);
+        paper.text(x0 + box_width + 60, y0 + box_height * n_boxes + 20, multiply + unit.text);
     }
     else{
         paper.text(x0 + box_width * n_boxes / 2, y0 + box_height + 20, multiply + unit.text);
@@ -78,13 +78,12 @@ function draw_legend(paper, colorscale, x0, y0, min, max, unit, orientation) {
 
 App.chart_library['map'] = function(view, options) {
     var container = view.el
-    var map_div = $('<div class="map-chart">');
+    var map_div = $('<div/>').addClass('map-chart');
     $(container).empty().append($('<p>', {
         'id': 'map-title',
         'text': options.titles.title
     }));
     $(container).append(map_div);
-    $(container).addClass('map-chart');
 
     // add a form to request a png download
     $(container).append(
@@ -112,7 +111,7 @@ App.chart_library['map'] = function(view, options) {
     var unit = options['meta_data']['unit-measure'];
 
     var n = 0;
-    var map = Kartograph.map(map_div[0]);
+    var map = Kartograph.map(map_div[0], 1000, 900);
     App.kartograph_map = map;
     map.loadMap(App.JSAPP + '/europe.svg', function() {
         map.addLayer('countries', {
@@ -145,18 +144,23 @@ App.chart_library['map'] = function(view, options) {
                 }
             }
         });
+
         //horizontal
         /*
         draw_legend(map.paper, colorscale, 10, 420, 0, max_value,
                 {text: unit, is_pc: options.unit_is_pc[0]});
         */
         //vertical
-        draw_legend(map.paper, colorscale, 10, 10, 0, max_value,
+        draw_legend(map.paper, colorscale, 10, 100, 0, max_value,
                 {text: unit.short_label, is_pc: options.unit_is_pc[0]},
                 'vertical');
-
+        // add title
+        map.paper.text(440, 10, options.titles.title).attr({
+            'font-size': 12,
+        });
         // load svg html into the form for png download
-        $("input[name='svg']").val($(".kartograph").html());
+        // use toSVG function provided by raphael.export.js (IE 8 compatibility)
+        $("input[name='svg']").val(map.paper.toSVG());
     });
 
     var metadata = {
