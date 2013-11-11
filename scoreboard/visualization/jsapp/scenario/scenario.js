@@ -53,7 +53,6 @@ App.ScenarioChartView = Backbone.View.extend({
                 this.remove_loading_add_msg('No data.');
             } else {
                 this.scenario_chart(this, this.data, this.data.meta_data);
-                $("#sharerWrap").show();
             }
 
         }
@@ -61,6 +60,7 @@ App.ScenarioChartView = Backbone.View.extend({
 
     chart_ready: function(){
         this.$el.removeClass('loading-small');
+        $("#sharerWrap").show();
     },
 
     get_meta_data: function(chart_data){
@@ -117,6 +117,7 @@ App.ScenarioChartView = Backbone.View.extend({
             // not all filters have values
             this.$el.addClass('loading-small');
             this.$el.html("");
+            $("#sharerWrap").hide();
             return;
         }
         this.$el.html("");
