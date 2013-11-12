@@ -29,7 +29,6 @@ function draw_legend(paper, colorscale, x0, y0, min, max, unit, orientation) {
     var max_value = min + (min + max) / (n_boxes - 1) * n_boxes;
     var magnitude = (max_value>0)?Math.floor(Math.log(max_value) / Math.LN10):0;
     var multiply = (magnitude>3)?'x10^' + magnitude + " ":"";
-
     _(_.range(n_boxes)).forEach(function(n) {
         var x = x0;
         var y = y0;
@@ -58,8 +57,11 @@ function draw_legend(paper, colorscale, x0, y0, min, max, unit, orientation) {
             }
         }
         if (orientation == 'vertical'){
-            paper.rect(x0, y, box_width, box_height).attr({fill: color});
-            paper.text(x0 + box_width + 20, y + box_height/2, text);
+            paper.rect(x0 + 35, y, box_width, box_height).attr({fill: color});
+            paper.text(x0 + box_width + 80, y + box_height/2, text).attr({
+                'font-size': '12',
+                'text-anchor': 'end',
+                'font-family': 'Segoe UI, Verdana, Arial, sans-serif'});
         }
         else{
             paper.rect(x, y0, box_width, box_height).attr({fill: color});
@@ -68,7 +70,11 @@ function draw_legend(paper, colorscale, x0, y0, min, max, unit, orientation) {
     });
     //paper.text(x0 + box_width * (n_boxes + 1/2), y0 + box_height + 10, unit);
     if (orientation == 'vertical'){
-        paper.text(x0 + box_width + 60, y0 + box_height * n_boxes + 20, multiply + unit.text);
+        paper.text(x0 + 10, y0 + box_height * n_boxes/2, multiply + unit.text).attr({
+                'font-size': '14',
+                'text-anchor': 'middle',
+                'font-family': 'Segoe UI, Verdana, Arial, sans-serif'
+        }).rotate(270);
     }
     else{
         paper.text(x0 + box_width * n_boxes / 2, y0 + box_height + 20, multiply + unit.text);
@@ -79,10 +85,11 @@ function draw_legend(paper, colorscale, x0, y0, min, max, unit, orientation) {
 App.chart_library['map'] = function(view, options) {
     var container = view.el
     var map_div = $('<div/>').addClass('map-chart');
-    $(container).empty().append($('<p>', {
+    /*$(container).empty().append($('<p>', {
         'id': 'map-title',
         'text': options.titles.title
     }));
+    */
     $(container).append(map_div);
 
     // add a form to request a png download
@@ -111,7 +118,7 @@ App.chart_library['map'] = function(view, options) {
     var unit = options['meta_data']['unit-measure'];
 
     var n = 0;
-    var map = Kartograph.map(map_div[0], 1000, 900);
+    var map = Kartograph.map(map_div[0], 1000, 845);
     App.kartograph_map = map;
     map.loadMap(App.JSAPP + '/europe.svg', function() {
         map.addLayer('countries', {
@@ -151,12 +158,16 @@ App.chart_library['map'] = function(view, options) {
                 {text: unit, is_pc: options.unit_is_pc[0]});
         */
         //vertical
-        draw_legend(map.paper, colorscale, 10, 100, 0, max_value,
+        draw_legend(map.paper, colorscale, 10, 300, 0, max_value,
                 {text: unit.short_label, is_pc: options.unit_is_pc[0]},
                 'vertical');
         // add title
-        map.paper.text(440, 10, options.titles.title).attr({
-            'font-size': 12,
+        map.paper.rect(0, 0, 1000, 25).attr({fill: '#FEFEFE', 'stroke-width': 0});
+        map.paper.text(500, 10, options.titles.title).attr({
+            'font-size': '13',
+            'font-weight': 'bold',
+            'text-anchor': 'middle',
+            'font-family': '"Segoe UI Semibold", Calibri, Arial, sans-serif'
         });
         // load svg html into the form for png download
         // use toSVG function provided by raphael.export.js (IE 8 compatibility)
