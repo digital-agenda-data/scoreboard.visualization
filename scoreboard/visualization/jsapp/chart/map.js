@@ -20,6 +20,14 @@ function get_value_for_code(code, series){
     }
 }
 
+function wordwrap( str, width, brk, cut ) {
+    brk = brk || '\n';
+    width = width || 75;
+    cut = cut || false;
+    if (!str) { return str; }
+    var regex = '.{1,' +width+ '}(\\s|$)' + (cut ? '|.{' +width+ '}|.+$' : '|\\S+?(\\s|$)');
+    return str.match( RegExp(regex, 'g') ).join( brk );
+}
 
 function draw_legend(paper, colorscale, x0, y0, min, max, unit, orientation) {
     var box_width = 40;
@@ -161,13 +169,15 @@ App.chart_library['map'] = function(view, options) {
         draw_legend(map.paper, colorscale, 10, 300, 0, max_value,
                 {text: unit.short_label, is_pc: options.unit_is_pc[0]},
                 'vertical');
-        // add title
-        map.paper.rect(0, 0, 1000, 25).attr({fill: '#FEFEFE', 'stroke-width': 0});
-        map.paper.text(500, 10, options.titles.title).attr({
+        // add title over a white box
+        var title = wordwrap(options.titles.title, 110, '\n');
+        var lines = (title.match(/\n/g)||[]).length + 1;
+        map.paper.rect(0, 0, 1000, lines*20).attr({fill: '#FEFEFE', 'stroke-width': 0});
+        map.paper.text(500, 20*lines/2, title).attr({
             'font-size': '16',
             'font-weight': 'bold',
             'text-anchor': 'middle',
-            'font-family': '"Segoe UI Semibold", Verdana, Arial, sans-serif'
+            'font-family': 'Verdana, Arial, sans-serif'
         });
         // load svg html into the form for png download
         // use toSVG function provided by raphael.export.js (IE 8 compatibility)
