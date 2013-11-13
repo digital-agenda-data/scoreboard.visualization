@@ -164,10 +164,10 @@ App.chart_library['map'] = function(view, options) {
         // add title
         map.paper.rect(0, 0, 1000, 25).attr({fill: '#FEFEFE', 'stroke-width': 0});
         map.paper.text(500, 10, options.titles.title).attr({
-            'font-size': '13',
+            'font-size': '16',
             'font-weight': 'bold',
             'text-anchor': 'middle',
-            'font-family': '"Segoe UI Semibold", Calibri, Arial, sans-serif'
+            'font-family': '"Segoe UI Semibold", Verdana, Arial, sans-serif'
         });
         // load svg html into the form for png download
         // use toSVG function provided by raphael.export.js (IE 8 compatibility)

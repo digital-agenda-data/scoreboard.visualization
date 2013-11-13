@@ -19,7 +19,7 @@ App.chart_library['lines'] = function(view, options) {
 	_.map(series, function(elem) {
         var lastElem;
         _(elem.data).each(function(item){
-            if (item.y) {
+            if (item.y != undefined) {
                 lastElem = item;
             }
         });
@@ -28,6 +28,7 @@ App.chart_library['lines'] = function(view, options) {
                 dataLabels: {
                   enabled: true,
                   crop: false,
+                  overflow: 'none',
                   x: 3,
                   align: 'left',
                   verticalAlign: 'middle',
@@ -114,12 +115,14 @@ App.chart_library['lines'] = function(view, options) {
         },
         title: {
             text: options.titles.title,
-            align: "left",
-            x: 40,
+            align: "center",
+            x: 350,
+            width: 800,
             y: 40,
             style: {
                 color: '#000000',
-                fontWeight: 'bold',
+                fontFamily: 'Verdana',
+                fontWeight: 'bold'
             }
         },
         subtitle: {
@@ -129,7 +132,8 @@ App.chart_library['lines'] = function(view, options) {
             y: 90,
             style: {
                 color: '#000000',
-                fontWeight: 'bold',
+                fontFamily: 'Verdana',
+                fontWeight: 'bold'
             }
         },
         xAxis: {
@@ -156,11 +160,12 @@ App.chart_library['lines'] = function(view, options) {
             layout: 'vertical',
             align: 'right',
             verticalAlign: 'top',
-            x: 10,
+            x: 5,
             y: 80,
-            borderWidth: 0,
+            floating: true,
+            borderWidth: 1,
             itemStyle: {
-                width: 200
+                width: 195
             }
         },
         plotOptions: {

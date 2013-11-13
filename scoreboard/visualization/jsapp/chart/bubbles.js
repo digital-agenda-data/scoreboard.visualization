@@ -124,9 +124,9 @@ App.chart_library['bubbles'] = function(view, options) {
             layout: 'vertical',
             align: 'right',
             verticalAlign: 'top',
-            x: 10,
+            x: -5,
             y: 30,
-            borderWidth: 0
+            borderWidth: 1
         },
         plotOptions: {
             bubble: {
