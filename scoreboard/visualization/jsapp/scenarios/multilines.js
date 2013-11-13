@@ -207,7 +207,7 @@ App.multilines_filters_schema = {
   "sort": {
     "by": "category",
     "order": 1,
-    "each_series": true,
+    "each_series": true
   },
   "titles": {
     "title": [
@@ -225,7 +225,7 @@ App.multilines_filters_schema = {
       },
       {
         "facet_name": "y-indicator",
-        "prefix": ' and ',
+        "prefix": " and ",
         "suffix": null,
         "format": "label"
       },
