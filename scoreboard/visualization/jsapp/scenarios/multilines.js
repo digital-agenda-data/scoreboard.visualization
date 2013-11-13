@@ -9,13 +9,22 @@ App.multilines_filters_schema = {
   "annotations": {
     "filters": [
       {
-        "name": "indicator"
+        "name": "x-indicator"
       },
       {
-        "name": "breakdown"
+        "name": "x-breakdown"
       },
       {
-        "name": "unit-measure"
+        "name": "x-unit-measure"
+      },
+      {
+        "name": "y-indicator"
+      },
+      {
+        "name": "y-breakdown"
+      },
+      {
+        "name": "y-unit-measure"
       }
     ]
   },
@@ -132,7 +141,9 @@ App.multilines_filters_schema = {
         "x-indicator": "x-indicator",
         "x-unit-measure": "x-unit-measure",
         "y-indicator": "y-indicator",
-        "y-unit-measure": "y-unit-measure"
+        "y-unit-measure": "y-unit-measure",
+        "x-breakdown": "x-breakdown",
+        "y-breakdown": "y-breakdown"
       },
       "dimension": "ref-area",
       "default_value": "EU27",
@@ -167,35 +178,59 @@ App.multilines_filters_schema = {
   ],
   "height": 450,
   "labels": {
-    "indicator": {
-        "facet": "indicator"
+    "x-indicator": {
+        "facet": "x-indicator"
     },
-    "unit-measure": {
-        "facet": "unit-measure"
+    "x-unit-measure": {
+        "facet": "x-unit-measure"
     },
-    "breakdown": {
-        "facet": "breakdown"
+    "x-breakdown": {
+        "facet": "x-breakdown"
+    },
+    "y-indicator": {
+        "facet": "y-indicator"
+    },
+    "y-unit-measure": {
+        "facet": "y-unit-measure"
+    },
+    "y-breakdown": {
+        "facet": "y-breakdown"
+    },
+    "ref-area": {
+        "facet": "ref-area"
     }
   },
-  "multiple_series": "multidim",
+  "multiple_series": 2,
   "series-legend-label": "long",
   "series-ending-label": "none",
   "series-point-label": "none",
   "sort": {
     "by": "category",
     "order": 1,
-    "each_series": true
+    "each_series": true,
   },
   "titles": {
     "title": [
       {
-        "facet_name": "indicator",
+        "facet_name": "x-indicator",
         "prefix": null,
         "suffix": null,
         "format": "label"
       },
       {
-        "facet_name": "breakdown",
+        "facet_name": "x-breakdown",
+        "prefix": ", by ",
+        "suffix": null,
+        "format": "label"
+      },
+      {
+        "facet_name": "y-indicator",
+        "prefix": ' and ',
+        "suffix": null,
+        "format": "label"
+      },
+      {
+        "facet_name": "y-breakdown",
         "prefix": ", by ",
         "suffix": null,
         "format": "label"
@@ -203,7 +238,7 @@ App.multilines_filters_schema = {
     ],
     "subtitle": [
       {
-        "facet_name": "time-period",
+        "facet_name": "ref-area",
         "prefix": null,
         "suffix": null,
         "format": "label"
@@ -212,10 +247,18 @@ App.multilines_filters_schema = {
     "xAxisTitle": [],
     "yAxisTitle": [
       {
-        "facet_name": "unit-measure",
+        "facet_name": "x-unit-measure",
         "prefix": null,
         "suffix": null,
-        "format": "short_label"
+        "format": "short_label",
+        "asArray": true
+      },
+      {
+        "facet_name": "y-unit-measure",
+        "prefix": null,
+        "suffix": null,
+        "format": "short_label",
+        "asArray": true
       }
     ]
   },

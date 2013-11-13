@@ -44,14 +44,59 @@ App.chart_library['lines'] = function(view, options) {
         }
     });
 
+    var yAxis = {
+        min:0,
+        max: options['unit_is_pc'][0]?100:null,
+        minRange: 1,
+        startOnTick: false,
+        minPadding: 0.1,
+        title: {
+            text: typeof(options.titles.yAxisTitle) == 'string'?options.titles.yAxisTitle:options.titles.yAxisTitle[0],
+            style: {
+                color: '#000000',
+                fontWeight: 'bold'
+            }
+        },
+        labels: {
+            style: {
+                color: '#000000'
+            }
+        }
+    };
+    
+    if ( this.multiple_series == 2 ) {
+        var yAxis = [yAxis];
+        yAxis.push({
+            min:0,
+            max: options['unit_is_pc'][1]?100:null,
+            opposite: true,
+            title: {
+                text: options.titles.yAxisTitle[1],
+                //text: 'second series',
+                style: {
+                    color: '#000',
+                    fontWeight: 'bold'
+                }
+            },
+            labels: {
+                style: {
+                    color: '#000'
+                }
+            }
+        });
+        _(series).forEach(function(item, index) {
+            item['yAxis'] = index;
+        });
+    }
+
     var chartOptions = {
         chart: {
             renderTo: container,
             type: 'spline',
             zoomType: 'y',
             marginLeft: 100,
-            marginRight: 170,
-            marginTop: 100,
+            marginRight: 270,
+            marginTop: 120,
             marginBottom: 50,
             height: 450,
             width: 1100
@@ -77,33 +122,30 @@ App.chart_library['lines'] = function(view, options) {
                 fontWeight: 'bold',
             }
         },
+        subtitle: {
+            text: options.titles.subtitle,
+            align: "left",
+            x: 40,
+            y: 90,
+            style: {
+                color: '#000000',
+                fontWeight: 'bold',
+            }
+        },
         xAxis: {
             type: 'datetime',
             tickInterval: 3600 * 24 * 1000 * 182,
-            minRange: 3600 * 100 * 24 * 365,
+            maxZoom: 3600 * 24 * 1000 * 365,
+            dateTimeLabelFormats: {
+                month: '%Y-%m'
+            },
             labels: {
                 style: {
                     color: '#000000'
                 }
              }
         },
-        yAxis: {
-            min:0,
-            max: options['unit_is_pc'][0]?100:null,
-            minRange: 1,
-            title: {
-                text: options.titles.yAxisTitle,
-                style: {
-                    color: '#000000',
-                    fontWeight: 'bold'
-                }
-            },
-            labels: {
-                style: {
-                    color: '#000000'
-                }
-            }
-        },
+        yAxis: yAxis,
         tooltip: {
             formatter: options['tooltip_formatter'],
             style: {
@@ -115,10 +157,10 @@ App.chart_library['lines'] = function(view, options) {
             align: 'right',
             verticalAlign: 'top',
             x: 10,
-            y: 30,
+            y: 80,
             borderWidth: 0,
             itemStyle: {
-                width: 150
+                width: 200
             }
         },
         plotOptions: {

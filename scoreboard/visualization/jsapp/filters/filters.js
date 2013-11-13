@@ -335,7 +335,7 @@ App.FiltersBox = Backbone.View.extend({
                 chart_subtype: schema['chart_subtype'],
                 sortBy: item['sortBy'],
                 sortOrder: item['sortOrder'],
-                multidim: item['multidim_common'] ? options['multidim'] : null,
+                multidim: item['multidim_common'] ? options['multidim'] | options.schema['multiple_series'] : null,
                 name: item['name'],
                 label: item['label'],
                 default_value: item['default_value'],

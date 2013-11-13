@@ -39,14 +39,28 @@ App.ScenarioChartView = Backbone.View.extend({
         this.load_chart();
     },
 
+    remove_loading_add_msg: function(txt){
+        $("#the-chart").removeClass("loading-small").css({
+            'font-size': '1.3em',
+            'margin': '30px 0',
+            'text-align': 'center'
+        }).text(txt);
+    },
+
     render: function() {
         if(this.data) {
-            this.scenario_chart(this, this.data, this.data.meta_data);
+            if ( this.data.series.length == 0 ) {
+                this.remove_loading_add_msg('No data.');
+            } else {
+                this.scenario_chart(this, this.data, this.data.meta_data);
+            }
+
         }
     },
 
     chart_ready: function(){
         this.$el.removeClass('loading-small');
+        $("#sharerWrap").show();
     },
 
     get_meta_data: function(chart_data){
@@ -103,6 +117,7 @@ App.ScenarioChartView = Backbone.View.extend({
             // not all filters have values
             this.$el.addClass('loading-small');
             this.$el.html("");
+            $("#sharerWrap").hide();
             return;
         }
         this.$el.html("");
@@ -118,7 +133,10 @@ App.ScenarioChartView = Backbone.View.extend({
             var units = [this.model.get('x-unit-measure') || '',
                          this.model.get('y-unit-measure') || '']
         }
-        else{
+        else if(this.schema['multiple_series'] == 2){
+            var units = [this.model.get('x-unit-measure') || '',
+                         this.model.get('y-unit-measure') || '']
+        } else {
             var units = [this.model.get('unit-measure') || ''];
         }
         _(units).each(function(unit){
@@ -142,6 +160,7 @@ App.ScenarioChartView = Backbone.View.extend({
         if ( category_facet ) {
             var highlights = category_facet.highlights;
         }
+        var multiple_series = this.multiple_series;
         var chart_data = {
             'tooltip_formatter': function() {
                 var attrs = this.point.attributes;
@@ -152,7 +171,7 @@ App.ScenarioChartView = Backbone.View.extend({
                         out += '<br><b>x</b>: ' + Math.round(this.x*10)/10;
                         if (unit_is_pc[0]) out += '%';
                         out += ' ';
-                        if (_.contains(tooltip_attributes, 'unit-measure')) {
+                        if (_.contains(tooltip_attributes, 'unit-measure') && attrs['unit-measure']) {
                             out += attrs['unit-measure']['x'].label;
                         }
                     }
@@ -164,10 +183,10 @@ App.ScenarioChartView = Backbone.View.extend({
                     if ( multidim ) {
                         if (unit_is_pc[1]) out += '%';
                     } else {
-                        if (unit_is_pc[0]) out += '%';
+                        if (unit_is_pc[this.series.index]) out += '%';
                     }
                     out += ' ';
-                    if (_.contains(tooltip_attributes, 'unit-measure')) {
+                    if (_.contains(tooltip_attributes, 'unit-measure') && attrs['unit-measure']) {
                         if ( multidim ) {
                             out += attrs['unit-measure']['y'].label;
                         } else {
@@ -178,7 +197,7 @@ App.ScenarioChartView = Backbone.View.extend({
                         out += '<br><b>z</b>: ' + Math.round(this.point.z*10)/10;
                         if (unit_is_pc[2]) out += '%';
                         out += ' ';
-                        if (_.contains(tooltip_attributes, 'unit-measure')) {
+                        if (_.contains(tooltip_attributes, 'unit-measure') && attrs['unit-measure']) {
                             out += attrs['unit-measure']['z'].label;
                         }
                     }
@@ -267,63 +286,97 @@ App.ScenarioChartView = Backbone.View.extend({
         }
         var datapoints_url = this.cube_url + data_method;
 
-        if (this.multiple_series) {
-            var groupby_dimension = this.dimensions_mapping[
-                this.multiple_series];
-            multiseries_values = this.model.get(this.multiple_series);
-            requests = _(multiseries_values).map(function(value) {
-                args[groupby_dimension] = value;
-                return this.request_datapoints(datapoints_url, args);
-            }, this);
-            var groupby_facet = _(this.schema.facets).find(function(facet, idx){
-                return facet['name'] == groupby_dimension;
-            });
-            var labels_args = {
-                'dimension': groupby_dimension,
-                'rev': this.data_revision
-            };
-            if (groupby_facet){
-                _.chain(groupby_facet.constraints)
-                 .values()
-                 .each(function(facet){
-                    if ( this.model.get(facet) != 'any' ) {
-                        _(labels_args).extend(
-                            _.object([
-                                [facet, this.model.get(facet)]
-                            ])
-                        );
-                    }
-                }, this);
-            }
-            var labels_url = '/dimension_options_' + 'xyz'.slice(0, this.schema.multidim);
-            var labels_request = $.getJSON(this.cube_url + labels_url, labels_args);
-            var dict = {'short': 'short_label', 'long': 'label', 'none': 'notation'};
-            var series_names = 'notation';
-            if ( this.schema['series-legend-label'] ) {
-                series_names = dict[this.schema['series-legend-label']] || 'notation';
-            }
-            var series_ending_labels = 'notation';
-            if ( this.schema['series-ending-label'] ) {
-                series_ending_labels = dict[this.schema['series-ending-label']] || 'notation';
-            }
-            labels_request.done(function(data) {
-                var results = data['options'];
-                chart_data['series_names'] = _.object(
-                    _(results).pluck('notation'),
-                    _(results).pluck(series_names));
-                chart_data['series_ending_labels'] = _.object(
-                    _(results).pluck('notation'),
-                    _(results).pluck(series_ending_labels));
-            });
-            requests.push(labels_request);
-        }
-        else {
+        if (!this.multiple_series) {
             multiseries_values = [null];
             requests.push(this.request_datapoints(datapoints_url, args));
+        } else {
+            if ( this.multiple_series == 2 ) {
+                multiseries_values = ['x', 'y'];
+                //this.client_filter = null;
+
+                var xpairs = _.filter(_.pairs(args), function(pair) {return pair[0].substr(0,2) != 'y-'}); 
+                var ypairs = _.filter(_.pairs(args), function(pair) {return pair[0].substr(0,2) != 'x-'}); 
+
+                _(xpairs).map(function(pair) { 
+                    if ( pair[0].substr(0,2) == 'x-' ) { 
+                        pair[0] = pair[0].substr(2) 
+                    }; 
+                    return;
+                });
+
+                _(ypairs).map(function(pair) { 
+                    if ( pair[0].substr(0,2) == 'y-' ) { 
+                        pair[0] = pair[0].substr(2) 
+                    }; 
+                    return;
+                });
+
+                var xargs = _.object(xpairs);
+                var yargs = _.object(ypairs);
+
+                requests.push(this.request_datapoints(datapoints_url, xargs));
+                requests.push(this.request_datapoints(datapoints_url, yargs));
+                 
+                var theFilters = this.$el.closest("#scenario-box").find("#the-filters");
+                chart_data['series_names'] = {
+                    'x': theFilters.find("option[value='" + xargs['indicator'] + "']").text().trim(),
+                    'y': theFilters.find("option[value='" + yargs['indicator'] + "']").text().trim()
+                }
+            } else { 
+                var groupby_dimension = this.dimensions_mapping[
+                    this.multiple_series];
+                multiseries_values = this.model.get(this.multiple_series);
+                requests = _(multiseries_values).map(function(value) {
+                    args[groupby_dimension] = value;
+                    return this.request_datapoints(datapoints_url, args);
+                }, this);
+
+                var groupby_facet = _(this.schema.facets).find(function(facet, idx){
+                    return facet['name'] == groupby_dimension;
+                });
+                var labels_args = {
+                    'dimension': groupby_dimension,
+                    'rev': this.data_revision
+                };
+                if (groupby_facet){
+                    _.chain(groupby_facet.constraints)
+                     .values()
+                     .each(function(facet){
+                        if ( this.model.get(facet) != 'any' ) {
+                            _(labels_args).extend(
+                                _.object([
+                                    [facet, this.model.get(facet)]
+                                ])
+                            );
+                        }
+                    }, this);
+                }
+                var labels_url = '/dimension_options_' + 'xyz'.slice(0, this.schema.multidim);
+                var labels_request = $.getJSON(this.cube_url + labels_url, labels_args);
+                var dict = {'short': 'short_label', 'long': 'label', 'none': 'notation'};
+                var series_names = 'notation';
+                if ( this.schema['series-legend-label'] ) {
+                    series_names = dict[this.schema['series-legend-label']] || 'notation';
+                }
+                var series_ending_labels = 'notation';
+                if ( this.schema['series-ending-label'] ) {
+                    series_ending_labels = dict[this.schema['series-ending-label']] || 'notation';
+                }
+                labels_request.done(function(data) {
+                    var results = data['options'];
+                    chart_data['series_names'] = _.object(
+                        _(results).pluck('notation'),
+                        _(results).pluck(series_names));
+                    chart_data['series_ending_labels'] = _.object(
+                        _(results).pluck('notation'),
+                        _(results).pluck(series_ending_labels));
+                });
+                requests.push(labels_request);
+            }
         }
 
         var client_filter_options = [];
-        if(this.client_filter) {
+        if ( this.client_filter ) {
             client_filter_options = this.model.get(this.client_filter);
         }
 
@@ -333,6 +386,8 @@ App.ScenarioChartView = Backbone.View.extend({
 
         this.requests_in_flight = requests;
 
+        var that = this;
+
         var ajax_calls = $.when.apply($, requests);
         ajax_calls.done(_.bind(function() {
             var responses = _(arguments).toArray();
@@ -341,7 +396,7 @@ App.ScenarioChartView = Backbone.View.extend({
             chart_data['series'] = _(multiseries_values).map(function(value, n) {
                 var resp = responses[n];
                 var datapoints = resp[0]['datapoints'];
-                if(this.client_filter && (this.schema['chart_type'] !== 'country_profile')) {
+                if(this.client_filter && (this.schema['chart_type'] !== 'country_profile') && this.multiple_series != 2 ) {
                     var dimension = this.dimensions_mapping[this.client_filter];
                     datapoints = _(datapoints).filter(function(item) {
                         return _(client_filter_options).contains(
@@ -363,7 +418,9 @@ App.ScenarioChartView = Backbone.View.extend({
             );
             this.data = chart_data;
             this.render();
-        }, this));
+        }, this)).fail(function(){
+            that.remove_loading_add_msg('Error occured. Please refresh the page.');
+        });
     }
 
 });
@@ -689,7 +746,8 @@ App.ShareOptionsView = Backbone.View.extend({
     render: function() {
         this.$el.html(this.template({'related': this.related.html()}));
         App.jQuery(this.form).appendTo(this.$el);
-        window.addthis.button('#scoreboard-addthis', {}, {url: this.url});
+        //window.addthis.button('#scoreboard-addthis', {}, {url: this.url});
+        window.addthis.toolbox('.addthis_toolbox', {}, {url: this.url});
     },
 
     update_url: function(new_url) {

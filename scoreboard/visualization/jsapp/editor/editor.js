@@ -40,10 +40,23 @@ App.EditForm = Backbone.View.extend({
     save_form: function() {
         var form_status = this.$el.find('.editor-form-status');
         form_status.text('saving...');
+
+        // remove multidim if model has multilines
+        if ( this.model.has('multilines') ){ 
+            this.model.unset('multidim'); 
+            this.update_form();
+        }
+
         var data = {'configuration': this.input.val()};
         $.post(this.$el.attr('action'), data, function() {
             form_status.text('ok');
         });
+
+        // readding multidim = 2 if save has been clicked
+        // and further changes are being done
+        if ( this.model.has('multilines') ){
+            this.model.set('multidim', 2);
+        }
     }
 
 });

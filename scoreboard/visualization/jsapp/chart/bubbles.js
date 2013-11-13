@@ -104,7 +104,7 @@ App.chart_library['bubbles'] = function(view, options) {
                     fontWeight: 'bold',
                     width: 500
                 },
-                 margin: 30
+                margin: 30
             },
             labels: {
                 formatter: _.partial(App.tick_labels_formatter,
@@ -132,7 +132,10 @@ App.chart_library['bubbles'] = function(view, options) {
             bubble: {
                 dataLabels: {
                     enabled: true,
-                    color: '#555555'
+                    color: '#555555',
+                    style: {
+                        textShadow: '0px'
+                    }
                 }
             },
             scatter: {
