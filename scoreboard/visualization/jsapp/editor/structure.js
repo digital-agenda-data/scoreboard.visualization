@@ -146,6 +146,15 @@ App.StructureEditor = Backbone.View.extend({
         this.model.facets.forEach(function(facet_model) {
             var facet = facet_model.toJSON();
             var name = facet['name'];
+            // for some reason ref-area gets multiple_select as a default type
+            // even though select type is shown in template
+            // in case of multilines make it back to select
+            if (this.model.has('multilines')){
+                if (name == 'ref-area' && facet['type'] == 'multiple_select'){
+                    facet_model.set('type', 'select');
+                    facet['type'] = 'select';
+                }
+            }
             if(facet['type'] == 'multiple_select' ||
                facet['type'] == 'all-values') {
                 var option = _({}).extend(facet);
