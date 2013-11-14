@@ -17,7 +17,6 @@ App.Visualization = Backbone.View.extend({
         var filters_schema = [];
         var values_schema = [];
         var filters_in_url = [];
-
         _(options['schema']['facets']).forEach(function(item) {
             if(item['type'] == 'ignore') {
                 return;
@@ -47,6 +46,10 @@ App.Visualization = Backbone.View.extend({
             _(filters_schema).forEach(function(item) {
                 if(item['type'] == 'select' || item['type'] == 'multiple_select') {
                     keep_filters[item['name']] = true;
+                }
+                // ignore ref-area from previous charts when navigating to map chart
+                if(item['dimension'] == 'ref-area' && options['schema']['chart_type'] == 'map' ) {
+                    keep_filters[item['name']] = false;
                 }
             });
             _(url_filters).forEach(function(value, name) {
