@@ -183,8 +183,7 @@ App.format_series = function (data, sort, multidim, percent, category, highlight
                                 ['y', null]])
                   );
               });
-
-            if (category == 'time-period'){
+            if (category == 'time-period' || category == 'refPeriod'){
                 var date_pattern = /^([0-9]{4})(?:-(?:([0-9]{2})|(?:Q([0-9]){1})))*$/;
                 _(serie).each(function(item){
                     var matches = date_pattern.exec(item['code']);
