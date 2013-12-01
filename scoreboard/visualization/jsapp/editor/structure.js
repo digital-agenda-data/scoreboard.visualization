@@ -13,7 +13,7 @@ App.StructureEditorField = Backbone.View.extend({
 
     events: {
         'change [name="type"]': 'on_change_type',
-        'change [name="multidim"]': 'on_change_multidim',
+        'change [name="multidim_common"]': 'on_change_multidim_common',
         'click .facet-sort': 'on_click_sort'
     },
 
@@ -32,21 +32,14 @@ App.StructureEditorField = Backbone.View.extend({
         this.render();
     },
 
-    check_for_multilines: function(){
-        if ( this.structure_editor.model.has('multilines') ){
-            this.structure_editor.model.set('multiple_series', 2);
-            this.type_options = [
-                {value: 'select', label: "single selection"},
-                {value: 'all-values', label: "all values"},
-                {value: 'ignore', label: "ignore"}
-            ]
-        } 
-    },
-
     render: function() {
-        this.check_for_multilines();
+        // multiple selection not allowed in multilines chart type
+        var is_multilines = typeof this.structure_editor.model.get('multiple_series') == 'number';
         var context = _({
-            type_options: _(this.type_options).map(function(opt) {
+            type_options: _(this.type_options)
+              .reject(function(item){
+                return is_multilines && item['value'] == 'multiple_select';
+              }).map(function(opt) {
                 var selected = this.model.get('type') == opt['value'];
                 return _({
                     selected: selected
@@ -63,12 +56,6 @@ App.StructureEditorField = Backbone.View.extend({
         }
     },
 
-    on_change_position: function(evt) {
-        this.model.set({
-            position: this.$el.find('[name="position"]').val()
-        });
-    },
-
     on_change_type: function(evt) {
         this.model.set({
             type: this.$el.find('[name="type"]').val()
@@ -82,12 +69,12 @@ App.StructureEditorField = Backbone.View.extend({
         }
     },
 
-    on_change_multidim: function(evt) {
+    on_change_multidim_common: function(evt) {
         if($(evt.target).is(':checked')) {
-            this.model.unset('multidim');
+            this.model.set('multidim_common', true);
         }
         else {
-            this.model.set('multidim', true);
+            this.model.set('multidim_common', false);
         }
     }
 
@@ -100,7 +87,6 @@ App.StructureEditor = Backbone.View.extend({
     title: "Structure",
 
     events: {
-        'change [name="multiple_series"]': 'on_multiple_series_change'
     },
 
     update_model: function(){
@@ -136,23 +122,26 @@ App.StructureEditor = Backbone.View.extend({
         }, this));
         this.apply_changes();
         this.render();
-        this.model.facets.on('change:type change:multidim', this.apply_changes, this);
+        this.model.facets.on('change:type change:multidim_common', this.apply_changes, this);
     },
 
     compute_facet_roles: function() {
         var series_options = [];
         var no_multiple_series = true;
         var free_dimensions = [];
+        var is_multilines = typeof this.model.get('multiple_series') == 'number';
         this.model.facets.forEach(function(facet_model) {
             var facet = facet_model.toJSON();
             var name = facet['name'];
-            // for some reason ref-area gets multiple_select as a default type
-            // even though select type is shown in template
-            // in case of multilines make it back to select
-            if (this.model.has('multilines')){
+            if (is_multilines) {
                 if (name == 'ref-area' && facet['type'] == 'multiple_select'){
                     facet_model.set('type', 'select');
                     facet['type'] = 'select';
+                }
+                if (name == 'time-period') {
+                    facet_model.set('type', 'all-values');
+                    facet_model.set('multidim_common', 'true');
+                    facet['type'] = 'all-values';
                 }
             }
             if(facet['type'] == 'multiple_select' ||
@@ -168,7 +157,8 @@ App.StructureEditor = Backbone.View.extend({
                 series_options.push(option);
             }
         }, this);
-        if(no_multiple_series) {
+        if(no_multiple_series && !is_multilines) {
+            // is number for multilines chart
             this.model.set('multiple_series', null);
         }
         var category_facet = (free_dimensions.length == 1
@@ -187,12 +177,13 @@ App.StructureEditor = Backbone.View.extend({
 
     render: function() {
         var context = _({
-            chart_is_multidim: this.chart_is_multidim(),
-            chart_has_multilines: this.model.has('multilines')
+            chart_is_multidim: this.chart_is_multidim()
         }).extend(this.model.toJSON());
         this.$el.html(this.template(context));
         this.$el.find('[name="categories-by"]').html(this.categoryby.el);
-        if (! this.model.has('multilines') ){
+        // TODO
+        var is_multilines = typeof this.model.get('multiple_series') == 'number';
+        if (! is_multilines ){
             this.$el.find('[name="multiple-series-slot"]').html(this.multipleseries.el);
         }
         this.categoryby.delegateEvents();
@@ -207,13 +198,19 @@ App.StructureEditor = Backbone.View.extend({
 
     save_value: function() {
         var value = this.model.facets.get_value(
-                this.model.get('multidim'),
+                this.chart_is_multidim(),
                 this.model.layout_collection.presets());
         this.model.set('facets', value);
     },
 
     chart_is_multidim: function() {
-        return this.model.get('multidim') ? true : false;
+        if (this.model.get('multidim')) {
+            return this.model.get('multidim');
+        }
+        if (typeof this.model.get('multiple_series') == 'number') {
+            return this.model.get('multiple_series');
+        }
+        return false;
     },
 
     apply_changes: function() {

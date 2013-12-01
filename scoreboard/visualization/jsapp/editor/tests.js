@@ -401,32 +401,35 @@ describe('StructureEditor', function() {
             var model = new App.EditorConfiguration({multidim: 2}, {
                 dimensions: four_dimensions});
             var view = new App.StructureEditor({model: model});
-            view.$el.find('[data-name="dim1"] [name="multidim"]').click().change();
-            expect(model.get('facets')[0]['name']).to.equal('x-dim1');
-            expect(model.get('facets')[1]['name']).to.equal('y-dim1');
-            expect(model.get('facets')[2]['name']).to.equal('dim2');
+            // dim1 is multilines_common, dim2 is not
+            view.$el.find('[data-name="dim1"] [name="multidim_common"]').click().change();
+            expect(model.get('facets')[0]['name']).to.equal('dim1');
+            expect(model.get('facets')[1]['name']).to.equal('x-dim2');
+            expect(model.get('facets')[2]['name']).to.equal('y-dim2');
         });
 
         it('multidim dimensions should depend on their axis only', function() {
             var model = new App.EditorConfiguration({multidim: 2}, {
                 dimensions: four_dimensions});
             var view = new App.StructureEditor({model: model});
-            view.$el.find('[data-name="dim1"] [name="multidim"]').click().change();
-            view.$el.find('[data-name="dim2"] [name="multidim"]').click().change();
-            view.$el.find('[data-name="dim3"] [name="multidim"]').click().change();
+            //view.$el.find('[data-name="dim1"] [name="multidim_common"]').click().change();
+            view.$el.find('[data-name="dim2"] [name="multidim_common"]').click().change();
+            //view.$el.find('[data-name="dim3"] [name="multidim_common"]').click().change();
             var facets = facets_by_name(model.get('facets'));
-            expect(facets['x-dim2']['constraints']).to.deep.equal(
-                {'dim1': 'x-dim1'});
+            expect(facets['x-dim1']['constraints']).to.deep.equal(
+                {});
+            expect(facets['dim2']['constraints']).to.deep.equal(
+                {'x-dim1': 'x-dim1', 'y-dim1': 'y-dim1'});
             expect(facets['x-dim3']['constraints']).to.deep.equal(
-                {'dim1': 'x-dim1', 'dim2': 'x-dim2'});
+                {'dim1': 'x-dim1', 'dim2': 'dim2'});
         });
 
         it('subsequent dimensions depend on all multidim axes', function() {
             var model = new App.EditorConfiguration({multidim: 2}, {
                 dimensions: four_dimensions});
             var view = new App.StructureEditor({model: model});
-            view.$el.find('[data-name="dim1"] [name="multidim"]').click().change();
-            view.$el.find('[data-name="dim2"] [name="multidim"]').click().change();
+            view.$el.find('[data-name="dim3"] [name="multidim_common"]').click().change();
+            view.$el.find('[data-name="dim4"] [name="multidim_common"]').click().change();
             var facets = facets_by_name(model.get('facets'));
             expect(facets['dim3']['constraints']).to.deep.equal({
                 'x-dim1': 'x-dim1', 'x-dim2': 'x-dim2',
@@ -437,14 +440,18 @@ describe('StructureEditor', function() {
                 'dim3': 'dim3'});
         });
 
-        it('should set multidim_common on non-multidim facets', function() {
+        it('should have by default multidim_common=false', function() {
             var model = new App.EditorConfiguration({multidim: 2}, {
                 dimensions: four_dimensions});
             var view = new App.StructureEditor({model: model});
-            view.$el.find('[data-name="dim1"] [name="multidim"]').click().change();
+            view.$el.find('[data-name="dim2"] [name="multidim_common"]').click().change();
             var facets = facets_by_name(model.get('facets'));
-            expect(facets['x-dim1']['multidim_common']).to.be.undefined;
-            expect(facets['dim3']['multidim_common']).to.be.true;
+            expect(facets['x-dim1']['multidim_common']).to.be.false;
+            expect(facets['y-dim1']['multidim_common']).to.be.false;
+            expect(facets['dim1']).to.be.undefined;
+            expect(facets['dim2']['multidim_common']).to.be.true;
+            expect(facets['x-dim2']).to.be.undefined;
+            expect(facets['y-dim2']).to.be.undefined;
         });
 
         it('should set multidim_value on value facet', function() {
@@ -463,8 +470,8 @@ describe('StructureEditor', function() {
                     {name: 'y-dim1', label: '(Y) ignored dim1'},
                     {name: 'x-dim2', label: '(X) blah dim2'},
                     {name: 'y-dim2', label: '(Y) ignored dim2'},
-                    {name: 'dim3', label: 'blah dim3'},
-                    {name: 'dim4', label: 'blah dim4'}
+                    {name: 'dim3', label: 'blah dim3', multidim_common: true},
+                    {name: 'dim4', label: 'blah dim4', multidim_common: true}
                 ]
             }, {dimensions: four_dimensions});
             var view = new App.StructureEditor({model: model});
@@ -477,14 +484,14 @@ describe('StructureEditor', function() {
             expect(facets['dim4'].label).to.equal('blah dim4');
         });
 
-        it('should order multidim facets grouped by axis', function() {
+        it('should order multidim facets grouped by dimension and axis', function() {
             var model = new App.EditorConfiguration({multidim: 2}, {
                 dimensions: four_dimensions});
             var view = new App.StructureEditor({model: model});
-            view.$el.find('[data-name="dim1"] [name="multidim"]').click().change();
-            view.$el.find('[data-name="dim2"] [name="multidim"]').click().change();
+            view.$el.find('[data-name="dim3"] [name="multidim_common"]').click().change();
+            view.$el.find('[data-name="dim4"] [name="multidim_common"]').click().change();
             expect(_(model.get('facets')).pluck('name')).to.deep.equal(
-                ['x-dim1', 'x-dim2', 'y-dim1', 'y-dim2',
+                ['x-dim1', 'y-dim1', 'x-dim2', 'y-dim2',
                  'dim3', 'dim4', 'value']);
         });
 
@@ -593,10 +600,14 @@ describe('LayoutEditor', function() {
                 dimensions: [
                     {type_label: 'dimension', notation: 'indicator'}]
             });
+        // TODO: length should be 2 by default; fix this
         var structureView = new App.StructureEditor({model: model});
         var view = new App.LayoutEditor({model: model});
+        structureView.$el.find('[name="multidim_common"]').click().change();
         expect(view.model.layout_collection.length).to.equal(1);
-        structureView.$el.find('[name="multidim"]').click().change();
+        expect(view.model.layout_collection.models[0].get('name')).to.equal(
+            'indicator');
+        structureView.$el.find('[name="multidim_common"]').click().change();
         expect(view.model.layout_collection.length).to.equal(2);
         expect(view.model.layout_collection.models[0].get('name')).to.equal(
             'x-indicator');
@@ -626,37 +637,37 @@ describe('LayoutEditor', function() {
                 multidim: 2,
                 facets: [
                     {constraints: {},
-                    dimension: "indicator-group",
-                    label: "(X) Indicator group",
-                    name: "x-indicator-group",
-                    position: "upper-left",
-                     multidim_common: true,
-                    sortBy: "order_in_codelist",
-                    sortOrder: "asc",
-                    type: "select"},
+                     dimension: "indicator-group",
+                     label: "(X) Indicator group",
+                     name: "x-indicator-group",
+                     position: "upper-left",
+                     multidim_common: false,
+                     sortBy: "order_in_codelist",
+                     sortOrder: "asc",
+                     type: "select"},
                     {name: "x-indicator",
                      label: "(X) Indicator",
                      constraints: {},
                      dimension: "indicator",
-                     multidim_common: true,
+                     multidim_common: false,
                      position: "upper-left",
                      sortBy: "inner_order",
                      sortOrder: "asc",
                      type: "select"},
                     {constraints: {},
-                    dimension: "indicator-group",
-                    label: "(Y) Indicator group",
-                    name: "y-indicator-group",
-                    position: "upper-right",
-                     multidim_common: true,
-                    sortBy: "order_in_codelist",
-                    sortOrder: "asc",
-                    type: "select"},
+                     dimension: "indicator-group",
+                     label: "(Y) Indicator group",
+                     name: "y-indicator-group",
+                     position: "upper-right",
+                     multidim_common: false,
+                     sortBy: "order_in_codelist",
+                     sortOrder: "asc",
+                     type: "select"},
                     {name: "y-indicator",
                      label: "(Y) Indicator",
                      constraints: {},
                      dimension: "indicator",
-                     multidim_common: true,
+                     multidim_common: false,
                      position: "upper-right",
                      sortBy: "inner_order",
                      sortOrder: "asc",
@@ -680,38 +691,38 @@ describe('LayoutEditor', function() {
                 multidim: 2,
                 facets: [
                     {constraints: {},
-                    dimension: "indicator-group",
-                    label: "(X) Indicator group",
-                    name: "x-indicator-group",
-                    position: "upper-left",
+                     dimension: "indicator-group",
+                     label: "(X) Indicator group",
+                     name: "x-indicator-group",
+                     position: "upper-left",
                      multidim_common: true,
-                    sortBy: "order_in_codelist",
-                    sortOrder: "asc",
-                    type: "ignore"},
+                     sortBy: "order_in_codelist",
+                     sortOrder: "asc",
+                     type: "ignore"},
                     {name: "x-indicator",
                      label: "(X) Indicator",
                      constraints: {},
                      dimension: "indicator",
                      multidim_common: true,
-                     position: "upper-left",
+                     position: "bottom-left",
                      sortBy: "inner_order",
                      sortOrder: "asc",
                      type: "select"},
                     {constraints: {},
-                    dimension: "indicator-group",
-                    label: "(Y) Indicator group",
-                    name: "y-indicator-group",
-                    position: "upper-left",
+                     dimension: "indicator-group",
+                     label: "(Y) Indicator group",
+                     name: "y-indicator-group",
+                     position: "upper-right",
                      multidim_common: true,
-                    sortBy: "order_in_codelist",
-                    sortOrder: "asc",
-                    type: "ignore"},
+                     sortBy: "order_in_codelist",
+                     sortOrder: "asc",
+                     type: "ignore"},
                     {name: "y-indicator",
                      label: "(Y) Indicator",
                      constraints: {},
                      dimension: "indicator",
                      multidim_common: true,
-                     position: "upper-left",
+                     position: "bottom-right",
                      sortBy: "inner_order",
                      sortOrder: "asc",
                      type: "select"}
@@ -724,9 +735,14 @@ describe('LayoutEditor', function() {
             });
         var structure_view = new App.StructureEditor({model: model});
         var layout_view = new App.LayoutEditor({model: model});
-        var x_ind = layout_view.$el.find('[name="position"]:first');
-        x_ind.val('upper-right').change();
+        // order will be: x-indicator-group, y-indicator-group, x-indicator, y-indicator
+        // only two position fields will be visible (x-indicator, y-indicator)
+        var x_indicator_pos = layout_view.$el.find('[name="position"]:first');
+        x_indicator_pos.val('bottom-right').change();
+        expect(model.get('facets')[0].position).to.equal('upper-left');
         expect(model.get('facets')[1].position).to.equal('upper-right');
+        expect(model.get('facets')[2].position).to.equal('bottom-right');
+        expect(model.get('facets')[3].position).to.equal('bottom-right');
     });
 
     it('should put "all-values" at the bottom of facets', function() {
@@ -744,7 +760,7 @@ describe('LayoutEditor', function() {
         var structureView = new App.StructureEditor({model: model});
         var view = new App.LayoutEditor({model: model});
         expect(_(model.get('facets')).first()['name']).to.equal(
-            'dim2');
+            'x-dim2');
     });
 
 });
