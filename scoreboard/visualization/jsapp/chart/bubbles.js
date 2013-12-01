@@ -18,6 +18,9 @@ App.chart_library['bubbles'] = function(view, options) {
                     options['category_facet'],
                     options['highlights']);
 
+    // sort series by country name
+    series = _(series).sortBy('name');
+    // create deep copy
     var init_series = JSON.parse(JSON.stringify(series[0]));
 
     // formatter is lost after stringify
@@ -125,7 +128,7 @@ App.chart_library['bubbles'] = function(view, options) {
             align: 'right',
             verticalAlign: 'top',
             x: -5,
-            y: 30,
+            y: 45,
             borderWidth: 1
         },
         plotOptions: {

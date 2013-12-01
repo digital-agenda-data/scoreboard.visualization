@@ -18,6 +18,9 @@ App.chart_library['scatter'] = function(view, options) {
                     options['category_facet'],
                     options['highlights']);
 
+    // sort series by country name
+    series = _(series).sortBy('name');
+    // create deep copy
     var init_series = JSON.parse(JSON.stringify(series[0]));
 
     // formatter is lost after stringify

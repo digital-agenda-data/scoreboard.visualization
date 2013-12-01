@@ -219,13 +219,7 @@ App.format_series = function (data, sort, multidim, percent, category, highlight
                     [item['name'], item['ending_label'], item['notation'], item['order'], countrycolor(item['notation']), serie]);
         }).value();
     }
-
-    if ( category == 'time-period'){
-        return series
-    } else {
-        return _(series).sortBy('name');
-    }
-
+    return series;
 }
 
 App.compute_plotLines = function compute_plotLines(coord, series, axis_type){
