@@ -56,7 +56,8 @@ App.chart_library['scatter'] = function(view, options) {
         title: {
             text: options.titles.title,
             align: 'center',
-            x: -100,
+            x: 200,
+            width: 600,
             style: {
                 color: '#000000',
                 fontFamily: 'Verdana',
@@ -95,7 +96,7 @@ App.chart_library['scatter'] = function(view, options) {
                     fontWeight: 'bold',
                     width: 500
                 },
-                margin: 50
+                margin: 45
             },
             labels: {
                 formatter: _.partial(App.tick_labels_formatter,
