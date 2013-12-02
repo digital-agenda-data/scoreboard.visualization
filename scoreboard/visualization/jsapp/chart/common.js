@@ -191,12 +191,12 @@ App.format_series = function (data, sort, multidim, percent, category, highlight
                     var month = parseInt(matches[2]);
                     var quarter = parseInt(matches[3]);
                     if (!_(quarter).isNaN() && _(month).isNaN()){
-                        month = (quarter * 4) - 1;
+                        month = (quarter * 3) - 2;
                     }
                     else if(_(month).isNaN()){
                         month = 0;
                     }
-                    item['x'] = Date.UTC(year, month);
+                    item['x'] = Date.UTC(year, month, 15);
                 })
             }
 
