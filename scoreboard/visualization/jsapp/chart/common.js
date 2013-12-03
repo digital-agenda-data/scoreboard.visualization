@@ -118,14 +118,6 @@ App.format_series = function (data, sort, multidim, percent, category, highlight
         var highlights_counter = {};
         var extract_data = function(series_item){
             var value = series_item['value'];
-            if(percent){
-                if (percent[0]){
-                    value*=100;
-                }
-            }
-            if ( typeof(value) == "string" ) {
-                value = parseFloat(value);
-            }
             var point = _.object([['name', series_item[category]['label']],
                                  ['code', series_item[category]['notation']],
                                  ['order', series_item[category]['inner_order']],
@@ -153,7 +145,15 @@ App.format_series = function (data, sort, multidim, percent, category, highlight
         };
 
         var diffs_collection = {}
-        var series = _.chain(data).map(function(item){
+        var series = _.chain(data).map(function(item, key){
+            // multiply with 100 for percentages
+            _(item['data']).map(function(item) {
+                var value = item['value'];
+                if ( typeof(value) == "string" ) {
+                    value = parseFloat(value);
+                }
+                item['value'] = value * multiplicators[key];
+            });
             var data = _(item['data']).map(extract_data);
             _.chain(data).
               each(function(item){
