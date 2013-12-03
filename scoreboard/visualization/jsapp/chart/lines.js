@@ -138,10 +138,9 @@ App.chart_library['lines'] = function(view, options) {
         },
         xAxis: {
             type: 'datetime',
-            tickInterval: 3600 * 24 * 1000 * 182,
-            maxZoom: 3600 * 24 * 1000 * 365,
+            tickInterval: 3600 * 24 * 1000 * 365,
             dateTimeLabelFormats: {
-                month: '%Y-%m'
+                month: '%Y'
             },
             labels: {
                 style: {
