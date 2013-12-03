@@ -36,7 +36,7 @@ App.StructureEditorField = Backbone.View.extend({
         // multiple selection not allowed in multilines chart type
         var is_multilines = typeof this.structure_editor.model.get('multiple_series') == 'number';
         var context = _({
-            type_options: _(this.type_options)
+            type_options: _.chain(this.type_options)
               .reject(function(item){
                 return is_multilines && item['value'] == 'multiple_select';
               }).map(function(opt) {
@@ -44,7 +44,7 @@ App.StructureEditorField = Backbone.View.extend({
                 return _({
                     selected: selected
                 }).extend(opt);
-            }, this),
+            }, this).value(),
             is_single_select: (this.model.get('type') == 'select'),
             chart_is_multidim: this.structure_editor.chart_is_multidim()
         }).extend(this.model.toJSON());
