@@ -312,6 +312,10 @@ App.AxesEditor = Backbone.View.extend({
         if (!_([2,3]).contains(this.model.get('multidim'))){
             composers = _(composers).without('xAxisTitle');
         }
+        if ( typeof this.model.get('multiple_series') == 'number' ) {
+            // TODO
+            // in multilines chart yAxisTitle elements should have asArray=true
+        }
         this.composers = new App.TitleComposers({
             names: composers,
             init_value: this.model.get('titles') || {},

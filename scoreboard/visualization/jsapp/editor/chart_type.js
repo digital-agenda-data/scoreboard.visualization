@@ -86,13 +86,7 @@ App.ChartTypeEditor = Backbone.View.extend({
         } else {
             this.model.unset('multidim');
         }
-        // TODO: this is duplicated code (see App.FacetsEditor.apply_changes)
-        if ( this.model.layout_collection ) {
-            var facets = this.model.facets.get_value(
-                multilines || multidim,
-                this.model.layout_collection.presets());
-            this.model.set('facets', facets); 
-        }
+        // layout_collection in EditorConfiguration is updated due to event
         this.render();
     }
 
