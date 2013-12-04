@@ -67,6 +67,7 @@ App.multilines_filters_schema = {
         "indicator": "x-indicator"
       },
       "dimension": "breakdown",
+      "default_value": "total",
       "label": "Breakdown",
       "name": "x-breakdown",
       "sortBy": "inner_order",
@@ -116,6 +117,7 @@ App.multilines_filters_schema = {
         "indicator": "y-indicator"
       },
       "dimension": "breakdown",
+      "default_value": "total",
       "label": "Breakdown",
       "name": "y-breakdown",
       "sortBy": "inner_order",
