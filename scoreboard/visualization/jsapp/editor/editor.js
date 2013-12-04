@@ -24,7 +24,7 @@ App.EditForm = Backbone.View.extend({
         var value = this.model.get_value();
         //var sorted = copyObjectWithSortedKeys(value);
         // disabled, as it does not work on IE8
-        this.input.val(JSON.stringify(value, null, 2));  // indent 2 spaces
+        this.input.val(JSON.stringify(value, null, 2));
     },
 
     on_submit: function(evt) {
@@ -40,6 +40,7 @@ App.EditForm = Backbone.View.extend({
     save_form: function() {
         var form_status = this.$el.find('.editor-form-status');
         form_status.text('saving...');
+
         var data = {'configuration': this.input.val()};
         $.post(this.$el.attr('action'), data, function() {
             form_status.text('ok');
@@ -147,22 +148,34 @@ App.EditorConfiguration = Backbone.Model.extend({
             this.get('facets')
         );
 
-        this.facets.on('change:multidim change:type', this.rebuild_layout, this);
+        this.on('change:multidim change:multiple_series', this.rebuild_layout, this);
+        this.facets.on('change:multidim_common change:type', this.rebuild_layout, this);
         this.layout_collection.on('change', this.save_facets, this);
     },
 
     rebuild_layout: function(){
         this.layout_collection = new App.LayoutCollection(
             this.facets.get_value(
-                this.get('multidim'),
+                this.chart_is_multidim(),
                 this.layout_collection.presets())
         );
         this.layout_collection.on('change', this.save_facets, this);
     },
 
+    chart_is_multidim: function() {
+        // TODO: this is duplicate code, refactor
+        if (this.get('multidim')) {
+            return this.get('multidim');
+        }
+        if (typeof this.get('multiple_series') == 'number') {
+            return this.get('multiple_series');
+        }
+        return false;
+    },
+
     save_facets: function() {
         var value = this.facets.get_value(
-            this.get('multidim'),
+            this.chart_is_multidim(),
             this.layout_collection.presets())
         this.set('facets', value);
     },

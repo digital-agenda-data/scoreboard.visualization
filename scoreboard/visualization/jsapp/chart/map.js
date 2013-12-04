@@ -20,6 +20,14 @@ function get_value_for_code(code, series){
     }
 }
 
+function wordwrap( str, width, brk, cut ) {
+    brk = brk || '\n';
+    width = width || 75;
+    cut = cut || false;
+    if (!str) { return str; }
+    var regex = '.{1,' +width+ '}(\\s|$)' + (cut ? '|.{' +width+ '}|.+$' : '|\\S+?(\\s|$)');
+    return str.match( RegExp(regex, 'g') ).join( brk );
+}
 
 function draw_legend(paper, colorscale, x0, y0, min, max, unit, orientation) {
     var box_width = 40;
@@ -29,7 +37,6 @@ function draw_legend(paper, colorscale, x0, y0, min, max, unit, orientation) {
     var max_value = min + (min + max) / (n_boxes - 1) * n_boxes;
     var magnitude = (max_value>0)?Math.floor(Math.log(max_value) / Math.LN10):0;
     var multiply = (magnitude>3)?'x10^' + magnitude + " ":"";
-
     _(_.range(n_boxes)).forEach(function(n) {
         var x = x0;
         var y = y0;
@@ -58,8 +65,11 @@ function draw_legend(paper, colorscale, x0, y0, min, max, unit, orientation) {
             }
         }
         if (orientation == 'vertical'){
-            paper.rect(x0, y, box_width, box_height).attr({fill: color});
-            paper.text(x0 + box_width + 20, y + box_height/2, text);
+            paper.rect(x0 + 35, y, box_width, box_height).attr({fill: color});
+            paper.text(x0 + box_width + 80, y + box_height/2, text).attr({
+                'font-size': '12',
+                'text-anchor': 'end',
+                'font-family': 'Segoe UI, Verdana, Arial, sans-serif'});
         }
         else{
             paper.rect(x, y0, box_width, box_height).attr({fill: color});
@@ -68,7 +78,11 @@ function draw_legend(paper, colorscale, x0, y0, min, max, unit, orientation) {
     });
     //paper.text(x0 + box_width * (n_boxes + 1/2), y0 + box_height + 10, unit);
     if (orientation == 'vertical'){
-        paper.text(x0 + box_width + 20, y0 + box_height * n_boxes + 20, multiply + unit.text);
+        paper.text(x0 + 10, y0 + box_height * n_boxes/2, multiply + unit.text).attr({
+                'font-size': '14',
+                'text-anchor': 'middle',
+                'font-family': 'Segoe UI, Verdana, Arial, sans-serif'
+        }).rotate(270);
     }
     else{
         paper.text(x0 + box_width * n_boxes / 2, y0 + box_height + 20, multiply + unit.text);
@@ -78,13 +92,22 @@ function draw_legend(paper, colorscale, x0, y0, min, max, unit, orientation) {
 
 App.chart_library['map'] = function(view, options) {
     var container = view.el
-    var map_div = $('<div class="map-chart">');
-    $(container).empty().append($('<p>', {
+    var map_div = $('<div/>').addClass('map-chart');
+    /*$(container).empty().append($('<p>', {
         'id': 'map-title',
         'text': options.titles.title
     }));
+    */
     $(container).append(map_div);
-    $(container).addClass('map-chart');
+
+    // add a form to request a png download
+    $(container).append(
+        $('<form method="POST" action="' + App.URL + '/svg2png"></form>').append(
+            $("<input/>").attr("type", "hidden").attr("name", "svg")
+        ).append(
+            $("<input/>").attr("type", "submit").attr("value", "Download").addClass('mapExportPngButton')
+        )
+    );
 
     var series = App.format_series(
                     options['series'],
@@ -103,7 +126,7 @@ App.chart_library['map'] = function(view, options) {
     var unit = options['meta_data']['unit-measure'];
 
     var n = 0;
-    var map = Kartograph.map(map_div[0]);
+    var map = Kartograph.map(map_div[0], 1000, 845);
     App.kartograph_map = map;
     map.loadMap(App.JSAPP + '/europe.svg', function() {
         map.addLayer('countries', {
@@ -136,15 +159,29 @@ App.chart_library['map'] = function(view, options) {
                 }
             }
         });
+
         //horizontal
         /*
         draw_legend(map.paper, colorscale, 10, 420, 0, max_value,
                 {text: unit, is_pc: options.unit_is_pc[0]});
         */
         //vertical
-        draw_legend(map.paper, colorscale, 10, 10, 0, max_value,
+        draw_legend(map.paper, colorscale, 10, 300, 0, max_value,
                 {text: unit.short_label, is_pc: options.unit_is_pc[0]},
                 'vertical');
+        // add title over a white box
+        var title = wordwrap(options.titles.title, 110, '\n');
+        var lines = (title.match(/\n/g)||[]).length + 1;
+        map.paper.rect(0, 0, 1000, lines*20).attr({fill: '#FEFEFE', 'stroke-width': 0});
+        map.paper.text(500, 20*lines/2, title).attr({
+            'font-size': '16',
+            'font-weight': 'bold',
+            'text-anchor': 'middle',
+            'font-family': 'Verdana, Arial, sans-serif'
+        });
+        // load svg html into the form for png download
+        // use toSVG function provided by raphael.export.js (IE 8 compatibility)
+        $("input[name='svg']").val(map.paper.toSVG());
     });
 
     var metadata = {
@@ -158,6 +195,5 @@ App.chart_library['map'] = function(view, options) {
     };
     view.trigger('chart_ready', series, metadata);
 };
-
 
 })(App.jQuery);

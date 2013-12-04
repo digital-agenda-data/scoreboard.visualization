@@ -19,7 +19,7 @@ App.chart_library['lines'] = function(view, options) {
 	_.map(series, function(elem) {
         var lastElem;
         _(elem.data).each(function(item){
-            if (item.y) {
+            if (item.y != undefined) {
                 lastElem = item;
             }
         });
@@ -28,6 +28,7 @@ App.chart_library['lines'] = function(view, options) {
                 dataLabels: {
                   enabled: true,
                   crop: false,
+                  overflow: 'none',
                   x: 3,
                   align: 'left',
                   verticalAlign: 'middle',
@@ -44,14 +45,59 @@ App.chart_library['lines'] = function(view, options) {
         }
     });
 
+    var yAxis = {
+        min:0,
+        max: options['unit_is_pc'][0]?100:null,
+        minRange: 1,
+        startOnTick: false,
+        minPadding: 0.1,
+        title: {
+            text: typeof(options.titles.yAxisTitle) == 'string'?options.titles.yAxisTitle:options.titles.yAxisTitle[0],
+            style: {
+                color: '#000000',
+                fontWeight: 'bold'
+            }
+        },
+        labels: {
+            style: {
+                color: '#000000'
+            }
+        }
+    };
+    
+    if ( this.multiple_series == 2 ) {
+        var yAxis = [yAxis];
+        yAxis.push({
+            min:0,
+            max: options['unit_is_pc'][1]?100:null,
+            opposite: true,
+            title: {
+                text: options.titles.yAxisTitle[1],
+                //text: 'second series',
+                style: {
+                    color: '#000',
+                    fontWeight: 'bold'
+                }
+            },
+            labels: {
+                style: {
+                    color: '#000'
+                }
+            }
+        });
+        _(series).forEach(function(item, index) {
+            item['yAxis'] = index;
+        });
+    }
+
     var chartOptions = {
         chart: {
             renderTo: container,
             type: 'spline',
             zoomType: 'y',
             marginLeft: 100,
-            marginRight: 170,
-            marginTop: 60,
+            marginRight: 270,
+            marginTop: 120,
             marginBottom: 50,
             height: 450,
             width: 1100
@@ -69,40 +115,40 @@ App.chart_library['lines'] = function(view, options) {
         },
         title: {
             text: options.titles.title,
+            align: "center",
+            x: 350,
+            width: 800,
+            y: 40,
             style: {
                 color: '#000000',
-                fontWeight: 'bold',
-                fontSize:'1.2em',
-                width: '800'
+                fontFamily: 'Verdana',
+                fontWeight: 'bold'
+            }
+        },
+        subtitle: {
+            text: options.titles.subtitle,
+            align: "left",
+            x: 40,
+            y: 90,
+            style: {
+                color: '#000000',
+                fontFamily: 'Verdana',
+                fontWeight: 'bold'
             }
         },
         xAxis: {
             type: 'datetime',
-            tickInterval: 3600 * 24 * 1000 * 182,
-            minRange: 3600 * 100 * 24 * 365,
+            tickInterval: 3600 * 24 * 1000 * 365,
+            dateTimeLabelFormats: {
+                month: '%Y'
+            },
             labels: {
                 style: {
                     color: '#000000'
                 }
              }
         },
-        yAxis: {
-            min:0,
-            max: options['unit_is_pc'][0]?100:null,
-            minRange: 1,
-            title: {
-                text: options.titles.yAxisTitle,
-                style: {
-                    color: '#000000',
-                    fontWeight: 'bold'
-                }
-            },
-            labels: {
-                style: {
-                    color: '#000000'
-                }
-            }
-        },
+        yAxis: yAxis,
         tooltip: {
             formatter: options['tooltip_formatter'],
             style: {
@@ -113,11 +159,12 @@ App.chart_library['lines'] = function(view, options) {
             layout: 'vertical',
             align: 'right',
             verticalAlign: 'top',
-            x: 10,
-            y: 30,
-            borderWidth: 0,
+            x: 5,
+            y: 80,
+            floating: true,
+            borderWidth: 1,
             itemStyle: {
-                width: 150
+                width: 195
             }
         },
         plotOptions: {
@@ -130,7 +177,7 @@ App.chart_library['lines'] = function(view, options) {
                 }
             }
         },
-        series: series
+        series: series,
     };
 
     App.set_default_chart_options(chartOptions);

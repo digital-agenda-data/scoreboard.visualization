@@ -18,6 +18,9 @@ App.chart_library['bubbles'] = function(view, options) {
                     options['category_facet'],
                     options['highlights']);
 
+    // sort series by country name
+    series = _(series).sortBy('name');
+    // create deep copy
     var init_series = JSON.parse(JSON.stringify(series[0]));
 
     // formatter is lost after stringify
@@ -104,7 +107,7 @@ App.chart_library['bubbles'] = function(view, options) {
                     fontWeight: 'bold',
                     width: 500
                 },
-                 margin: 30
+                margin: 30
             },
             labels: {
                 formatter: _.partial(App.tick_labels_formatter,
@@ -124,15 +127,18 @@ App.chart_library['bubbles'] = function(view, options) {
             layout: 'vertical',
             align: 'right',
             verticalAlign: 'top',
-            x: 10,
-            y: 30,
-            borderWidth: 0
+            x: -5,
+            y: 45,
+            borderWidth: 1
         },
         plotOptions: {
             bubble: {
                 dataLabels: {
                     enabled: true,
-                    color: '#555555'
+                    color: '#555555',
+                    style: {
+                        textShadow: '0px'
+                    }
                 }
             },
             scatter: {

@@ -14,7 +14,7 @@
     {{/ horizontal_plotline_options }}
     </select>
   </label>
-  </br>
+  <br />
   <label>
     Vertical Median Line
     <select class="span2" name="axis-vertical-plotline">
@@ -35,25 +35,25 @@
   <label>
     <input type="radio" name="axis-sort-by"
            value="{{ value }}"
-           {{# if checked }}checked{{/ if }}>
+           {{# if checked }}checked{{/ if }} />
     {{ label }}
   </label>
   {{/ sort_by_options }}
 
-  <br>
+  <br />
   {{# sort_order_options }}
   <label>
     <input type="radio" name="axis-sort-order"
            value="{{ value }}"
-           {{# if checked }}checked{{/ if }}>
+           {{# if checked }}checked{{/ if }} />
     {{ label }}
   </label>
   {{/ sort_order_options }}
 
-  <br>
+  <br />
   <label>
     <input type="checkbox" name="axis-sort-each-series"
-           {{# if sort_each_series }}checked{{/ if }}>
+           {{# if sort_each_series }}checked{{/ if }} />
     Sort multiple series independently
   </label>
 </fieldset>

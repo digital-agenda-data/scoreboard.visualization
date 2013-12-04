@@ -64,7 +64,9 @@ App.chart_library['country_profile'] = function(view, options) {
                     color: '#000000',
                     enabled: true,
                     align: 'right',
+                    crop: false,
                     inside: false,
+                    overflow: 'none',
                     x: 50,
                     formatter: function(){
                         if(this.point.y >= 0){
@@ -89,6 +91,8 @@ App.chart_library['country_profile'] = function(view, options) {
                     enabled: true,
                     align: 'right',
                     inside: false,
+                    crop: false,
+                    overflow: 'none',
                     x: 50,
                     formatter: function(){
                         if(this.point.y){
@@ -142,10 +146,10 @@ App.chart_library['country_profile'] = function(view, options) {
                 defaultSeriesType: 'bar',
                 marginTop: 100,
                 marginBottom: 100,
-                marginLeft: 400,
+                marginLeft: 500,
                 marginRight: 60,
                 height: 200 + series[0].data.length * 75,
-                width: 950
+                width: 1100
             },
             credits: {
                 href: options['credits']['href'],
@@ -160,33 +164,39 @@ App.chart_library['country_profile'] = function(view, options) {
             title: {
                 text: options.titles.title,
                 align: 'center',
+                x: 300,
+                width: 600,
                 style: {
                     color: '#000000',
-                    fontFamily: 'Arial',
+                    fontFamily: 'Verdana',
                     fontWeight: 'bold',
-                    fontSize:'1.2em',
+                    fontSize: '16px',
                     width: '600'
                 }
             },
             subtitle: {
-                y:50,
+                y:60,
                 text: options.titles.subtitle,
                 style: {
-                    fontFamily: 'Arial',
+                    fontFamily: 'Verdana',
                     fontWeight: 'bold',
-                    fontSize: '16px'
+                    fontSize: '16px',
                 },
-                align: 'left',
-                x:70
+                align: 'center',
+                width: 600,
+                x:300
             },
             xAxis: {
                 type: 'category',
                 labels: {
                     rotation: 0,
                     align: 'right',
+                    overflow: 'justify',
                     style: {
                         color: '#000000',
-                        fontFamily: 'Arial'
+                        fontFamily: 'Tahoma',
+                        fontSize: '10px',
+                        width: '250'
                     }
                  }
             },

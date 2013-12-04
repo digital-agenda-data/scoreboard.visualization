@@ -27,8 +27,8 @@ App.chart_library['columns'] = function(view, options) {
             defaultSeriesType: 'column',
             zoomType: 'y',
             marginLeft: 100,
-            marginRight: 170,
-            marginTop: 80,
+            marginRight: 180,
+            marginTop: 100,
             marginBottom: 100,
             height: 450,
             width: 1100
@@ -45,23 +45,28 @@ App.chart_library['columns'] = function(view, options) {
             }
         },
         title: {
-            useHTML:true,
             text: options.titles.title,
+            align: "center",
+            x: 370,
+            width: 830,
+            y: 35,
             style: {
                 color: '#000000',
+                fontFamily: 'Verdana',
                 fontWeight: 'bold',
-                fontSize:'1.2em',
-                width: '700'
+                fontSize: '16px'
             }
         },
         subtitle: {
             text: options.titles.subtitle,
             style: {
                 fontWeight: 'bold',
+                fontFamily: 'Verdana',
                 fontSize: '16px'
             },
             align: 'left',
-            x: 70
+            x: 90,
+            y: 80,
         },
         xAxis: {
             type: 'category',
@@ -90,11 +95,16 @@ App.chart_library['columns'] = function(view, options) {
             layout: 'vertical',
             align: 'right',
             verticalAlign: 'top',
-            x: 10,
-            y: 30,
+            x: 0,
+            y: 50,
             borderWidth: 0,
+            backgroundColor: '#FFF',
+            width: 170,
+            itemMarginBottom: 5,
             itemStyle: {
-                width: 150
+                fontFamily: 'Verdana',
+                fontSize: '11px',
+                width: 160
             }
         },
         tooltip: {

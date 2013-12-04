@@ -16,3 +16,11 @@
   Use animated (play toolbar) time dimension
 </label>
 {{/ if }}
+
+{{# if multilines_available }}
+<label>
+  <input type="checkbox" name="multilines"
+         {{# if multilines }}checked{{/ if }}>
+  Compare two indicators per country
+</label>
+{{/ if }}

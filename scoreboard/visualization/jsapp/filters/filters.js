@@ -124,8 +124,8 @@ App.SelectFilter = Backbone.View.extend({
 
             // Sort items
             var sortBy = this.sortBy;
-            if(this.sortOrder === 'order_in_codelist'){
-                this.dimension_options = data[options];
+            if(this.sortBy === 'order_in_codelist'){
+                this.dimension_options = data['options'];
             }else{
                 this.dimension_options = _(data['options']).sortBy(function(item){
                     if (item[sortBy] && !isNaN(parseInt(item[sortBy]))) {
@@ -335,7 +335,7 @@ App.FiltersBox = Backbone.View.extend({
                 chart_subtype: schema['chart_subtype'],
                 sortBy: item['sortBy'],
                 sortOrder: item['sortOrder'],
-                multidim: item['multidim_common'] ? options['multidim'] : null,
+                multidim: item['multidim_common'] ? options['multidim'] | options.schema['multiple_series'] : null,
                 name: item['name'],
                 label: item['label'],
                 default_value: item['default_value'],

@@ -18,6 +18,9 @@ App.chart_library['scatter'] = function(view, options) {
                     options['category_facet'],
                     options['highlights']);
 
+    // sort series by country name
+    series = _(series).sortBy('name');
+    // create deep copy
     var init_series = JSON.parse(JSON.stringify(series[0]));
 
     // formatter is lost after stringify
@@ -33,11 +36,11 @@ App.chart_library['scatter'] = function(view, options) {
             defaultSeriesType: 'scatter',
             zoomType: 'xy',
             marginLeft: 100,
-            marginRight: 150,
+            marginRight: 300,
             marginTop: 70,
             marginBottom: 100,
             height: 670,
-            width: 750,
+            width: 900,
             ignoreHiddenSeries: false
         },
         credits: {
@@ -53,8 +56,11 @@ App.chart_library['scatter'] = function(view, options) {
         title: {
             text: options.titles.title,
             align: 'center',
+            x: 200,
+            width: 600,
             style: {
                 color: '#000000',
+                fontFamily: 'Verdana',
                 fontWeight: 'bold'
             }
         },
@@ -90,7 +96,7 @@ App.chart_library['scatter'] = function(view, options) {
                     fontWeight: 'bold',
                     width: 500
                 },
-                margin: 30
+                margin: 45
             },
             labels: {
                 formatter: _.partial(App.tick_labels_formatter,
@@ -110,9 +116,14 @@ App.chart_library['scatter'] = function(view, options) {
             layout: 'vertical',
             align: 'right',
             verticalAlign: 'top',
-            x: 10,
+            style: {
+                fontFamily: 'Verdana',
+                fontSize: '11px'
+            },
+            x: -50,
             y: 30,
-            borderWidth: 0
+            borderWidth: 1,
+            floating: true
         },
         plotOptions: {
             scatter: {

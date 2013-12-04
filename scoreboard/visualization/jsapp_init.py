@@ -31,6 +31,7 @@ js_bundles = [
             'scenario8/scenario8.js',
             'scenario9/scenario9.js',
             'scenario9/scenario9_table.js',
+            'scenarios/multilines.js',
             'scenario/visualization.js',
             'editor/editor.js',
             'editor/chart_type.js',
