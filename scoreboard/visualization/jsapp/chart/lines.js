@@ -146,6 +146,7 @@ App.chart_library['lines'] = function(view, options) {
             },
             startOnTick: true,
             endOnTick: true,
+            showLastLabel: true,
             tickmarkPlacement: 'between',
             labels: {
                 style: {
