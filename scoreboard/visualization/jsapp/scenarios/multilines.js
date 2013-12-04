@@ -69,7 +69,7 @@ App.multilines_filters_schema = {
       "dimension": "breakdown",
       "label": "Breakdown",
       "name": "x-breakdown",
-      "sortBy": "order_in_codelist",
+      "sortBy": "inner_order",
       "sortOrder": "asc",
       "type": "select"
     },
@@ -118,7 +118,7 @@ App.multilines_filters_schema = {
       "dimension": "breakdown",
       "label": "Breakdown",
       "name": "y-breakdown",
-      "sortBy": "order_in_codelist",
+      "sortBy": "inner_order",
       "sortOrder": "asc",
       "position": "upper-right",
       "type": "select"
