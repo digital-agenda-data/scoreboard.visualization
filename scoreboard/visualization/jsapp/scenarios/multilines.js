@@ -56,7 +56,7 @@ App.multilines_filters_schema = {
       "dimension": "indicator",
       "label": "Indicator",
       "name": "x-indicator",
-      "sortBy": "order_in_codelist",
+      "sortBy": "inner_order",
       "sortOrder": "asc",
       "default_value": "#random",
       "type": "select"
@@ -104,7 +104,7 @@ App.multilines_filters_schema = {
       "dimension": "indicator",
       "label": "Indicator",
       "name": "y-indicator",
-      "sortBy": "order_in_codelist",
+      "sortBy": "inner_order",
       "sortOrder": "asc",
       "default_value": "#random",
       "position": "upper-right",
