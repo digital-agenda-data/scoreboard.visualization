@@ -140,7 +140,7 @@ App.chart_library['lines'] = function(view, options) {
             type: 'datetime',
             tickInterval: 3600 * 24 * 1000 * 365,
             dateTimeLabelFormats: {
-                day: '%Y-%m',
+                day: '%Y',
                 month: '%Y-%m',
                 year: '%Y-%m'
             },
