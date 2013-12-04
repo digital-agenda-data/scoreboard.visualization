@@ -190,19 +190,31 @@ App.format_series = function (data, sort, multidim, percent, category, highlight
                   );
               });
             if (category == 'time-period' || category == 'refPeriod'){
-                var date_pattern = /^([0-9]{4})(?:-(?:([0-9]{2})|(?:Q([0-9]){1})))*$/;
+                var date_pattern = /^([0-9]{4})(?:-(?:([0-9]{2})|(?:Q([0-9]){1})|(?:H([0-9]){1})))*$/;
                 _(serie).each(function(item){
                     var matches = date_pattern.exec(item['code']);
                     var year = parseInt(matches[1]);
                     var month = parseInt(matches[2]);
+                    var day=1;
                     var quarter = parseInt(matches[3]);
+                    var half = parseInt(matches[4]);
                     if (!_(quarter).isNaN() && _(month).isNaN()){
+                        // YYYY-Q1 .. YYYY-Q4
                         month = (quarter * 3) - 2;
-                    }
-                    else if(_(month).isNaN()){
+                        day = 15;
+                    } else if (!_(half).isNaN() && _(month).isNaN()){
+                        // YYYY-H1 .. YYYY-H2
+                        month = (half * 6) - 3;
+                        day = 1;
+                    } else if(!_(month).isNaN()){
+                        // expected values are 0-11
+                        month = month - 1;
+                        day = 15;
+                    } else {
+                        day = 1;
                         month = 0;
                     }
-                    item['x'] = Date.UTC(year, month, 15);
+                    item['x'] = Date.UTC(year, month, day);
                 })
             }
 
