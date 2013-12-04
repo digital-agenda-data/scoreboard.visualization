@@ -183,7 +183,14 @@ App.ScenarioChartView = Backbone.View.extend({
                     if ( multidim ) {
                         if (unit_is_pc[1]) out += '%';
                     } else {
-                        if (unit_is_pc[this.series.index]) out += '%';
+                        // no multidim, but may be multi-lines
+                        var series_is_pc = unit_is_pc[0];
+                        if (typeof unit_is_pc[this.series.index] != 'undefined') {
+                            series_is_pc = unit_is_pc[this.series.index];
+                        }
+                        if (series_is_pc) {
+                            out += '%';
+                        }
                     }
                     out += ' ';
                     if (_.contains(tooltip_attributes, 'unit-measure') && attrs['unit-measure']) {
