@@ -96,7 +96,7 @@ App.chart_library['lines'] = function(view, options) {
             type: 'spline',
             zoomType: 'y',
             marginLeft: 100,
-            marginRight: 270,
+            marginRight: 280,
             marginTop: 120,
             marginBottom: 50,
             height: 450,
