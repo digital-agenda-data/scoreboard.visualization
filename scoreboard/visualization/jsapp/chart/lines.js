@@ -165,6 +165,7 @@ App.chart_library['lines'] = function(view, options) {
             layout: 'vertical',
             align: 'right',
             verticalAlign: 'top',
+            useHTML: true,
             x: 5,
             y: 80,
             floating: true,
