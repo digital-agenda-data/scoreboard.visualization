@@ -321,12 +321,12 @@ App.set_default_chart_options = function(chartOptions){
                     enabled: false
                 },
                 exportButton: {
-                    text: 'Download',
+                    text: 'Download image',
                     // Use only the download related menu items from the default context button
                     menuItems: menuItems
                 },
                 printButton: {
-                    text: 'Print Chart',
+                    text: 'Print chart',
                     onclick: function () {
                         this.print();
                     }
