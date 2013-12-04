@@ -18,6 +18,7 @@ App.chart_library['columns'] = function(view, options) {
                     options['animation']);
     var init_series = series;
     if (options['animation']){
+        series = _(series).sortBy('name');
         init_series = JSON.parse(JSON.stringify(series.slice(-1)));
     }
 
