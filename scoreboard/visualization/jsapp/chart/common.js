@@ -152,7 +152,13 @@ App.format_series = function (data, sort, multidim, percent, category, highlight
                 if ( typeof(value) == "string" ) {
                     value = parseFloat(value);
                 }
-                item['value'] = value * multiplicators[key];
+                if ( multiplicators[key] ) {
+                    // multiple_series=2 (multilines)
+                    item['value'] = value * multiplicators[key];
+                } else {
+                    // same unit of measure for all series
+                    item['value'] = value * multiplicators[0];
+                }
             });
             var data = _(item['data']).map(extract_data);
             _.chain(data).
