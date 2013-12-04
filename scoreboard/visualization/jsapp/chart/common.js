@@ -212,7 +212,7 @@ App.format_series = function (data, sort, multidim, percent, category, highlight
                         day = 15;
                     } else {
                         day = 1;
-                        month = 0;
+                        month = 6;
                     }
                     item['x'] = Date.UTC(year, month, day);
                 })
