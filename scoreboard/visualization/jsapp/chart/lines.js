@@ -47,7 +47,7 @@ App.chart_library['lines'] = function(view, options) {
 
     var yAxis = {
         min:0,
-        max: options['unit_is_pc'][0]?100:null,
+        //max: options['unit_is_pc'][0]?100:null,
         minRange: 1,
         startOnTick: false,
         minPadding: 0.1,
@@ -69,7 +69,7 @@ App.chart_library['lines'] = function(view, options) {
         var yAxis = [yAxis];
         yAxis.push({
             min:0,
-            max: options['unit_is_pc'][1]?100:null,
+            //max: options['unit_is_pc'][1]?100:null,
             opposite: true,
             title: {
                 text: options.titles.yAxisTitle[1],
