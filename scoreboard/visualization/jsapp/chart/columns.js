@@ -83,7 +83,7 @@ App.chart_library['columns'] = function(view, options) {
         },
         yAxis: {
             min: 0,
-            max: options['unit_is_pc'][0]?100:null,
+            // max: options['unit_is_pc'][0]?100:null,
             title: {
                 text: options.titles.yAxisTitle,
                 style: {
