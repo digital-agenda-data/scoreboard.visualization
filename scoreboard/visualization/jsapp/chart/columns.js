@@ -17,9 +17,18 @@ App.chart_library['columns'] = function(view, options) {
                     options['highlights'],
                     options['animation']);
     var init_series = series;
+    var max_value = null;
     if (options['animation']){
         series = _(series).sortBy('name');
         init_series = JSON.parse(JSON.stringify(series.slice(-1)));
+        // find max value of all series
+        _(series).each(function(serie){
+            _(serie.data).each(function(item){
+                if (!max_value || item.y > max_value ) {
+                    max_value = item.y;
+                }
+            });
+        });
     }
 
     var chartOptions = {
@@ -83,7 +92,7 @@ App.chart_library['columns'] = function(view, options) {
         },
         yAxis: {
             min: 0,
-            max: options['unit_is_pc'][0]?100:null,
+            max: max_value,
             title: {
                 text: options.titles.yAxisTitle,
                 style: {
