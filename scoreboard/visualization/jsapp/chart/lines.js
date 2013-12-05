@@ -141,11 +141,13 @@ App.chart_library['lines'] = function(view, options) {
             tickInterval: 3600 * 24 * 1000 * 365,
             dateTimeLabelFormats: {
                 day: '%Y',
-                month: '%Y-%m',
-                year: '%Y-%m'
+                month: '%Y',
+                year: '%Y'
             },
             startOnTick: true,
             endOnTick: true,
+            lineColor: '#191919',
+            tickColor: '#191919',
             showLastLabel: true,
             tickmarkPlacement: 'between',
             labels: {
