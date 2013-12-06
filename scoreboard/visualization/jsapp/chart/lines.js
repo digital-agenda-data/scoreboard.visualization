@@ -139,7 +139,7 @@ App.chart_library['lines'] = function(view, options) {
         xAxis: {
             type: 'datetime',
             tickInterval: 3600 * 24 * 1000 * 365,
-            minorTickInterval: 3600 * 24 * 1000 * 365 / 2,
+            //minorTickInterval: 3600 * 24 * 1000 * 365 / 2,
             minorGridLineWidth: 0,
             minorTickWidth: 1,
             lineColor: '#191919',
@@ -155,9 +155,11 @@ App.chart_library['lines'] = function(view, options) {
             endOnTick: true,
             showLastLabel: true,
             labels: {
+                align: 'left',
                 style: {
-                    color: '#000000'
-                }
+                    color: '#000000',
+                },
+                x: 10
             }
         },
         yAxis: yAxis,
