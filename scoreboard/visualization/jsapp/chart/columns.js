@@ -80,6 +80,8 @@ App.chart_library['columns'] = function(view, options) {
         },
         xAxis: {
             type: 'category',
+            lineColor: '#191919',
+            tickColor: '#191919',
             labels: {
                 rotation: -45,
                 align: 'right',

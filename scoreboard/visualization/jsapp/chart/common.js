@@ -198,21 +198,24 @@ App.format_series = function (data, sort, multidim, percent, category, highlight
                     var day=1;
                     var quarter = parseInt(matches[3]);
                     var half = parseInt(matches[4]);
+                    /* month is shifted 6 month before because of the 'fake' ticks
+                    // year label is displayed at 01.01.YYYY, but we want users to think
+                    // that there is the center of the year */
                     if (!_(quarter).isNaN() && _(month).isNaN()){
                         // YYYY-Q1 .. YYYY-Q4
-                        month = (quarter * 3) - 2;
+                        month = (quarter * 3) - 2 - 6 ;
                         day = 15;
                     } else if (!_(half).isNaN() && _(month).isNaN()){
                         // YYYY-H1 .. YYYY-H2
-                        month = (half * 6) - 3;
+                        month = (half * 6) - 3 - 6;
                         day = 1;
                     } else if(!_(month).isNaN()){
                         // expected values are 0-11
-                        month = month - 1;
+                        month = month - 1 - 6;
                         day = 15;
                     } else {
                         day = 1;
-                        month = 6;
+                        month = 0;
                     }
                     item['x'] = Date.UTC(year, month, day);
                 })

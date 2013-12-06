@@ -139,20 +139,26 @@ App.chart_library['lines'] = function(view, options) {
         xAxis: {
             type: 'datetime',
             tickInterval: 3600 * 24 * 1000 * 365,
+            minorTickInterval: 3600 * 24 * 1000 * 365 / 2,
+            minorGridLineWidth: 0,
+            minorTickWidth: 1,
+            lineColor: '#191919',
+            tickColor: '#191919',
+            minorTickColor: '#191919',
+            minorTickLength: 5,
             dateTimeLabelFormats: {
                 day: '%Y',
-                month: '%Y-%m',
-                year: '%Y-%m'
+                month: '%Y',
+                year: '%Y'
             },
             startOnTick: true,
             endOnTick: true,
             showLastLabel: true,
-            tickmarkPlacement: 'between',
             labels: {
                 style: {
                     color: '#000000'
                 }
-             }
+            }
         },
         yAxis: yAxis,
         tooltip: {
