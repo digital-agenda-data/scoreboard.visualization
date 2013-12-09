@@ -173,7 +173,9 @@ App.chart_library['lines'] = function(view, options) {
             layout: 'vertical',
             align: 'right',
             verticalAlign: 'top',
-            useHTML: true,
+            // useHTML: true,
+            // disabled because IE9 raises SCRIPT5007: Unable to get property 'childNodes'
+            // when changing the indicator
             x: 5,
             y: 80,
             floating: true,
