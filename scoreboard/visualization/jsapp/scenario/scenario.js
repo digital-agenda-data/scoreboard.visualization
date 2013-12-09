@@ -325,9 +325,11 @@ App.ScenarioChartView = Backbone.View.extend({
                 requests.push(this.request_datapoints(datapoints_url, yargs));
                  
                 var theFilters = this.$el.closest("#scenario-box").find("#the-filters");
+                var x_filter = theFilters.find("option[value='" + xargs['indicator'] + "']");
+                var y_filter = theFilters.find("option[value='" + yargs['indicator'] + "']");
                 chart_data['series_names'] = {
-                    'x': theFilters.find("option[selected='selected'][value='" + xargs['indicator'] + "']").text().trim() + ' (left side)',
-                    'y': theFilters.find("option[selected='selected'][value='" + yargs['indicator'] + "']").text().trim() + ' (right side)'
+                    'x': x_filter[0].text + ' (left side)',
+                    'y': y_filter[0].text + ' (right side)'
                 }
             } else { 
                 var groupby_dimension = this.dimensions_mapping[
