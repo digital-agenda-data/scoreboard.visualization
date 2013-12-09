@@ -82,7 +82,7 @@ App.chart_library['lines'] = function(view, options) {
         yAxis.push({
             min:0,
             //max: options['unit_is_pc'][1]?100:null,
-            max: max_value;
+            max: max_value,
             opposite: true,
             title: {
                 text: options.titles.yAxisTitle[1],
