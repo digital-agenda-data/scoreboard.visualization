@@ -66,6 +66,18 @@ App.chart_library['lines'] = function(view, options) {
     };
     
     if ( this.multiple_series == 2 ) {
+        var max_value = null;
+        if ( options.titles.yAxisTitle[0] == options.titles.yAxisTitle[1] ) {
+            // if same unit, set a common max value
+            _(series).each(function(serie){
+                _(serie.data).each(function(item){
+                    if (!max_value || item.y > max_value ) {
+                        max_value = item.y;
+                    }
+                });
+            });
+            yAxis['max'] = max_value;
+        }
         var yAxis = [yAxis];
         yAxis.push({
             min:0,
@@ -85,6 +97,7 @@ App.chart_library['lines'] = function(view, options) {
                 }
             }
         });
+
         _(series).forEach(function(item, index) {
             item['yAxis'] = index;
         });
