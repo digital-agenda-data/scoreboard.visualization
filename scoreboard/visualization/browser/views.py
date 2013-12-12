@@ -85,3 +85,14 @@ class CacheView(BrowserView):
                 CUBE_DIMENSIONS=[],
                 JSAPP_URL=self.JSAPP_URL)
 
+
+class IndicatorsListing(BrowserView):
+    def dataset_details(self):
+        last_group = ""
+        data = self.context.get_cube().get_dataset_details()
+        for indicator in data:
+            group_name = indicator["groupName"]
+            if group_name != last_group:
+                last_group = group_name
+                yield {"type": "header", "indicator": indicator}
+            yield {"type": "row", "indicator": indicator}

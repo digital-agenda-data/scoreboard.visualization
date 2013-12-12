@@ -1,6 +1,6 @@
 <html metal:use-macro="here/main_template/macros/master"
   i18n:domain="plone">
-  <div metal:fill-slot="main">
+  <div metal:fill-slot="main" tal:define="std modules/Products.PythonScripts.standard; normalizeString nocall:context/@@plone/normalizeString;">
     <h1><span id="dataset-title" tal:content="here/getExtended_title"/></h1>
 
     <div class="dataset-manage bootstrap">
@@ -13,6 +13,8 @@
     <p id="dataset-description" tal:content="structure here/getSummary" />
 
     <p>The following table provides methodological information about the source, the scope and the definition of each indicator. For more details, click on the links in the table or explore the whole database.</p>
+
+
 
     <div id="indicators-toc" class="listing-description"> </div>
     <br />
@@ -27,10 +29,41 @@
       </thead>
 
       <tbody>
+        <tal:row tal:repeat="row view/dataset_details">
+            <tr class="groupName" tal:condition="python:row['type'] == 'header'" tal:define="indicator python:row['indicator']" tal:attributes="id python:normalizeString(indicator['groupName'])">
+                <td colspan="5" tal:content="indicator/groupName"></td>
+            </tr>
+            <tr tal:condition="python:row['type'] == 'row'" tal:define="indicator python:row['indicator']">
+                <td class="even" tal:content="indicator/longlabel"></td>
+                <td class="odd" tal:define="definition indicator/definition|nothing; notes indicator/notes|nothing">
+                    <tal:block condition="definition">
+                        <strong class="definition">Definition: </strong><span tal:replace="indicator/definition"></span>
+                    </tal:block>
+                    <br tal:condition="python:definition and notes"/>
+                    <tal:block condition="notes">
+                        <strong class="notes">Notes: </strong><span tal:replace="indicator/notes"></span>
+                    </tal:block>
+                </td>
+                <td class="even">
+                    <span tal:replace="indicator/minYear"></span> - <span tal:replace="indicator/maxYear"></span>
+                </td>
+                <td class="odd" tal:define="quoted_indicator python:std.url_quote_plus(indicator['indicator'])">
+                    <a target="_blank"
+                       tal:attributes="href string:http://cr.scoreboardtest.edw.ro/sparql?selectedBookmarkName=&query=%23+This+is+a+sample+SPARQL+query+that+returns+the+first+100+countries%0D%0A%23+included+in+the+data+for+indicator+%22TODO%22+and+year+%222012%22%0D%0A%0D%0A%0D%0APREFIX+cube%3A+%3Chttp%3A%2F%2Fpurl.org%2Flinked-data%2Fcube%23%3E%0D%0APREFIX+skos%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23%3E%0D%0APREFIX+dad-prop%3A+%3Chttp%3A%2F%2Fsemantic.digital-agenda-data.eu%2Fdef%2Fproperty%2F%3E%0D%0A%0D%0ASELECT+DISTINCT+%3Fcountry+WHERE+%7B%0D%0A++%3Fobservation+a+cube%3AObservation+.%0D%0A++%3Fobservation+dad-prop%3Aindicator+%3C${quoted_indicator}%3E+.%0D%0A%23++%3Fobservation+dad-prop%3Atime-period+%3Chttp%3A%2F%2Freference.data.gov.uk%2Fid%2Fgregorian-year%2F2012%3E+.%0D%0A++%3Fobservation+dad-prop%3Aref-area+%5Bskos%3AprefLabel+%3Fcountry%5D%0D%0A%7D%0D%0AORDER+BY+%3Fcountry+%0D%0ALIMIT+100&format=text%2Fhtml&nrOfHits=100&execute=Execute">
+                        Find countries</a>
+                    <br />
+                    <a target="_blank"
+                       tal:attributes="href string:http://cr.scoreboardtest.edw.ro/sparql?selectedBookmarkName=&query=%23+This+is+a+sample+SPARQL+query+that+returns+the+first+100+countries%0D%0A%23+included+in+the+data+for+indicator+%22TODO%22+and+year+%222012%22%0D%0A%0D%0A%0D%0APREFIX+cube%3A+%3Chttp%3A%2F%2Fpurl.org%2Flinked-data%2Fcube%23%3E%0D%0APREFIX+skos%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23%3E%0D%0APREFIX+dad-prop%3A+%3Chttp%3A%2F%2Fsemantic.digital-agenda-data.eu%2Fdef%2Fproperty%2F%3E%0D%0A%0D%0ASELECT+DISTINCT+%3Fbreakdown_group+%3Fbreakdown+%28COUNT%28%3Fobservation%29+as+%3Fobservations%29+WHERE+%7B%0D%0A++%3Fobservation+a+cube%3AObservation+.%0D%0A++%3Fobservation+dad-prop%3Aindicator+%3C${quoted_indicator}%3E+.%0D%0A++%3Fobservation+dad-prop%3Abreakdown+%3Fbreakdown_uri+.%0D%0A++%3Fbreakdown_uri+skos%3AprefLabel+%3Fbreakdown+.%0D%0A++%3Fbreakdown_uri+dad-prop%3Amembership+%5B%0D%0A++++dad-prop%3Amember-of+%3Fbreakdown_group_uri+%3B%0D%0A++++dad-prop%3Aorder+%3Forder%0D%0A++%5D+.%0D%0A++%3Fbreakdown_group_uri+skos%3AprefLabel+%3Fbreakdown_group+.%0D%0A++%3Fbreakdown_group_uri+dad-prop%3Aorder+%3Fgroup_order.%0D%0A%0D%0A%7D%0D%0AGROUP+BY+%3Fbreakdown_group+%3Fgroup_order+%3Fbreakdown+%3Forder%0D%0AORDER+BY+%3Fgroup_order+%3Forder%0D%0ALIMIT+1000&format=text%2Fhtml&nrOfHits=100&execute=Execute">
+                        Find breakdowns</a>
+                </td>
+                <td class="odd" tal:define="sourcelink indicator/sourcelink; sourcelabel indicator/sourcelabel">
+                    <a tal:condition="sourcelink" tal:attributes="href sourcelink" tal:content="sourcelabel"></a>
+                    <span tal:condition="not:sourcelink" tal:replace="sourcelabel"></span>
+                </td>
+            </tr>
+        </tal:row>
       </tbody>
     </table>
-
-    <div class="indicatorsSpinner" id="indicatorsSpinner">Loading ...</div>
 
     <input type="hidden" id="dataset-value" tal:attributes="value here/dataset" />
 

@@ -33,6 +33,7 @@
   <browser:page
     name="indicators"
     for="edw.datacube.interfaces.IDataCube"
+    class=".views.IndicatorsListing"
     permission="zope2.View"
     template="templates/indicators.pt"
     />
