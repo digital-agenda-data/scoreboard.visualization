@@ -268,7 +268,7 @@ App.AxesEditor = Backbone.View.extend({
 
     template: App.get_template('editor/axes.html'),
 
-    title: "Axes",
+    title: "Titles",
 
     events: {
         'change [name="axis-sort-by"]': 'on_change',

@@ -96,7 +96,7 @@ App.FormatEditor = Backbone.View.extend({
 
     template: App.get_template('editor/format.html'),
 
-    title: "Format",
+    title: "Additional texts",
 
     events: {
         'change [name="description-text"]': 'on_change_text',

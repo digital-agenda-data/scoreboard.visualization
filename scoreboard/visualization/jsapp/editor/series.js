@@ -12,7 +12,7 @@ App.SeriesEditor = Backbone.View.extend({
 
     template: App.get_template('editor/series.html'),
 
-    title: "Series",
+    title: "Legend and tooltips",
 
     events: {
         'change [name="tooltip"]': 'on_tooltip_change',
