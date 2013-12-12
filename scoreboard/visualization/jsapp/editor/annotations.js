@@ -12,7 +12,7 @@ App.AnnotationsEditor = Backbone.View.extend({
 
     template: App.get_template('editor/annotations.html'),
 
-    title: "Annotations",
+    title: "Definitions",
 
     events: {
         'change [name="annotation"]': 'on_change_annotation',
