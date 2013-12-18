@@ -101,7 +101,7 @@ App.SelectFilter = Backbone.View.extend({
             }
         }, this);
         // if grouper not found in constraints at all, display in groups
-        if ( App.groupers[this.dimension] && !_(_.toArray(this.constraints)).contains(App.groupers[this.dimension])) {
+        if ( App.groupers[this.name] && !_(_.toArray(this.constraints)).contains(App.groupers[this.name])) {
             this.display_in_groups = true;
         }
         if(incomplete) {
