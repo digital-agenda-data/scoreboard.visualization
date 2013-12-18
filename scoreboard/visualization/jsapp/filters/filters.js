@@ -124,16 +124,16 @@ App.SelectFilter = Backbone.View.extend({
 
             // Sort items
             var sortBy = this.sortBy;
-            if(this.sortBy === 'order_in_codelist'){
-                this.dimension_options = data['options'];
-            }else{
-                this.dimension_options = _(data['options']).sortBy(function(item){
-                    if (item[sortBy] && !isNaN(parseInt(item[sortBy]))) {
-                        return parseInt(item[sortBy]);
-                    }
-                    return item[sortBy];
-                });
+            if ( !sortBy || sortBy == 'nosort' || sortBy == 'order_in_codelist' ) {
+                // default sorting
+                sortBy = 'inner_order';
             }
+            this.dimension_options = _(data['options']).sortBy(function(item){
+                if (item[sortBy] && !isNaN(parseInt(item[sortBy]))) {
+                    return parseInt(item[sortBy]);
+                }
+                return item[sortBy];
+            });
             if(this.sortOrder === 'reverse'){
                 this.dimension_options = _(this.dimension_options).reverse();
             }
