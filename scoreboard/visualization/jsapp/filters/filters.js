@@ -100,6 +100,10 @@ App.SelectFilter = Backbone.View.extend({
                 this.display_in_groups = false;
             }
         }, this);
+        // if grouper not found in constraints at all, display in groups
+        if ( App.groupers[this.dimension] && !_(_.toArray(this.constraints)).contains(App.groupers[this.dimension])) {
+            this.display_in_groups = true;
+        }
         if(incomplete) {
             this.$el.html("");
             return;
@@ -194,7 +198,9 @@ App.SelectFilter = Backbone.View.extend({
               findWhere({name: App.groupers[this.name]}).value();
             template_data['groups'] = _.chain(groups).map(function(item){
                 var label = null;
-                if ( grouper.options_labels[item[0]] ) {
+                if (!grouper) {
+                    label = item[0];
+                } else if ( grouper.options_labels[item[0]] ) {
                     label = grouper.options_labels[item[0]].short_label ||
                             grouper.options_labels[item[0]].label;
                 };
