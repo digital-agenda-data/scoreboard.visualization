@@ -91,7 +91,7 @@ class IndicatorsListing(BrowserView):
         last_group = ""
         data = self.context.get_cube().get_dataset_details()
         for indicator in data:
-            group_name = indicator["groupName"]
+            group_name = indicator.get("groupName", "")
             if group_name != last_group:
                 last_group = group_name
                 yield {"type": "header", "indicator": indicator}

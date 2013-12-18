@@ -34,14 +34,22 @@
                 <td colspan="5" tal:content="indicator/groupName"></td>
             </tr>
             <tr tal:condition="python:row['type'] == 'row'" tal:define="indicator python:row['indicator']">
-                <td class="even" tal:content="indicator/longlabel"></td>
-                <td class="odd" tal:define="definition indicator/definition|nothing; notes indicator/notes|nothing">
+                <td class="even" tal:define="longlabel indicator/longlabel|nothing">
+                    <tal:block condition="longlabel">
+                        <span tal:replace="longlabel"></span>
+                    </tal:block>
+                </td>
+                <td class="odd" tal:define="definition indicator/definition|nothing; notes indicator/notes|nothing; notation indicator/notation|indicator/indicator">
+                    <tal:block condition="notation">
+                        <strong class="notation">Notation: </strong><span tal:replace="notation"></span>
+                    </tal:block>
+                    <br tal:condition="python:notation and (definition or notes)"/>
                     <tal:block condition="definition">
-                        <strong class="definition">Definition: </strong><span tal:replace="indicator/definition"></span>
+                        <strong class="definition">Definition: </strong><span tal:replace="definition"></span>
                     </tal:block>
                     <br tal:condition="python:definition and notes"/>
                     <tal:block condition="notes">
-                        <strong class="notes">Notes: </strong><span tal:replace="indicator/notes"></span>
+                        <strong class="notes">Notes: </strong><span tal:replace="notes"></span>
                     </tal:block>
                 </td>
                 <td class="even">
@@ -56,7 +64,7 @@
                        tal:attributes="href string:http://digital-agenda-data.eu/sparql?selectedBookmarkName=&query=%23+This+is+a+sample+SPARQL+query+that+returns+the+first+100+countries%0D%0A%23+included+in+the+data+for+indicator+%22TODO%22+and+year+%222012%22%0D%0A%0D%0A%0D%0APREFIX+cube%3A+%3Chttp%3A%2F%2Fpurl.org%2Flinked-data%2Fcube%23%3E%0D%0APREFIX+skos%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23%3E%0D%0APREFIX+dad-prop%3A+%3Chttp%3A%2F%2Fsemantic.digital-agenda-data.eu%2Fdef%2Fproperty%2F%3E%0D%0A%0D%0ASELECT+DISTINCT+%3Fbreakdown_group+%3Fbreakdown+%28COUNT%28%3Fobservation%29+as+%3Fobservations%29+WHERE+%7B%0D%0A++%3Fobservation+a+cube%3AObservation+.%0D%0A++%3Fobservation+dad-prop%3Aindicator+%3C${quoted_indicator}%3E+.%0D%0A++%3Fobservation+dad-prop%3Abreakdown+%3Fbreakdown_uri+.%0D%0A++%3Fbreakdown_uri+skos%3AprefLabel+%3Fbreakdown+.%0D%0A++%3Fbreakdown_uri+dad-prop%3Amembership+%5B%0D%0A++++dad-prop%3Amember-of+%3Fbreakdown_group_uri+%3B%0D%0A++++dad-prop%3Aorder+%3Forder%0D%0A++%5D+.%0D%0A++%3Fbreakdown_group_uri+skos%3AprefLabel+%3Fbreakdown_group+.%0D%0A++%3Fbreakdown_group_uri+dad-prop%3Aorder+%3Fgroup_order.%0D%0A%0D%0A%7D%0D%0AGROUP+BY+%3Fbreakdown_group+%3Fgroup_order+%3Fbreakdown+%3Forder%0D%0AORDER+BY+%3Fgroup_order+%3Forder%0D%0ALIMIT+1000&format=text%2Fhtml&nrOfHits=100&execute=Execute">
                         Find breakdowns</a>
                 </td>
-                <td class="odd" tal:define="sourcelink indicator/sourcelink; sourcelabel indicator/sourcelabel">
+                <td class="odd" tal:define="sourcelink indicator/sourcelink|nothing; sourcelabel indicator/sourcelabel|nothing">
                     <a tal:condition="sourcelink" tal:attributes="href sourcelink" tal:content="sourcelabel"></a>
                     <span tal:condition="not:sourcelink" tal:replace="sourcelabel"></span>
                 </td>
