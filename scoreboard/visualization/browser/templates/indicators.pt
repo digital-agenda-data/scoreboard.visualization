@@ -30,8 +30,12 @@
 
       <tbody>
         <tal:row tal:repeat="row view/dataset_details">
-            <tr class="groupName" tal:condition="python:row['type'] == 'header'" tal:define="indicator python:row['indicator']" tal:attributes="id python:normalizeString(indicator['groupName'])">
-                <td colspan="5" tal:content="indicator/groupName"></td>
+            <tr class="groupName" tal:condition="python:row['type'] == 'header'" tal:define="indicator python:row['indicator']" tal:attributes="id python:normalizeString(indicator.get('groupName', ''))">
+                <td colspan="5" tal:define="groupName indicator/groupName|nothing">
+                    <tal:block condition="groupName">
+                        <span tal:replace="groupName"></span>
+                    </tal:block>
+                </td>
             </tr>
             <tr tal:condition="python:row['type'] == 'row'" tal:define="indicator python:row['indicator']">
                 <td class="even" tal:define="longlabel indicator/longlabel|nothing">
