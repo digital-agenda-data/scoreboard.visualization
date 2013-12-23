@@ -1,4 +1,7 @@
-<div class="daviz-tab-view daviz-tab-view-noscript" tal:attributes="id view/tabname" i18n:domain="scoreboard">
+<div class="daviz-tab-view daviz-tab-view-noscript"
+     tal:define="embeded python: options.get('embeded', False)"
+     tal:attributes="id view/tabname"
+     i18n:domain="scoreboard">
 
   <tal:define define="portal_state context/@@plone_portal_state; isAnon portal_state/anonymous">
     <tal:message condition="python: (not isAnon and (view.source_state() == 'private')) or
@@ -13,7 +16,7 @@
 
       <div tal:replace="structure python:view.jsapp_html()" />
 
-      <div id="scenario-box"></div>
+      <div id="scenario-box" tal:attributes="class python:embeded and 'embeded' or ''"></div>
 
       <script tal:content="structure string:
           App.chart_config = ${view/config};

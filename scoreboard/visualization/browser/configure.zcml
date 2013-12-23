@@ -39,6 +39,14 @@
     />
 
   <browser:page
+    name="embeded"
+    for="scoreboard.visualization.interfaces.IScoreboardVisualization"
+    class="eea.app.visualization.browser.app.view.View"
+    permission="zope2.View"
+    template="templates/embeded-view.html"
+    />
+
+  <browser:page
     name="european-union.json"
     for="zope.interface.Interface"
     permission="zope2.View"
@@ -60,7 +68,7 @@
     template="tests.pt"
     />
 
-    <browser:page
+  <browser:page
     name="cache_warmup"
     for="edw.datacube.interfaces.IDataCube"
     class=".views.CacheView"
