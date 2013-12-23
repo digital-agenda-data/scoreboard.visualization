@@ -8,9 +8,15 @@
 App.Visualization = Backbone.View.extend({
 
     template: App.get_template('scenario.html'),
+    embeded_template: App.get_template('scenario_embeded.html'),
 
     initialize: function(options) {
-        this.$el.html(this.template());
+        this.embeded = options['embeded'] !== undefined ? options['embeded'] : false;
+        if (this.embeded) {
+            this.$el.html(this.embeded_template());
+        } else {
+            this.$el.html(this.template());
+        }
         this.filters = new Backbone.Model();
         this.filter_loadstate = new Backbone.Model();
 
@@ -80,24 +86,26 @@ App.Visualization = Backbone.View.extend({
             dimensions: App.CUBE_DIMENSIONS
         });
 
-        this.metadata = new App.AnnotationsView({
-            el: this.$el.find('#the-metadata'),
-            cube_url: options['cube_url'],
-            data_revision: options['data_revision'],
-            model: this.filters,
-            field: 'indicator',
-            schema: options['schema']
-        });
+        if (!this.embeded) {
+            this.metadata = new App.AnnotationsView({
+                el: this.$el.find('#the-metadata'),
+                cube_url: options['cube_url'],
+                data_revision: options['data_revision'],
+                model: this.filters,
+                field: 'indicator',
+                schema: options['schema']
+            });
 
-        this.share = new App.ShareOptionsView({
-            el: this.$el.find('#the-share')
-        });
+            this.share = new App.ShareOptionsView({
+                el: this.$el.find('#the-share')
+            });
 
-        this.navigation = new Scoreboard.Views.ScenarioNavigationView({
-            el: this.$el.find('#the-navigation'),
-            cube_url: options['cube_url'],
-            scenario_url: App.SCENARIO_URL
-        });
+            this.navigation = new Scoreboard.Views.ScenarioNavigationView({
+                el: this.$el.find('#the-navigation'),
+                cube_url: options['cube_url'],
+                scenario_url: App.SCENARIO_URL
+            });
+        }
 
         var chart_type = options['schema']['chart_type'];
         this.chart_view = new App.ScenarioChartView({
@@ -122,12 +130,13 @@ App.Visualization = Backbone.View.extend({
             }
         });
 
+        if (!this.embeded) {
+            this.chart_view.on('chart_ready', this.share.chart_ready, this.share);
+            this.metadata.on('metadata_ready', this.share.metadata_ready, this.share);
+            this.filters.on('change', this.update_hashcfg, this);
+        }
 
-        this.chart_view.on('chart_ready', this.share.chart_ready, this.share);
-        this.metadata.on('metadata_ready', this.share.metadata_ready, this.share);
         this.chart_view.on('chart_ready', this.chart_view.chart_ready);
-
-        this.filters.on('change', this.update_hashcfg, this);
 
     },
 
@@ -156,6 +165,7 @@ App.update_url_hash = function(value) {
 App.create_visualization = function(container, schema) {
     App.visualization = new App.Visualization({
         el: container,
+        embeded: $(container).hasClass("embeded"),
         schema: schema,
         cube_url: App.URL,
         data_revision: App.DATA_REVISION,
