@@ -314,6 +314,86 @@ App.AllValuesFilter = App.SelectFilter.extend({
 
 });
 
+var EmbeddedPrototype = {
+    update: function(){
+        this.$el.addClass('on-hold');
+        this.update_loading_bar();
+        if(this.ajax) {
+            this.ajax.abort();
+            this.ajax = null;
+        }
+        this.loadstate.set(this.name, true);
+        var incomplete = false;
+        var args = {'dimension': this.dimension};
+        _(this.constraints).forEach(function(other_name, other_dimension) {
+            var other_option = this.model.get(other_name);
+            var other_loading = this.loadstate.get(other_name);
+            if(other_loading || ! other_option) {
+                incomplete = true;
+            }
+            args[other_dimension] = other_option;
+            if(other_option == 'any' && App.groupers[this.dimension] == other_dimension){
+                this.display_in_groups = true;
+            }
+            else{
+                this.display_in_groups = false;
+            }
+        }, this);
+        // if grouper not found in constraints at all, display in groups
+        if ( App.groupers[this.name] && !_(_.toArray(this.constraints)).contains(App.groupers[this.name])) {
+            this.display_in_groups = true;
+        }
+        if(incomplete) {
+            this.$el.html("");
+            return;
+        }
+        this.$el.removeClass('on-hold');
+        this.$el.html("");
+        App.trim_dimension_group_args(args, this.dimension_group_map);
+        var values = this.model.get(this.name);
+        if (!_(values).isArray()){
+            values = [values];
+        }
+        this.dimension_options = _(values).map(function(item){
+            return _.object([
+                    ['group_notation', null],
+                    ['label', 'Any'],
+                    ['short_label', 'Any'],
+                    ['notation', item],
+                    ['uri', null]
+                ]);
+        });
+        if (this.options.include_wildcard){
+            this.dimension_options.unshift(
+                _.object([
+                    ['group_notation', null],
+                    ['label', 'Any'],
+                    ['short_label', 'Any'],
+                    ['notation', 'any'],
+                    ['uri', null]
+                ]
+            ));
+        }
+
+        this.options_labels = {};
+        _(this.dimension_options).each(function(opt){
+              if (opt['notation'] != 'any'){
+                  _(this.options_labels).extend(
+                      _.object([[opt['notation'], opt]]));
+              }
+        }, this);
+        this.adjust_value();
+        this.$el.removeClass('loading-small');
+        //this.render();
+        this.loadstate.set(this.name, false);
+
+    }
+};
+
+App.EmbeddedSelectFilter = App.SelectFilter.extend(EmbeddedPrototype);
+App.EmbeddedMultipleSelectFilter = App.MultipleSelectFilter.extend(EmbeddedPrototype);
+App.EmbeddedAllValuesFilter = App.AllValuesFilter.extend(EmbeddedPrototype);
+
 
 App.FiltersBox = Backbone.View.extend({
 
@@ -366,6 +446,16 @@ App.FiltersBox = Backbone.View.extend({
                 $(filter.el).appendTo($('.upper-left', this.$el));
             }
         }, this);
+    }
+
+});
+
+App.EmbeddedFiltersBox = App.FiltersBox.extend({
+
+    filter_types: {
+        'select': App.EmbeddedSelectFilter,
+        'multiple_select': App.EmbeddedMultipleSelectFilter,
+        'all-values': App.AllValuesFilter
     }
 
 });

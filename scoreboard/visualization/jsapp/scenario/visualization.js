@@ -74,19 +74,32 @@ App.Visualization = Backbone.View.extend({
             }, this);
         }
 
-        this.filters_box = new App.FiltersBox({
-            el: this.$el.find('#the-filters'),
-            model: this.filters,
-            loadstate: this.filter_loadstate,
-            cube_url: options['cube_url'],
-            data_revision: options['data_revision'],
-            schema: options['schema'],
-            filters_schema: filters_schema,
-            multidim: options['schema']['multidim'],
-            dimensions: App.CUBE_DIMENSIONS
-        });
 
-        if (!this.embedded) {
+        if (this.embedded){
+            this.filters_box = new App.EmbeddedFiltersBox({
+                el: this.$el.find('#the-filters'),
+                model: this.filters,
+                loadstate: this.filter_loadstate,
+                cube_url: options['cube_url'],
+                data_revision: options['data_revision'],
+                schema: options['schema'],
+                filters_schema: filters_schema,
+                multidim: options['schema']['multidim'],
+                dimensions: App.CUBE_DIMENSIONS
+            });
+        } else {
+            this.filters_box = new App.FiltersBox({
+                el: this.$el.find('#the-filters'),
+                model: this.filters,
+                loadstate: this.filter_loadstate,
+                cube_url: options['cube_url'],
+                data_revision: options['data_revision'],
+                schema: options['schema'],
+                filters_schema: filters_schema,
+                multidim: options['schema']['multidim'],
+                dimensions: App.CUBE_DIMENSIONS
+            });
+
             this.metadata = new App.AnnotationsView({
                 el: this.$el.find('#the-metadata'),
                 cube_url: options['cube_url'],
@@ -99,6 +112,14 @@ App.Visualization = Backbone.View.extend({
             this.share = new App.ShareOptionsView({
                 el: this.$el.find('#the-share')
             });
+
+            // TODO: this is for devel purposes for the moment
+            $('#embed').click(function(ev){
+                ev.stopPropagation();
+                window.location.replace(window.location.pathname + "/embedded"
+                                        + window.location.hash);
+                return false;
+            })
 
             this.navigation = new Scoreboard.Views.ScenarioNavigationView({
                 el: this.$el.find('#the-navigation'),
