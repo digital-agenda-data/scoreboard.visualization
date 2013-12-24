@@ -39,11 +39,11 @@
     />
 
   <browser:page
-    name="embeded"
+    name="embedded"
     for="scoreboard.visualization.interfaces.IScoreboardVisualization"
     class="eea.app.visualization.browser.app.view.View"
     permission="zope2.View"
-    template="templates/embeded-view.html"
+    template="templates/embedded-view.html"
     />
 
   <browser:page

@@ -8,12 +8,12 @@
 App.Visualization = Backbone.View.extend({
 
     template: App.get_template('scenario.html'),
-    embeded_template: App.get_template('scenario_embeded.html'),
+    embedded_template: App.get_template('scenario_embedded.html'),
 
     initialize: function(options) {
-        this.embeded = options['embeded'] !== undefined ? options['embeded'] : false;
-        if (this.embeded) {
-            this.$el.html(this.embeded_template());
+        this.embedded = options['embedded'] !== undefined ? options['embedded'] : false;
+        if (this.embedded) {
+            this.$el.html(this.embedded_template());
         } else {
             this.$el.html(this.template());
         }
@@ -86,7 +86,7 @@ App.Visualization = Backbone.View.extend({
             dimensions: App.CUBE_DIMENSIONS
         });
 
-        if (!this.embeded) {
+        if (!this.embedded) {
             this.metadata = new App.AnnotationsView({
                 el: this.$el.find('#the-metadata'),
                 cube_url: options['cube_url'],
@@ -130,7 +130,7 @@ App.Visualization = Backbone.View.extend({
             }
         });
 
-        if (!this.embeded) {
+        if (!this.embedded) {
             this.chart_view.on('chart_ready', this.share.chart_ready, this.share);
             this.metadata.on('metadata_ready', this.share.metadata_ready, this.share);
             this.filters.on('change', this.update_hashcfg, this);
@@ -165,7 +165,7 @@ App.update_url_hash = function(value) {
 App.create_visualization = function(container, schema) {
     App.visualization = new App.Visualization({
         el: container,
-        embeded: $(container).hasClass("embeded"),
+        embedded: $(container).hasClass("embedded"),
         schema: schema,
         cube_url: App.URL,
         data_revision: App.DATA_REVISION,

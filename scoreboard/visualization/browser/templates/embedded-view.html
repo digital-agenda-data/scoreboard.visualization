@@ -25,7 +25,7 @@
       <div id="daviz-view">
         <div class="chart-panes">
           <tal:view repeat="name python:view.views">
-            <tal:view replace="structure python:view.get_view(name)(embeded=True)" />
+            <tal:view replace="structure python:view.get_view(name)(embedded=True)" />
           </tal:view>
         </div>
         <div style="clear: both"></div>
