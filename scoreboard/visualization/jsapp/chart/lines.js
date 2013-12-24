@@ -104,13 +104,14 @@ App.chart_library['lines'] = function(view, options) {
         });
     }
 
+    var has_legend = options['series-legend-label'] && options['series-legend-label'] != 'none';
     var chartOptions = {
         chart: {
             renderTo: container,
             type: 'spline',
             zoomType: 'y',
             marginLeft: 100,
-            marginRight: 280,
+            marginRight: has_legend?280:80,
             marginTop: 120,
             marginBottom: 50,
             height: 450,
@@ -130,9 +131,9 @@ App.chart_library['lines'] = function(view, options) {
         title: {
             text: options.titles.title,
             align: "center",
-            x: 350,
-            width: 800,
-            y: 40,
+            x: 500,
+            width: 1000,
+            y: 35,
             style: {
                 color: '#000000',
                 fontFamily: 'Verdana',
@@ -190,12 +191,16 @@ App.chart_library['lines'] = function(view, options) {
             // useHTML: true,
             // disabled because IE9 raises SCRIPT5007: Unable to get property 'childNodes'
             // when changing the indicator
-            x: 5,
-            y: 80,
-            floating: true,
-            borderWidth: 1,
+            x: -10,
+            y: 100,
+            borderWidth: 0,
+            backgroundColor: '#FFF',
+            width: 190,
+            itemMarginBottom: 5,
             itemStyle: {
-                width: 195
+                fontFamily: 'Verdana',
+                fontSize: '11px',
+                width: 190
             }
         },
         plotOptions: {

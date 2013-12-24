@@ -30,6 +30,7 @@ App.chart_library['columns'] = function(view, options) {
             });
         });
     }
+    var has_legend = options['series-legend-label'] && options['series-legend-label'] != 'none';
 
     var chartOptions = {
         chart: {
@@ -37,7 +38,7 @@ App.chart_library['columns'] = function(view, options) {
             defaultSeriesType: 'column',
             zoomType: 'y',
             marginLeft: 100,
-            marginRight: 180,
+            marginRight: has_legend?180:10,
             marginTop: 100,
             marginBottom: 100,
             height: 450,
@@ -57,9 +58,9 @@ App.chart_library['columns'] = function(view, options) {
         title: {
             text: options.titles.title,
             align: "center",
-            x: 370,
-            width: 830,
-            y: 35,
+            x: has_legend?370:500,
+            width: has_legend?830:900,
+            y: 40,
             style: {
                 color: '#000000',
                 fontFamily: 'Verdana',
@@ -129,9 +130,7 @@ App.chart_library['columns'] = function(view, options) {
     };
 
     App.set_default_chart_options(chartOptions);
-    if (!options['legend']){
-        App.disable_legend(chartOptions, options);
-    }
+    App.disable_legend(chartOptions, options);
     App.override_zoom();
     var chart = new Highcharts.Chart(chartOptions);
     var metadata = {
