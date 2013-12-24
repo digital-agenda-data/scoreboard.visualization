@@ -316,14 +316,7 @@ App.AllValuesFilter = App.SelectFilter.extend({
 
 var EmbeddedPrototype = {
     update: function(){
-        this.$el.addClass('on-hold');
-        this.update_loading_bar();
-        if(this.ajax) {
-            this.ajax.abort();
-            this.ajax = null;
-        }
         this.loadstate.set(this.name, true);
-        var incomplete = false;
         var args = {'dimension': this.dimension};
         _(this.constraints).forEach(function(other_name, other_dimension) {
             var other_option = this.model.get(other_name);
@@ -343,13 +336,8 @@ var EmbeddedPrototype = {
         if ( App.groupers[this.name] && !_(_.toArray(this.constraints)).contains(App.groupers[this.name])) {
             this.display_in_groups = true;
         }
-        if(incomplete) {
-            this.$el.html("");
-            return;
-        }
-        this.$el.removeClass('on-hold');
-        this.$el.html("");
         App.trim_dimension_group_args(args, this.dimension_group_map);
+
         var values = this.model.get(this.name);
         if (!_(values).isArray()){
             values = [values];
@@ -383,10 +371,7 @@ var EmbeddedPrototype = {
               }
         }, this);
         this.adjust_value();
-        this.$el.removeClass('loading-small');
-        //this.render();
         this.loadstate.set(this.name, false);
-
     }
 };
 
