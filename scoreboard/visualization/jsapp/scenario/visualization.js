@@ -113,14 +113,6 @@ App.Visualization = Backbone.View.extend({
                 el: this.$el.find('#the-share')
             });
 
-            // TODO: this is for devel purposes for the moment
-            $('#embed').click(function(ev){
-                ev.stopPropagation();
-                window.location.replace(window.location.pathname + "/embedded"
-                                        + window.location.hash);
-                return false;
-            })
-
             this.navigation = new Scoreboard.Views.ScenarioNavigationView({
                 el: this.$el.find('#the-navigation'),
                 cube_url: options['cube_url'],

@@ -696,6 +696,7 @@ App.ShareOptionsView = Backbone.View.extend({
     events: {
         'click #csv': 'request_csv',
         'click #excel': 'request_excel',
+        'click #embed': 'request_embed',
     },
 
     template: App.get_template('scenario/share.html'),
@@ -715,6 +716,12 @@ App.ShareOptionsView = Backbone.View.extend({
         ev.preventDefault();
         App.jQuery('input[name="format"]', this.form).remove();
         this.$el.find('form').submit();
+    },
+
+    request_embed: function(ev){
+        ev.stopPropagation();
+        window.location.replace(window.location.pathname + "/embedded" + window.location.hash);
+        return false;
     },
 
     request_excel: function(ev){
