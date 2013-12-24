@@ -58,7 +58,7 @@ App.chart_library['country_profile'] = function(view, options) {
 
         var stack_series = [
             {
-                name: 'Under EU27 average',
+                name: 'Under EU average',
                 color: '#7dc30f',
                 dataLabels: {
                     color: '#000000',
@@ -84,7 +84,7 @@ App.chart_library['country_profile'] = function(view, options) {
                 data: []
             },
             {
-                name: 'Above EU27 average',
+                name: 'Above EU average',
                 color: '#436b06',
                 dataLabels: {
                     color: '#000000',
@@ -205,7 +205,7 @@ App.chart_library['country_profile'] = function(view, options) {
                 tickPositions: [0, 1, 2],
                  labels: {
                     formatter: function() {
-                        return ['lowest EU country', 'EU27 average', 'highest EU country'][this.value];
+                        return ['lowest EU country', 'EU average', 'highest EU country'][this.value];
                     }
                 },
                 title: {
@@ -229,7 +229,7 @@ App.chart_library['country_profile'] = function(view, options) {
                 }],
                 labels: {
                     formatter: function() {
-                        return ['lowest EU country', 'EU27 average', 'highest EU country'][this.value];
+                        return ['lowest EU country', 'EU average', 'highest EU country'][this.value];
                     }
                 },
                 opposite:true

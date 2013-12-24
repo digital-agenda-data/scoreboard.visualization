@@ -156,7 +156,8 @@ EU = {
     "SK": "Slovakia",
     "FI": "Finland",
     "SE": "Sweden",
-    "UK": "United Kingdom"
+    "UK": "United Kingdom",
+    "HR": "Croatia"
 }
 
 # This list is used by country_profile chart and can be customized within
