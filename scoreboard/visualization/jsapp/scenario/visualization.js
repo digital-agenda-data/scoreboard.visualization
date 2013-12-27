@@ -12,6 +12,8 @@ App.Visualization = Backbone.View.extend({
 
     initialize: function(options) {
         this.embedded = options['embedded'] !== undefined ? options['embedded'] : false;
+        this.viewPortW = $(window).width();
+        this.viewPortH = $(window).height();
         if (this.embedded) {
             this.$el.html(this.embedded_template());
         } else {
