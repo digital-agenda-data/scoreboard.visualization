@@ -146,9 +146,6 @@ App.FacetEditorField = Backbone.View.extend({
             category_highlights.select2(params);
         }
         this.$el.find('[name="ignore_values"]').select2(params);
-        if (this.model.get('type') == 'select'){
-            params['maximumSelectionSize'] = 1;
-        }
         this.$el.find('[name="default_value"]').select2(params);
     },
 
@@ -183,12 +180,7 @@ App.FacetEditorField = Backbone.View.extend({
             result = _.union(result, _(App.EU27).keys());
         }
         if (result.length > 0){
-            if (this.model.get('type') == 'select'){
-                this.model.set({default_value: result[0]});
-            }
-            else{
                 this.model.set({default_value: result});
-            }
         }
         else if (this.model.has('default_value')){
             this.model.unset('default_value');
