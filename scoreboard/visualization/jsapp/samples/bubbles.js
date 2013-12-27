@@ -53,7 +53,7 @@ App.scenario3_bubbles_filters_schema = {
         "sortBy": "inner_order",
         "sortOrder": "asc",
         "position": "upper-left",
-        "default_value": "#random",
+        "default_value": ["total", "ent_all_xfin", "IND_TOTAL", "total_offers8plus", "TOTAL_MOB"],
         "constraints": {
             "indicator": "x-indicator"
         }
@@ -117,7 +117,7 @@ App.scenario3_bubbles_filters_schema = {
         "sortBy": "inner_order",
         "sortOrder": "asc",
         "position": "upper-right",
-        "default_value": "#random",
+        "default_value": ["total", "ent_all_xfin", "IND_TOTAL", "total_offers8plus", "TOTAL_MOB"],
         "constraints": {
             "indicator": "y-indicator"
         }
@@ -181,7 +181,7 @@ App.scenario3_bubbles_filters_schema = {
         "sortBy": "order_in_codelist",
         "sortOrder": "asc",
         "position": "bottom-right",
-        "default_value": "#random",
+        "default_value": ["total", "ent_all_xfin", "IND_TOTAL", "total_offers8plus", "TOTAL_MOB"],
         "constraints": {
             "indicator": "z-indicator"
         }

@@ -67,7 +67,7 @@ App.multilines_filters_schema = {
         "indicator": "x-indicator"
       },
       "dimension": "breakdown",
-      "default_value": "total",
+      "default_value": ["total", "ent_all_xfin", "IND_TOTAL", "total_offers8plus", "TOTAL_MOB"],
       "label": "Breakdown",
       "name": "x-breakdown",
       "sortBy": "inner_order",
@@ -117,7 +117,7 @@ App.multilines_filters_schema = {
         "indicator": "y-indicator"
       },
       "dimension": "breakdown",
-      "default_value": "total",
+      "default_value": ["total", "ent_all_xfin", "IND_TOTAL", "total_offers8plus", "TOTAL_MOB"],
       "label": "Breakdown",
       "name": "y-breakdown",
       "sortBy": "inner_order",

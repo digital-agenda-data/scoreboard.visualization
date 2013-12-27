@@ -82,7 +82,7 @@ App.scenario3_filters_schema = {
             "indicator-group": "x-indicator-group",
             "indicator": "x-indicator"
         },
-        "default_value": "#random",
+        "default_value": ["total", "ent_all_xfin", "IND_TOTAL", "total_offers8plus", "TOTAL_MOB"],
         "dimension": "breakdown",
         "sortBy": "inner_order",
         "sortOrder": "asc",
@@ -145,7 +145,7 @@ App.scenario3_filters_schema = {
             "indicator-group": "y-indicator-group",
             "indicator": "y-indicator"
         },
-        "default_value": "#random",
+        "default_value": ["total", "ent_all_xfin", "IND_TOTAL", "total_offers8plus", "TOTAL_MOB"],
         "dimension": "breakdown",
         "sortBy": "inner_order",
         "sortOrder": "asc",
