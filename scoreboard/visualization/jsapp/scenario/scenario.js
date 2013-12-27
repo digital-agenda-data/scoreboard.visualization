@@ -323,21 +323,6 @@ App.ScenarioChartView = Backbone.View.extend({
 
                 requests.push(this.request_datapoints(datapoints_url, xargs));
                 requests.push(this.request_datapoints(datapoints_url, yargs));
-                 
-                var theFilters = this.$el.closest("#scenario-box").find("#the-filters");
-                var x_filter = theFilters.find("option[value='" + xargs['indicator'] + "']");
-                var y_filter = theFilters.find("option[value='" + yargs['indicator'] + "']");
-                if (x_filter[0] !== undefined){
-                    chart_data['series_names'] = {
-                        'x': x_filter[0].text + ' (left side)',
-                        'y': y_filter[0].text + ' (right side)'
-                    }
-                } else {
-                    chart_data['series_names'] = {
-                        'x': xargs['indicator'] + ' (left side)',
-                        'y': yargs['indicator'] + ' (right side)'
-                    }
-                }
             } else { 
                 var groupby_dimension = this.dimensions_mapping[
                     this.multiple_series];
@@ -410,8 +395,9 @@ App.ScenarioChartView = Backbone.View.extend({
             if(requests.length < 2) { responses = [responses]; }
 
             chart_data['series'] = _(multiseries_values).map(function(value, n) {
-                var resp = responses[n];
-                var datapoints = resp[0]['datapoints'];
+                var sample_point, legend_candidates,
+                    resp = responses[n],
+                    datapoints = resp[0]['datapoints'];
                 if(this.client_filter && (this.schema['chart_type'] !== 'country_profile') && this.multiple_series != 2 ) {
                     var dimension = this.dimensions_mapping[this.client_filter];
                     datapoints = _(datapoints).filter(function(item) {
@@ -419,6 +405,23 @@ App.ScenarioChartView = Backbone.View.extend({
                             item[dimension]['notation']);
                     }, this);
                 }
+
+                if ( this.multiple_series == 2 ) {
+                    sample_point = datapoints[0];
+                    legend_candidates = _.chain(this.schema.facets)
+                        .pluck('dimension')
+                        .unshift('indicator')
+                        .filter(
+                            function(item){
+                                return (sample_point[item] !== undefined
+                                    && sample_point[item]['label'] !== undefined);
+                            }
+                        ).value();
+                    chart_data['series_names'][['x', 'y'][n]] =
+                        sample_point[legend_candidates[0]]['label'] + ' '
+                        + ['(left side)', '(right side)'][n];
+                }
+
                 return {
                     'label': chart_data['series_names'][value],
                     'ending_label': chart_data['series_ending_labels'][value],
