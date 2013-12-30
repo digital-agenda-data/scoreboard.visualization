@@ -17,9 +17,22 @@ App.Visualization = Backbone.View.extend({
         var filters_schema = [];
         var values_schema = [];
         var filters_in_url = [];
+        var groupers = _.chain(options['schema']['facets'])
+                        .filter(function(item){
+                            return App.groupers[item['name']];
+                         })
+                        .map(function(item){
+                           return App.groupers[item['name']];
+                        })
+                        .value()
         _(options['schema']['facets']).forEach(function(item) {
             if(item['type'] == 'ignore') {
-                return;
+                if(_(groupers).contains(item['name'])) {
+                    // we need its values for grouping a dimension
+                    item['type'] = 'all-values';
+                } else {
+                    return;
+                }
             }
             if(item['dimension'] == 'value') {
                 values_schema.push(item);

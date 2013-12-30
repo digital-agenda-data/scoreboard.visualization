@@ -55,6 +55,11 @@ App.SelectFilter = Backbone.View.extend({
             this.model.on('change:' + other_name, this.update, this);
             this.loadstate.on('change:' + other_name, this.update, this);
         }, this);
+        var grouper = App.groupers[this.name];
+        if ( grouper && !_(_.toArray(this.constraints)).contains(grouper)){
+            this.model.on('change:' + grouper, this.update, this);
+            this.loadstate.on('change:' + grouper, this.update, this);
+        }
         this.update();
     },
 
@@ -117,6 +122,11 @@ App.SelectFilter = Backbone.View.extend({
         // if grouper not found in constraints at all, display in groups
         if ( App.groupers[this.name] && !_(_.toArray(this.constraints)).contains(App.groupers[this.name])) {
             this.display_in_groups = true;
+            var grouper_option = this.model.get(App.groupers[this.name]);
+            var grouper_loading = this.loadstate.get(App.groupers[this.name]);
+            if(grouper_loading || ! grouper_option) {
+                incomplete = true;
+            }
         }
         if(incomplete) {
             this.$el.html("");
