@@ -918,7 +918,7 @@ describe('FacetsEditor', function() {
             expect(model.facets.models[0].get('default_value')).to.be.undefined;
             App.respond_json(server.requests[1], {'options': options});
             view.$el.find('[name="default_value"]:first').val(['two']).change();
-            expect(model.facets.models[0].get('default_value')).to.deep.equal('two');
+            expect(model.facets.models[0].get('default_value')).to.deep.equal(['two']);
             view.$el.find('[name="default_value"]:eq(1)').val(['one']).change();
             expect(model.facets.models[1].get('default_value')).to.deep.equal(['one']);
         });
@@ -940,8 +940,8 @@ describe('FacetsEditor', function() {
                            {'label': "Option Two", 'notation': 'two'}];
             App.respond_json(server.requests[0], {'options': options});
             view.$el.find('[name="default_value"]:first').val(['two']).change();
-            expect(model.facets.models[0].get('default_value')).to.deep.equal('two');
-            expect(model.toJSON()['facets'][0]['default_value']).to.deep.equal('two');
+            expect(model.facets.models[0].get('default_value')).to.deep.equal(['two']);
+            expect(model.toJSON()['facets'][0]['default_value']).to.deep.equal(['two']);
         });
 
         it('should unset default_value from model', function(){
@@ -962,7 +962,7 @@ describe('FacetsEditor', function() {
             App.respond_json(server.requests[0], {'options': options});
             expect(model.facets.models[0].get('default_value')).to.be.undefined;
             view.$el.find('[name="default_value"]:first').val(['two']).change();
-            expect(model.facets.models[0].get('default_value')).to.deep.equal('two');
+            expect(model.facets.models[0].get('default_value')).to.deep.equal(['two']);
             view.$el.find('[name="default_value"]:first').val([]).change();
             expect(model.facets.models[0].get('default_value')).to.be.undefined;
         });
@@ -985,7 +985,7 @@ describe('FacetsEditor', function() {
             App.respond_json(server.requests[0], {'options': options});
             var select = view.$el.find('[name="default_value"]:first');
             select.val(['#random']).change();
-            expect(model.facets.models[0].get('default_value')).to.equal('#random');
+            expect(model.facets.models[0].get('default_value')).to.deep.equal(['#random']);
         });
 
         it('should have "#eu27" option for country multiple_select', function(){

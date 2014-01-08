@@ -84,7 +84,7 @@ describe('ChartSeriesPreparation', function() {
                     }],
              label:'2001'},
         ];
-        var result = App.format_series(series, null, null, null, 'ref-area');
+        var result = App.format_series(series, null, 1, [false,false], 'ref-area');
         expect(result.length).to.equal(2);
         expect(result[1]['data']).to.deep.equal([{
             'name': 'Austria',
@@ -139,25 +139,25 @@ describe('ChartSeriesPreparation', function() {
 
         var sort = _.object(["by", "order", "each_series"],
                             ['value', 1, false]);
-        var result = App.format_series(series, sort, null, null, 'ref-area');
+        var result = App.format_series(series, sort, null, [false,false], 'ref-area');
         expect(_(result[0].data).pluck('code')).to.deep.equal(['BE', 'AT']);
         expect(_(result[1].data).pluck('code')).to.deep.equal(['BE', 'AT']);
 
         var sort = _.object(["by", "order", "each_series"],
                             ['value', 1, true]);
-        var result = App.format_series(series, sort, null, null, 'ref-area');
+        var result = App.format_series(series, sort, null, [false,false], 'ref-area');
         expect(_(result[0].data).pluck('code')).to.deep.equal(['BE', 'AT']);
         expect(_(result[1].data).pluck('code')).to.deep.equal(['AT', 'BE']);
 
         var sort = _.object(["by", "order", "each_series"],
                             ['category', 1, false]);
-        var result = App.format_series(series, sort, null, null, 'ref-area');
+        var result = App.format_series(series, sort, null, [false,false], 'ref-area');
         expect(_(result[0].data).pluck('code')).to.deep.equal(['AT', 'BE']);
         expect(_(result[1].data).pluck('code')).to.deep.equal(['AT', 'BE']);
 
         var sort = _.object(["by", "order", "each_series"],
                             ['category', 1, true]);
-        var result = App.format_series(series, sort, null, null, 'ref-area');
+        var result = App.format_series(series, sort, null, [false,false], 'ref-area');
         expect(_(result[0].data).pluck('code')).to.deep.equal(['AT', 'BE']);
         expect(_(result[1].data).pluck('code')).to.deep.equal(['AT', 'BE']);
     });
@@ -278,7 +278,7 @@ describe('ChartSeriesPreparation', function() {
              label:'2002'}
         ];
         var sort = _.object(["by", "order"],['category', 1]);
-        var result = App.format_series(series, sort, null, null, 'ref-area');
+        var result = App.format_series(series, sort, null, [false,false,false], 'ref-area');
         expect(_(_(result).pluck('data')[1]).pluck('y')).to.deep.equal([
             null, 0.4808]);
     })
@@ -297,7 +297,7 @@ describe('ChartSeriesPreparation', function() {
                     }],
              label:'2001'},
         ];
-        var result = App.format_series(series, null, null, null, 'ref-area');
+        var result = App.format_series(series, null, null, [false,false], 'ref-area');
         var attributes = _(series[1]['data'][0]).omit('value');
         expect(_(result).pluck('data')).to.deep.equal([
             [{ 'name': 'Austria',
