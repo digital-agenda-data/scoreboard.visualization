@@ -342,6 +342,7 @@ var EmbeddedPrototype = {
     update: function(){
         this.loadstate.set(this.name, true);
         var args = {'dimension': this.dimension};
+        var incomplete = false;
         _(this.constraints).forEach(function(other_name, other_dimension) {
             var other_option = this.model.get(other_name);
             var other_loading = this.loadstate.get(other_name);
