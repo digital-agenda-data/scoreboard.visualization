@@ -65,6 +65,7 @@ App.scenario3_filters_schema = {
             "indicator": "x-indicator"
         },
         "dimension": "breakdown-group",
+        "multidim_common": true,
         "sortBy": "order_in_codelist",
         "sortOrder": "asc",
         "type": "all-values"
@@ -127,6 +128,7 @@ App.scenario3_filters_schema = {
             "indicator": "y-indicator"
         },
         "dimension": "breakdown-group",
+        "multidim_common": true,
         "sortBy": "order_in_codelist",
         "sortOrder": "asc",
         "position": "upper-right",
