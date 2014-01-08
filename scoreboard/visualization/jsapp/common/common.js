@@ -39,7 +39,8 @@ var country_data = [
     {code: 'TR',   color: '#9900AB', label: "Turkey"},
     {code: 'GB',   color: '#D000C4', label: "United Kingdom"},
     {code: 'UK',   color: '#D000C4', label: "United Kingdom"}, // duplicate GB
-    {code: 'EU27', color: '#0B4EA2', label: "European Union"}
+    {code: 'EU27', color: '#0B4EA2', label: "European Union"},
+    {code: 'EU28', color: '#0B4EA2', label: "European Union 28"}
 ];
 
 
@@ -77,7 +78,8 @@ App.EU27 = {
     MT: "Malta",
     SI: "Slovenia",
     UK: "United Kingdom",
-    SE: "Sweden"
+    SE: "Sweden",
+    HR: "Croatia"
 }
 
 App.SERIES_COLOR = ['#63b8ff', '#E41A1C', '#4DAF4A', '#984EA3', '#FF7F00', '#FFFF33', '#A65628', '#F781BF', '#0d233a'];
