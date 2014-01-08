@@ -55,16 +55,35 @@ App.SelectFilter = Backbone.View.extend({
             this.model.on('change:' + other_name, this.update, this);
             this.loadstate.on('change:' + other_name, this.update, this);
         }, this);
+        var grouper = App.groupers[this.name];
+        if ( grouper && !_(_.toArray(this.constraints)).contains(grouper)){
+            this.model.on('change:' + grouper, this.update, this);
+            this.loadstate.on('change:' + grouper, this.update, this);
+        }
         this.update();
     },
 
     adjust_value: function() {
-        var range = _(this.dimension_options).pluck('notation');
+        var default_value,
+            default_value_candidates,
+            range = _(this.dimension_options).pluck('notation');
         if (typeof this.model.get(this.name) == 'object' && this.model.get(this.name) && this.model.get(this.name)[0]) {
             this.model.set(this.name, this.model.get(this.name)[0]);
         }
         if(! _(range).contains(this.model.get(this.name))) {
-            var default_value = this.default_value || range[0];
+            default_value_candidates = this.default_value || [];
+            if (! _(default_value_candidates).isArray()){
+                // backwards compatibility support
+                default_value_candidates = [ default_value_candidates ];
+            }
+            default_value_candidates.push(range[0]);
+
+            default_value = _(default_value_candidates).filter(
+                    function(item){
+                        return _(range).contains(item) || item === '#random';
+                    }
+                ).shift();
+
             if ( default_value == '#random' ) {
                 default_value = range[Math.floor( Math.random()*range.length )];
             }
@@ -103,6 +122,11 @@ App.SelectFilter = Backbone.View.extend({
         // if grouper not found in constraints at all, display in groups
         if ( App.groupers[this.name] && !_(_.toArray(this.constraints)).contains(App.groupers[this.name])) {
             this.display_in_groups = true;
+            var grouper_option = this.model.get(App.groupers[this.name]);
+            var grouper_loading = this.loadstate.get(App.groupers[this.name]);
+            if(grouper_loading || ! grouper_option) {
+                incomplete = true;
+            }
         }
         if(incomplete) {
             this.$el.html("");

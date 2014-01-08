@@ -34,7 +34,7 @@ App.scenario3_bubbles_filters_schema = {
         }
     },
     {
-        "type": "ignore",
+        "type": "all-values",
         "name": "x-breakdown-group",
         "label": "(X) breakdown group",
         "dimension": "breakdown-group",
@@ -53,7 +53,7 @@ App.scenario3_bubbles_filters_schema = {
         "sortBy": "inner_order",
         "sortOrder": "asc",
         "position": "upper-left",
-        "default_value": ["total", "ent_all_xfin", "IND_TOTAL", "total_offers8plus", "TOTAL_MOB"],
+        "default_value": ["1M_websites", "HH_total", "IND_TOTAL", "RURAL_POP", "TOTAL", "TOTAL_FBB", "TOTAL_MBB", "TOTAL_MOB", "TOTAL_POP","TOTAL_POPHH", "TOTAL_TEL", "ent_all_xfin", "orgclass_total", "tot_ict_products", "total_offers8plus"],
         "constraints": {
             "indicator": "x-indicator"
         }
@@ -98,7 +98,7 @@ App.scenario3_bubbles_filters_schema = {
         }
     },
     {
-        "type": "ignore",
+        "type": "all-values",
         "name": "y-breakdown-group",
         "label": "(Y) breakdown group",
         "dimension": "breakdown-group",
@@ -117,7 +117,7 @@ App.scenario3_bubbles_filters_schema = {
         "sortBy": "inner_order",
         "sortOrder": "asc",
         "position": "upper-right",
-        "default_value": ["total", "ent_all_xfin", "IND_TOTAL", "total_offers8plus", "TOTAL_MOB"],
+        "default_value": ["1M_websites", "HH_total", "IND_TOTAL", "RURAL_POP", "TOTAL", "TOTAL_FBB", "TOTAL_MBB", "TOTAL_MOB", "TOTAL_POP","TOTAL_POPHH", "TOTAL_TEL", "ent_all_xfin", "orgclass_total", "tot_ict_products", "total_offers8plus"],
         "constraints": {
             "indicator": "y-indicator"
         }
@@ -162,7 +162,7 @@ App.scenario3_bubbles_filters_schema = {
         }
     },
     {
-        "type": "ignore",
+        "type": "all-values",
         "name": "z-breakdown-group",
         "label": "(Z) breakdown group",
         "dimension": "breakdown-group",
@@ -181,7 +181,7 @@ App.scenario3_bubbles_filters_schema = {
         "sortBy": "order_in_codelist",
         "sortOrder": "asc",
         "position": "bottom-right",
-        "default_value": ["total", "ent_all_xfin", "IND_TOTAL", "total_offers8plus", "TOTAL_MOB"],
+        "default_value": ["1M_websites", "HH_total", "IND_TOTAL", "RURAL_POP", "TOTAL", "TOTAL_FBB", "TOTAL_MBB", "TOTAL_MOB", "TOTAL_POP","TOTAL_POPHH", "TOTAL_TEL", "ent_all_xfin", "orgclass_total", "tot_ict_products", "total_offers8plus"],
         "constraints": {
             "indicator": "z-indicator"
         }

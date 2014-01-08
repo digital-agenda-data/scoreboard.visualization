@@ -12,9 +12,6 @@ App.scenario3_filters_schema = {
             "name": "x-indicator"
         },
         {
-            "name": "x-breakdown-group"
-        },
-        {
             "name": "x-breakdown"
         },
         {
@@ -22,9 +19,6 @@ App.scenario3_filters_schema = {
         },
         {
             "name": "y-indicator"
-        },
-        {
-            "name": "y-breakdown-group"
         },
         {
             "name": "y-breakdown"
@@ -73,7 +67,7 @@ App.scenario3_filters_schema = {
         "dimension": "breakdown-group",
         "sortBy": "order_in_codelist",
         "sortOrder": "asc",
-        "type": "ignore"
+        "type": "all-values"
     },
     {
         "name": "x-breakdown",
@@ -82,7 +76,7 @@ App.scenario3_filters_schema = {
             "indicator-group": "x-indicator-group",
             "indicator": "x-indicator"
         },
-        "default_value": ["total", "ent_all_xfin", "IND_TOTAL", "total_offers8plus", "TOTAL_MOB"],
+        "default_value": ["1M_websites", "HH_total", "IND_TOTAL", "RURAL_POP", "TOTAL", "TOTAL_FBB", "TOTAL_MBB", "TOTAL_MOB", "TOTAL_POP","TOTAL_POPHH", "TOTAL_TEL", "ent_all_xfin", "orgclass_total", "tot_ict_products", "total_offers8plus"],
         "dimension": "breakdown",
         "sortBy": "inner_order",
         "sortOrder": "asc",
@@ -136,7 +130,7 @@ App.scenario3_filters_schema = {
         "sortBy": "order_in_codelist",
         "sortOrder": "asc",
         "position": "upper-right",
-        "type": "ignore"
+        "type": "all-values"
     },
     {
         "name": "y-breakdown",
@@ -145,7 +139,7 @@ App.scenario3_filters_schema = {
             "indicator-group": "y-indicator-group",
             "indicator": "y-indicator"
         },
-        "default_value": ["total", "ent_all_xfin", "IND_TOTAL", "total_offers8plus", "TOTAL_MOB"],
+        "default_value": ["1M_websites", "HH_total", "IND_TOTAL", "RURAL_POP", "TOTAL", "TOTAL_FBB", "TOTAL_MBB", "TOTAL_MOB", "TOTAL_POP","TOTAL_POPHH", "TOTAL_TEL", "ent_all_xfin", "orgclass_total", "tot_ict_products", "total_offers8plus"],
         "dimension": "breakdown",
         "sortBy": "inner_order",
         "sortOrder": "asc",
@@ -268,7 +262,7 @@ App.scenario3_filters_schema = {
       {
         "value": "",
         "position": "bottom-right"
-      }      
+      }
     ],
     "titles": {
         "title": [
