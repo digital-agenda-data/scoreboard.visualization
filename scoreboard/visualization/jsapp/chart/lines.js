@@ -191,7 +191,7 @@ App.chart_library['lines'] = function(view, options) {
             // useHTML: true,
             // disabled because IE9 raises SCRIPT5007: Unable to get property 'childNodes'
             // when changing the indicator
-            x: -10,
+            x: -15,
             y: 100,
             borderWidth: 0,
             backgroundColor: '#FFF',
