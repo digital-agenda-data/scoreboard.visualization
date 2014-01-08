@@ -1,0 +1,37 @@
+<tal:left define="hidden python:request.set('disable_plone.leftcolumn', 1)" />
+<tal:right define="hidden python:request.set('disable_plone.rightcolumn', 1)" />
+<tal:html define="plone_view context/@@plone">
+<html
+  xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US"
+  xmlns:ex="http://simile.mit.edu/2006/11/exhibit#"
+  lang="en-US"
+  i18n:domain="eea">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <base tal:attributes="href plone_view/renderBase" /><!--[if lt IE 7]></base><![endif]-->
+    <div tal:replace="structure provider:plone.htmlhead" />
+    <link tal:replace="structure provider:plone.htmlhead.links" />
+
+    <tal:headers repeat="header view/headers">
+      <tal:header replace="structure header" />
+    </tal:headers>
+
+    <meta name="viewport" content="width=device-width, initial-scale=0.6666, maximum-scale=1.0, minimum-scale=0.6666" />
+    <meta name="generator" content="Plone - http://plone.org" />
+</head>
+<body>
+  <div id="content-core">
+    <div tal:define="views python:view.views">
+      <div id="daviz-view">
+        <div class="chart-panes">
+          <tal:view repeat="name python:view.views">
+            <tal:view replace="structure python:view.get_view(name)(embedded=True)" />
+          </tal:view>
+        </div>
+        <div style="clear: both"></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+</tal:html>

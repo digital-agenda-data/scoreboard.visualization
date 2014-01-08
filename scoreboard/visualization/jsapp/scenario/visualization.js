@@ -8,9 +8,17 @@
 App.Visualization = Backbone.View.extend({
 
     template: App.get_template('scenario.html'),
+    embedded_template: App.get_template('scenario_embedded.html'),
 
     initialize: function(options) {
-        this.$el.html(this.template());
+        this.embedded = options['embedded'] !== undefined ? options['embedded'] : false;
+        this.viewPortW = $(window).width();
+        this.viewPortH = $(window).height();
+        if (this.embedded) {
+            this.$el.html(this.embedded_template());
+        } else {
+            this.$el.html(this.template());
+        }
         this.filters = new Backbone.Model();
         this.filter_loadstate = new Backbone.Model();
 
@@ -81,36 +89,51 @@ App.Visualization = Backbone.View.extend({
             }, this);
         }
 
-        this.filters_box = new App.FiltersBox({
-            el: this.$el.find('#the-filters'),
-            model: this.filters,
-            loadstate: this.filter_loadstate,
-            cube_url: options['cube_url'],
-            data_revision: options['data_revision'],
-            schema: options['schema'],
-            filters_schema: filters_schema,
-            multidim: options['schema']['multidim'],
-            dimensions: App.CUBE_DIMENSIONS
-        });
 
-        this.metadata = new App.AnnotationsView({
-            el: this.$el.find('#the-metadata'),
-            cube_url: options['cube_url'],
-            data_revision: options['data_revision'],
-            model: this.filters,
-            field: 'indicator',
-            schema: options['schema']
-        });
+        if (this.embedded){
+            this.filters_box = new App.EmbeddedFiltersBox({
+                el: this.$el.find('#the-filters'),
+                model: this.filters,
+                loadstate: this.filter_loadstate,
+                cube_url: options['cube_url'],
+                data_revision: options['data_revision'],
+                schema: options['schema'],
+                filters_schema: filters_schema,
+                multidim: options['schema']['multidim'],
+                dimensions: App.CUBE_DIMENSIONS
+            });
+        } else {
+            this.filters_box = new App.FiltersBox({
+                el: this.$el.find('#the-filters'),
+                model: this.filters,
+                loadstate: this.filter_loadstate,
+                cube_url: options['cube_url'],
+                data_revision: options['data_revision'],
+                schema: options['schema'],
+                filters_schema: filters_schema,
+                multidim: options['schema']['multidim'],
+                dimensions: App.CUBE_DIMENSIONS
+            });
 
-        this.share = new App.ShareOptionsView({
-            el: this.$el.find('#the-share')
-        });
+            this.metadata = new App.AnnotationsView({
+                el: this.$el.find('#the-metadata'),
+                cube_url: options['cube_url'],
+                data_revision: options['data_revision'],
+                model: this.filters,
+                field: 'indicator',
+                schema: options['schema']
+            });
 
-        this.navigation = new Scoreboard.Views.ScenarioNavigationView({
-            el: this.$el.find('#the-navigation'),
-            cube_url: options['cube_url'],
-            scenario_url: App.SCENARIO_URL
-        });
+            this.share = new App.ShareOptionsView({
+                el: this.$el.find('#the-share')
+            });
+
+            this.navigation = new Scoreboard.Views.ScenarioNavigationView({
+                el: this.$el.find('#the-navigation'),
+                cube_url: options['cube_url'],
+                scenario_url: App.SCENARIO_URL
+            });
+        }
 
         var chart_type = options['schema']['chart_type'];
         this.chart_view = new App.ScenarioChartView({
@@ -135,12 +158,13 @@ App.Visualization = Backbone.View.extend({
             }
         });
 
+        if (!this.embedded) {
+            this.chart_view.on('chart_ready', this.share.chart_ready, this.share);
+            this.metadata.on('metadata_ready', this.share.metadata_ready, this.share);
+            this.filters.on('change', this.update_hashcfg, this);
+        }
 
-        this.chart_view.on('chart_ready', this.share.chart_ready, this.share);
-        this.metadata.on('metadata_ready', this.share.metadata_ready, this.share);
         this.chart_view.on('chart_ready', this.chart_view.chart_ready);
-
-        this.filters.on('change', this.update_hashcfg, this);
 
     },
 
@@ -169,6 +193,7 @@ App.update_url_hash = function(value) {
 App.create_visualization = function(container, schema) {
     App.visualization = new App.Visualization({
         el: container,
+        embedded: $(container).hasClass("embedded"),
         schema: schema,
         cube_url: App.URL,
         data_revision: App.DATA_REVISION,

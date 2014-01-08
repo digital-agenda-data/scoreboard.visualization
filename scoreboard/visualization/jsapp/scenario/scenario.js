@@ -323,14 +323,6 @@ App.ScenarioChartView = Backbone.View.extend({
 
                 requests.push(this.request_datapoints(datapoints_url, xargs));
                 requests.push(this.request_datapoints(datapoints_url, yargs));
-                 
-                var theFilters = this.$el.closest("#scenario-box").find("#the-filters");
-                var x_filter = theFilters.find("option[value='" + xargs['indicator'] + "']");
-                var y_filter = theFilters.find("option[value='" + yargs['indicator'] + "']");
-                chart_data['series_names'] = {
-                    'x': x_filter[0].text + ' (left side)',
-                    'y': y_filter[0].text + ' (right side)'
-                }
             } else { 
                 var groupby_dimension = this.dimensions_mapping[
                     this.multiple_series];
@@ -403,8 +395,9 @@ App.ScenarioChartView = Backbone.View.extend({
             if(requests.length < 2) { responses = [responses]; }
 
             chart_data['series'] = _(multiseries_values).map(function(value, n) {
-                var resp = responses[n];
-                var datapoints = resp[0]['datapoints'];
+                var sample_point, legend_candidates,
+                    resp = responses[n],
+                    datapoints = resp[0]['datapoints'];
                 if(this.client_filter && (this.schema['chart_type'] !== 'country_profile') && this.multiple_series != 2 ) {
                     var dimension = this.dimensions_mapping[this.client_filter];
                     datapoints = _(datapoints).filter(function(item) {
@@ -412,6 +405,23 @@ App.ScenarioChartView = Backbone.View.extend({
                             item[dimension]['notation']);
                     }, this);
                 }
+
+                if ( this.multiple_series == 2 ) {
+                    sample_point = datapoints[0];
+                    legend_candidates = _.chain(this.schema.facets)
+                        .pluck('dimension')
+                        .unshift('indicator')
+                        .filter(
+                            function(item){
+                                return (sample_point[item] !== undefined
+                                    && sample_point[item]['label'] !== undefined);
+                            }
+                        ).value();
+                    chart_data['series_names'][['x', 'y'][n]] =
+                        sample_point[legend_candidates[0]]['label'] + ' '
+                        + ['(left side)', '(right side)'][n];
+                }
+
                 return {
                     'label': chart_data['series_names'][value],
                     'ending_label': chart_data['series_ending_labels'][value],
@@ -689,6 +699,7 @@ App.ShareOptionsView = Backbone.View.extend({
     events: {
         'click #csv': 'request_csv',
         'click #excel': 'request_excel',
+        'click #embed': 'request_embed'
     },
 
     template: App.get_template('scenario/share.html'),
@@ -708,6 +719,12 @@ App.ShareOptionsView = Backbone.View.extend({
         ev.preventDefault();
         App.jQuery('input[name="format"]', this.form).remove();
         this.$el.find('form').submit();
+    },
+
+    request_embed: function(ev){
+        ev.stopPropagation();
+        window.location.replace(window.location.pathname + "/embedded" + window.location.hash);
+        return false;
     },
 
     request_excel: function(ev){
