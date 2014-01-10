@@ -105,17 +105,21 @@ App.chart_library['lines'] = function(view, options) {
     }
 
     var has_legend = options['series-legend-label'] && options['series-legend-label'] != 'none';
+    var prefW = 1100;
+    var viewPortWidth = _.min([$(window).width(), prefW]);
+    var legendWidth = _.min([viewPortWidth * 0.25, 250]);
+
     var chartOptions = {
         chart: {
             renderTo: container,
             type: 'spline',
             zoomType: 'y',
-            marginLeft: 100,
-            marginRight: has_legend?280:80,
+            marginLeft: 50,
+            marginRight: 50 + (has_legend?legendWidth:0),
             marginTop: 120,
             marginBottom: 50,
             height: 450,
-            width: 1100
+            width: viewPortWidth
         },
         colors: App.SERIES_COLOR,
         credits: {
@@ -131,8 +135,8 @@ App.chart_library['lines'] = function(view, options) {
         title: {
             text: options.titles.title,
             align: "center",
-            x: 500,
-            width: 1000,
+            x: viewPortWidth/2-25,
+            width: viewPortWidth - 50,
             y: 35,
             style: {
                 color: '#000000',
@@ -143,7 +147,7 @@ App.chart_library['lines'] = function(view, options) {
         subtitle: {
             text: options.titles.subtitle,
             align: "left",
-            x: 40,
+            x: 25,
             y: 90,
             style: {
                 color: '#000000',
@@ -179,28 +183,26 @@ App.chart_library['lines'] = function(view, options) {
         },
         yAxis: yAxis,
         tooltip: {
-            formatter: options['tooltip_formatter'],
-            style: {
-                width:400
-            }
+            useHTML: true,
+            formatter: options['tooltip_formatter']
+            // style is set from external css
         },
         legend: {
             layout: 'vertical',
-            align: 'right',
+            align: 'left',
             verticalAlign: 'top',
             // useHTML: true,
             // disabled because IE9 raises SCRIPT5007: Unable to get property 'childNodes'
             // when changing the indicator
-            x: -15,
+            x: viewPortWidth - legendWidth - 15,
             y: 100,
             borderWidth: 0,
             backgroundColor: '#FFF',
-            width: 190,
             itemMarginBottom: 5,
             itemStyle: {
                 fontFamily: 'Verdana',
-                fontSize: '11px',
-                width: 190
+                fontSize: '10px',
+                width: legendWidth - 30
             }
         },
         plotOptions: {
