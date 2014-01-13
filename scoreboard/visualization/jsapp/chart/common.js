@@ -317,31 +317,41 @@ App.override_zoom = function() {
 
 App.set_default_chart_options = function(chartOptions){
     var menuItems = _.rest(Highcharts.getOptions().exporting.buttons.contextButton.menuItems, 2);
-    var options = {
+    _(chartOptions).extend({
+        navigation: {
+            buttonOptions: {
+            }
+        },
         exporting: {
             buttons: {
                 contextButton: {
                     enabled: false
-                },
-                exportButton: {
-                    text: 'Download image',
-                    // Use only the download related menu items from the default context button
-                    menuItems: menuItems
-                },
-                printButton: {
-                    text: 'Print chart',
-                    onclick: function () {
-                        this.print();
+                }
+            }
+        }
+    });
+    if ( ! App.visualization.embedded ) {
+        _(chartOptions).extend({
+            exporting: {
+                buttons: {
+                    contextButton: {
+                        enabled: false
+                    },
+                    exportButton: {
+                        text: 'Download image',
+                        // Use only the download related menu items from the default context button
+                        menuItems: menuItems
+                    },
+                    printButton: {
+                        text: 'Print chart',
+                        onclick: function () {
+                            this.print();
+                        }
                     }
                 }
             }
-        },
-        navigation: {
-            buttonOptions: {
-            }
-        }
+        });
     }
-    _(chartOptions).extend(options);
 }
 
 

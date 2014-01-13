@@ -45,6 +45,18 @@ App.chart_library['lines'] = function(view, options) {
         }
     });
 
+    var viewPortWidth = _.min([$(window).width(), 1100]);
+    var legendWidth = _.min([viewPortWidth * 0.25, 250]);
+    var viewPortHeight = _.min([$(window).height()-300, 450]);
+    if ( App.visualization.embedded ) {
+        viewPortHeight = _.min([$(window).height(), 450]);
+    }
+
+    var titleFontSize = 16;
+    if ( viewPortHeight < 450 ) titleFontSize = 14;
+    if ( viewPortHeight < 350 ) titleFontSize = 12;
+    if ( viewPortWidth < 600 ) titleFontSize = titleFontSize-1;
+
     var yAxis = {
         min:0,
         //max: options['unit_is_pc'][0]?100:null,
@@ -55,6 +67,7 @@ App.chart_library['lines'] = function(view, options) {
             text: typeof(options.titles.yAxisTitle) == 'string'?options.titles.yAxisTitle:options.titles.yAxisTitle[0],
             style: {
                 color: '#000000',
+                fontSize: titleFontSize-4,
                 fontWeight: 'bold'
             }
         },
@@ -89,6 +102,7 @@ App.chart_library['lines'] = function(view, options) {
                 //text: 'second series',
                 style: {
                     color: '#000',
+                    fontSize: titleFontSize-4,
                     fontWeight: 'bold'
                 }
             },
@@ -105,9 +119,6 @@ App.chart_library['lines'] = function(view, options) {
     }
 
     var has_legend = options['series-legend-label'] && options['series-legend-label'] != 'none';
-    var prefW = 1100;
-    var viewPortWidth = _.min([$(window).width(), prefW]);
-    var legendWidth = _.min([viewPortWidth * 0.25, 250]);
 
     var chartOptions = {
         chart: {
@@ -118,7 +129,7 @@ App.chart_library['lines'] = function(view, options) {
             marginRight: 50 + (has_legend?legendWidth:0),
             marginTop: 120,
             marginBottom: 50,
-            height: 450,
+            height: viewPortHeight,
             width: viewPortWidth
         },
         colors: App.SERIES_COLOR,
@@ -141,6 +152,7 @@ App.chart_library['lines'] = function(view, options) {
             style: {
                 color: '#000000',
                 fontFamily: 'Verdana',
+                fontSize: titleFontSize,
                 fontWeight: 'bold'
             }
         },
@@ -152,6 +164,7 @@ App.chart_library['lines'] = function(view, options) {
             style: {
                 color: '#000000',
                 fontFamily: 'Verdana',
+                fontSize: titleFontSize-2,
                 fontWeight: 'bold'
             }
         },
