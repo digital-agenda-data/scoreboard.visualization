@@ -45,11 +45,11 @@ App.chart_library['lines'] = function(view, options) {
         }
     });
 
-    var viewPortWidth = _.min([$(window).width(), 1100]);
+    var viewPortWidth = _.min([$(window).width(), 1130]) - 30;
     var legendWidth = _.min([viewPortWidth * 0.25, 250]);
-    var viewPortHeight = _.min([$(window).height()-300, 450]);
+    var viewPortHeight = _.min([$(window).height()-100, 450]);
     if ( App.visualization.embedded ) {
-        viewPortHeight = _.min([$(window).height(), 450]);
+        viewPortHeight = _.min([$(window).height(), 470]) - 20;
     }
 
     var titleFontSize = 16;
@@ -119,15 +119,22 @@ App.chart_library['lines'] = function(view, options) {
     }
 
     var has_legend = options['series-legend-label'] && options['series-legend-label'] != 'none';
-
+    var marginTop = 100;
+    if ( App.visualization.embedded ) {
+        if ( options.titles.title ) {
+            marginTop = 20 + 30 * Math.floor(options.titles.title.length / 100);
+        } else {
+            marginTop = 20;
+        }
+    }
     var chartOptions = {
         chart: {
             renderTo: container,
             type: 'spline',
             zoomType: 'y',
             marginLeft: 50,
-            marginRight: 50 + (has_legend?legendWidth:0),
-            marginTop: 120,
+            marginRight: 70 + (has_legend?legendWidth:0),
+            marginTop: marginTop,
             marginBottom: 50,
             height: viewPortHeight,
             width: viewPortWidth
@@ -148,7 +155,7 @@ App.chart_library['lines'] = function(view, options) {
             align: "center",
             x: viewPortWidth/2-25,
             width: viewPortWidth - 50,
-            y: 35,
+            y: App.visualization.embedded ? 5 : 35,
             style: {
                 color: '#000000',
                 fontFamily: 'Verdana',
@@ -160,7 +167,7 @@ App.chart_library['lines'] = function(view, options) {
             text: options.titles.subtitle,
             align: "left",
             x: 25,
-            y: 90,
+            y: App.visualization.embedded ? 50 : 90,
             style: {
                 color: '#000000',
                 fontFamily: 'Verdana',
