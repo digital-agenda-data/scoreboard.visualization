@@ -132,7 +132,7 @@ App.chart_library['lines'] = function(view, options) {
             renderTo: container,
             type: 'spline',
             zoomType: 'y',
-            marginLeft: 50,
+            marginLeft: 55,
             marginRight: 70 + (has_legend?legendWidth:0),
             marginTop: marginTop,
             marginBottom: 50,
@@ -159,7 +159,7 @@ App.chart_library['lines'] = function(view, options) {
             style: {
                 color: '#000000',
                 fontFamily: 'Verdana',
-                fontSize: titleFontSize,
+                fontSize: titleFontSize + 'px',
                 fontWeight: 'bold'
             }
         },
@@ -171,7 +171,7 @@ App.chart_library['lines'] = function(view, options) {
             style: {
                 color: '#000000',
                 fontFamily: 'Verdana',
-                fontSize: titleFontSize-2,
+                fontSize: (titleFontSize-2) + 'px',
                 fontWeight: 'bold'
             }
         },
