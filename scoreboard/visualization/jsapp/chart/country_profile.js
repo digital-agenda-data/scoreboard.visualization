@@ -140,16 +140,38 @@ App.chart_library['country_profile'] = function(view, options) {
             }
         });
 
+        var viewPortWidth = _.min([$(window).width(), 1130]) - 30;
+        var labelsWidth = _.min([viewPortWidth * 0.45, 300]);
+        if ( App.isIE78() && !App.visualization.embedded ) {
+            labelsWidth = 600;
+        }
+        var viewPortHeight = _.min([$(window).height()-200, 200 + series[0].data.length * 40]);
+        if ( App.visualization.embedded ) {
+            viewPortHeight = _.max([viewPortHeight, 200 + series[0].data.length * 30]);
+        }
+
+        var titleFontSize = 16;
+        if ( viewPortHeight < 450 ) titleFontSize = 14;
+        if ( viewPortHeight < 350 ) titleFontSize = 12;
+        if ( viewPortWidth < 600 ) titleFontSize = titleFontSize-1;
+        var marginTop = 100;
+        if ( App.visualization.embedded ) {
+            if ( options.titles.title ) {
+                marginTop = 50 + 30 * Math.floor(options.titles.title.length / 100);
+            } else {
+                marginTop = 50;
+            }
+        }
         var chartOptions = {
             chart: {
                 renderTo: container,
                 defaultSeriesType: 'bar',
-                marginTop: 100,
-                marginBottom: 100,
-                marginLeft: App.isIE78()?600:300,
+                marginTop: marginTop,
+                marginBottom: 50,
+                marginLeft: labelsWidth,
                 marginRight: 60,
-                height: 200 + series[0].data.length * 75,
-                width: 1100
+                height: viewPortHeight,
+                width: viewPortWidth
             },
             credits: {
                 href: options['credits']['href'],
@@ -158,33 +180,32 @@ App.chart_library['country_profile'] = function(view, options) {
                     align: 'right',
                     x: -10,
                     verticalAlign: 'bottom',
-                    y: -2
+                    y: 0
                 }
             },
             title: {
                 text: options.titles.title,
                 align: 'center',
-                x: 300,
-                width: 750,
+                x: viewPortWidth/2-25,
+                width: viewPortWidth - 50,
+                y: App.visualization.embedded ? 5 : 35,
                 style: {
                     color: '#000000',
                     fontFamily: 'Verdana',
                     fontWeight: 'bold',
-                    fontSize: '16px',
-                    width: '600'
+                    fontSize: (titleFontSize-1) + 'px'
                 }
             },
             subtitle: {
-                y:60,
+                align: 'left',
+                x: 25,
+                y: App.visualization.embedded ? 40 : 70,
                 text: options.titles.subtitle,
                 style: {
                     fontFamily: 'Tahoma',
                     fontWeight: 'bold',
-                    fontSize: '16px',
-                },
-                align: 'center',
-                width: 600,
-                x:300
+                    fontSize: titleFontSize + 'px'
+                }
             },
             xAxis: {
                 type: 'category',
@@ -196,7 +217,7 @@ App.chart_library['country_profile'] = function(view, options) {
                         color: '#000000',
                         fontFamily: 'Tahoma',
                         fontSize: '10px',
-                        width: 270
+                        width: labelsWidth-30
                     }
                  }
             },
@@ -206,6 +227,10 @@ App.chart_library['country_profile'] = function(view, options) {
                  labels: {
                     formatter: function() {
                         return ['lowest EU country', 'EU average', 'highest EU country'][this.value];
+                    },
+                    style: {
+                        fontFamily: 'Tahoma',
+                        fontSize: '10px'
                     }
                 },
                 title: {
@@ -230,6 +255,10 @@ App.chart_library['country_profile'] = function(view, options) {
                 labels: {
                     formatter: function() {
                         return ['lowest EU country', 'EU average', 'highest EU country'][this.value];
+                    },
+                    style: {
+                        fontFamily: 'Tahoma',
+                        fontSize: '10px'
                     }
                 },
                 opposite:true
@@ -237,10 +266,10 @@ App.chart_library['country_profile'] = function(view, options) {
             legend: {
                 enabled: true,
                 layout: 'horizontal',
-                align: 'right',
+                align: 'center',
                 verticalAlign: 'bottom',
-                x: 0,
-                y: -30,
+                x: 120,
+                y: 0,
                 borderWidth: 0
             },
             tooltip: {
