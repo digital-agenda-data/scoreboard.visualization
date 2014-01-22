@@ -31,18 +31,37 @@ App.chart_library['columns'] = function(view, options) {
         });
     }
     var has_legend = options['series-legend-label'] && options['series-legend-label'] != 'none';
+    var viewPortWidth = _.min([$(window).width(), 1130]) - 30;
+    var legendWidth = _.min([viewPortWidth * 0.3, 170]);
+    var viewPortHeight = _.min([$(window).height()-100, 450]);
+    if ( App.visualization.embedded ) {
+        viewPortHeight = _.min([$(window).height(), 470]) - 20;
+    }
+
+    var titleFontSize = 16;
+    if ( viewPortHeight < 450 ) titleFontSize = 14;
+    if ( viewPortHeight < 350 ) titleFontSize = 12;
+    if ( viewPortWidth < 600 ) titleFontSize = titleFontSize-1;
+    var marginTop = 100;
+    if ( App.visualization.embedded ) {
+        if ( options.titles.title ) {
+            marginTop = 20 + 30 * Math.floor(options.titles.title.length / 100);
+        } else {
+            marginTop = 20;
+        }
+    }
 
     var chartOptions = {
         chart: {
             renderTo: container,
             defaultSeriesType: 'column',
             zoomType: 'y',
-            marginLeft: 100,
-            marginRight: has_legend?180:10,
-            marginTop: 100,
-            marginBottom: 100,
-            height: 450,
-            width: 1100
+            marginLeft: 55,
+            marginRight: 10 + (has_legend?legendWidth:0),
+            marginTop: marginTop,
+            marginBottom: 80,
+            height: viewPortHeight,
+            width: viewPortWidth
         },
         colors: App.SERIES_COLOR,
         credits: {
@@ -58,14 +77,17 @@ App.chart_library['columns'] = function(view, options) {
         title: {
             text: options.titles.title,
             align: "center",
-            x: has_legend?370:500,
-            width: has_legend?830:900,
-            y: 40,
+            x: viewPortWidth/2-25,
+            width: viewPortWidth - 50,
+            y: App.visualization.embedded ? 5 : 35,
+            //x: has_legend?370:500,
+            //width: has_legend?830:900,
+            //y: 40,
             style: {
                 color: '#000000',
                 fontFamily: 'Verdana',
                 fontWeight: 'bold',
-                fontSize: '16px'
+                fontSize: titleFontSize + 'px'
             }
         },
         subtitle: {
@@ -73,11 +95,11 @@ App.chart_library['columns'] = function(view, options) {
             style: {
                 fontWeight: 'bold',
                 fontFamily: 'Verdana',
-                fontSize: '16px'
+                fontSize: (titleFontSize-2) + 'px'
             },
             align: 'left',
-            x: 90,
-            y: 80,
+            x: 45,
+            y: App.visualization.embedded ? 35 : 70
         },
         xAxis: {
             type: 'category',
@@ -100,16 +122,17 @@ App.chart_library['columns'] = function(view, options) {
                 text: options.titles.yAxisTitle,
                 style: {
                     color: '#000000',
+                    fontSize: (titleFontSize-4) + 'px',
                     fontWeight: 'bold'
                 }
             }
         },
         legend: {
             layout: 'vertical',
-            align: 'right',
+            align: 'left',
             verticalAlign: 'top',
-            x: 0,
-            y: 50,
+            x: viewPortWidth - legendWidth - 15,
+            y: App.visualization.embedded ? 35 : 70,
             borderWidth: 0,
             backgroundColor: '#FFF',
             width: 170,
@@ -117,7 +140,7 @@ App.chart_library['columns'] = function(view, options) {
             itemStyle: {
                 fontFamily: 'Verdana',
                 fontSize: '11px',
-                width: 160
+                width: legendWidth - 30
             }
         },
         tooltip: {
