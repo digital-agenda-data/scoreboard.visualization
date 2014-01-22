@@ -268,7 +268,7 @@ App.chart_library['country_profile'] = function(view, options) {
                 layout: 'horizontal',
                 align: 'center',
                 verticalAlign: 'bottom',
-                x: 120,
+                x: labelsWidth/2-35,
                 y: 0,
                 borderWidth: 0
             },
