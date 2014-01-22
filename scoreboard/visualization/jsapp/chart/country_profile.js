@@ -146,7 +146,7 @@ App.chart_library['country_profile'] = function(view, options) {
                 defaultSeriesType: 'bar',
                 marginTop: 100,
                 marginBottom: 100,
-                marginLeft: 500,
+                marginLeft: App.isIE78()?600:300,
                 marginRight: 60,
                 height: 200 + series[0].data.length * 75,
                 width: 1100
@@ -165,7 +165,7 @@ App.chart_library['country_profile'] = function(view, options) {
                 text: options.titles.title,
                 align: 'center',
                 x: 300,
-                width: 600,
+                width: 750,
                 style: {
                     color: '#000000',
                     fontFamily: 'Verdana',
@@ -178,7 +178,7 @@ App.chart_library['country_profile'] = function(view, options) {
                 y:60,
                 text: options.titles.subtitle,
                 style: {
-                    fontFamily: 'Verdana',
+                    fontFamily: 'Tahoma',
                     fontWeight: 'bold',
                     fontSize: '16px',
                 },
@@ -191,12 +191,12 @@ App.chart_library['country_profile'] = function(view, options) {
                 labels: {
                     rotation: 0,
                     align: 'right',
-                    overflow: 'justify',
+                    x: -10,
                     style: {
                         color: '#000000',
                         fontFamily: 'Tahoma',
                         fontSize: '10px',
-                        width: '250'
+                        width: 270
                     }
                  }
             },
