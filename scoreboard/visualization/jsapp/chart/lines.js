@@ -67,7 +67,7 @@ App.chart_library['lines'] = function(view, options) {
             text: typeof(options.titles.yAxisTitle) == 'string'?options.titles.yAxisTitle:options.titles.yAxisTitle[0],
             style: {
                 color: '#000000',
-                fontSize: titleFontSize-4,
+                fontSize: (titleFontSize-4) + 'px',
                 fontWeight: 'bold'
             }
         },
@@ -102,7 +102,7 @@ App.chart_library['lines'] = function(view, options) {
                 //text: 'second series',
                 style: {
                     color: '#000',
-                    fontSize: titleFontSize-4,
+                    fontSize: (titleFontSize-4) + 'px',
                     fontWeight: 'bold'
                 }
             },
