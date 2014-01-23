@@ -41,7 +41,7 @@ App.LayoutEditorField = Backbone.View.extend({
         this.model.set({
             position: this.$el.find('[name="position"]').val()
         });
-    },
+    }
 });
 
 App.LayoutEditor = Backbone.View.extend({

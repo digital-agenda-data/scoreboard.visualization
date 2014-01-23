@@ -196,7 +196,7 @@ App.chart_library['lines'] = function(view, options) {
             labels: {
                 align: 'left',
                 style: {
-                    color: '#000000',
+                    color: '#000000'
                 },
                 x: 10
             }
@@ -236,7 +236,7 @@ App.chart_library['lines'] = function(view, options) {
                 }
             }
         },
-        series: series,
+        series: series
     };
 
     App.set_default_chart_options(chartOptions);

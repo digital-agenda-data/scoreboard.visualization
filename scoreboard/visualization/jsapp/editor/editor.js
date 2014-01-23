@@ -183,7 +183,7 @@ App.EditorConfiguration = Backbone.Model.extend({
     get_value: function() {
         var value = this.toJSON();
         return value;
-    },
+    }
 });
 
 

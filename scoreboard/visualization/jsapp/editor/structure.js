@@ -217,7 +217,7 @@ App.StructureEditor = Backbone.View.extend({
         this.compute_facet_roles();
         this.save_value();
         this.render()
-    },
+    }
 
 });
 

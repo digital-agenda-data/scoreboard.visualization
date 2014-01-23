@@ -134,7 +134,7 @@ App.TitleComposerModel = Backbone.Model.extend({
             })
         }
         this.set('parts', parts);
-    },
+    }
 });
 
 App.TitleComposerView = Backbone.View.extend({
@@ -147,7 +147,7 @@ App.TitleComposerView = Backbone.View.extend({
 
     initialize: function(options) {
         this.parts = new App.TitlePartsCollection({
-            parts: this.model.get('parts'),
+            parts: this.model.get('parts')
         });
         this.model.set('parts', this.parts.get_values());
         this.parts.on('change', this.on_change, this);

@@ -22,7 +22,7 @@ App.FacetEditorField = Backbone.View.extend({
         'change [name="sort-order"]': 'on_change_sorting',
         'change [name="default_value"]': 'on_change_default_value',
         'change [name="ignore_values"]': 'on_change_ignore_values',
-        'change [name="highlights"]': 'on_change_highlights',
+        'change [name="highlights"]': 'on_change_highlights'
     },
 
     fetch_options: function(){
@@ -510,7 +510,7 @@ App.FacetsEditor = Backbone.View.extend({
 
     apply_changes: function() {
         this.save_value();
-    },
+    }
 
 });
 
