@@ -32,6 +32,7 @@ App.chart_library['bubbles'] = function(view, options) {
         item['dataLabels']['y'] = 0;
     });
 
+    var viewPortWidth = _.min([$(window).width(), 780]) - 30;
     var chartOptions = {
         chart: {
             type: 'bubble',
@@ -41,8 +42,8 @@ App.chart_library['bubbles'] = function(view, options) {
             marginRight: 150,
             marginTop: 70,
             marginBottom: 100,
-            height: 670,
-            width: 750,
+            height: viewPortWidth-70,
+            width: viewPortWidth,
             ignoreHiddenSeries: false
         },
         credits: {
@@ -57,6 +58,8 @@ App.chart_library['bubbles'] = function(view, options) {
         },
         title: {
             text: options.titles.title,
+            x: viewPortWidth/2-150,
+            width: viewPortWidth-250,
             align: 'center',
             style: {
                 color: '#000000',
@@ -65,6 +68,8 @@ App.chart_library['bubbles'] = function(view, options) {
         },
         subtitle: {
             text: options.titles.subtitle,
+            x: viewPortWidth/2-150,
+            width: viewPortWidth-250,
             style: {
                 color: '#000000',
                 width: 600,
@@ -79,8 +84,8 @@ App.chart_library['bubbles'] = function(view, options) {
                 text: options.titles.xAxisTitle,
                 style: {
                     color: '#000000',
-                    width: 500,
-                    fontWeight: 'bold'
+                    fontWeight: 'bold',
+                    width: viewPortWidth-300
                 }
             },
             startOnTick: false,
@@ -105,7 +110,7 @@ App.chart_library['bubbles'] = function(view, options) {
                 style: {
                     color: '#000000',
                     fontWeight: 'bold',
-                    width: 500
+                    width: viewPortWidth-200
                 },
                 margin: 30
             },
@@ -119,23 +124,26 @@ App.chart_library['bubbles'] = function(view, options) {
         },
         tooltip: {
             formatter: options['tooltip_formatter'],
-            style: {
-                width:400
-            }
+            useHTML: true
         },
         legend: {
             layout: 'vertical',
             align: 'right',
             verticalAlign: 'top',
+            style: {
+                fontFamily: 'Verdana',
+                fontSize: '11px'
+            },
             x: -5,
             y: 45,
-            borderWidth: 1
+            borderWidth: 1,
+            floating: true
         },
         plotOptions: {
             bubble: {
                 dataLabels: {
                     enabled: true,
-                    color: '#555555',
+                    color: '#222222',
                     style: {
                         textShadow: '0px'
                     }
