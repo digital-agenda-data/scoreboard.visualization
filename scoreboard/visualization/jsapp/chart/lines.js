@@ -230,7 +230,8 @@ App.chart_library['lines'] = function(view, options) {
                 connectNulls: true,
                 marker: {
                     fillColor: null,
-                    lineWidth: 4,
+                    lineWidth: 1,
+                    radius: 3,
                     lineColor: null
                 }
             }
