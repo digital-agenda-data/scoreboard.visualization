@@ -145,9 +145,7 @@ App.chart_library['columns'] = function(view, options) {
         },
         tooltip: {
             formatter: options['tooltip_formatter'],
-            style: {
-                width:400
-            }
+            useHTML: true
         },
         series: init_series
     };

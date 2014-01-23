@@ -109,7 +109,8 @@ App.chart_library['scatter'] = function(view, options) {
             }
         },
         tooltip: {
-            formatter: options['tooltip_formatter']
+            formatter: options['tooltip_formatter'],
+            useHTML: true
         },
         legend: {
             layout: 'vertical',
