@@ -30,17 +30,19 @@ App.chart_library['scatter'] = function(view, options) {
         }
     });
 
+    var viewPortWidth = _.min([$(window).width(), 780]) - 30;
+
     var chartOptions = {
         chart: {
             renderTo: container,
             defaultSeriesType: 'scatter',
             zoomType: 'xy',
             marginLeft: 100,
-            marginRight: 300,
-            marginTop: 70,
-            marginBottom: 100,
-            height: 670,
-            width: 900,
+            marginRight: 150,
+            marginTop: 30,
+            marginBottom: 70,
+            height: viewPortWidth-100,
+            width: viewPortWidth,
             ignoreHiddenSeries: false
         },
         credits: {
@@ -56,8 +58,8 @@ App.chart_library['scatter'] = function(view, options) {
         title: {
             text: options.titles.title,
             align: 'center',
-            x: 200,
-            width: 600,
+            x: viewPortWidth/2-150,
+            width: viewPortWidth-250,
             style: {
                 color: '#000000',
                 fontFamily: 'Verdana',
@@ -73,7 +75,7 @@ App.chart_library['scatter'] = function(view, options) {
                 style: {
                     color: '#000000',
                     fontWeight: 'bold',
-                    width: 500
+                    width: viewPortWidth-300
                 }
             },
             showLastLabel: true,
@@ -94,9 +96,9 @@ App.chart_library['scatter'] = function(view, options) {
                 style: {
                     color: '#000000',
                     fontWeight: 'bold',
-                    width: 500
+                    width: viewPortWidth-200
                 },
-                margin: 45
+                margin: 35
             },
             labels: {
                 formatter: _.partial(App.tick_labels_formatter,
@@ -107,10 +109,7 @@ App.chart_library['scatter'] = function(view, options) {
             }
         },
         tooltip: {
-            formatter: options['tooltip_formatter'],
-            style: {
-                width:400
-            }
+            formatter: options['tooltip_formatter']
         },
         legend: {
             layout: 'vertical',
@@ -120,7 +119,7 @@ App.chart_library['scatter'] = function(view, options) {
                 fontFamily: 'Verdana',
                 fontSize: '11px'
             },
-            x: -50,
+            x: -5,
             y: 30,
             borderWidth: 1,
             floating: true
