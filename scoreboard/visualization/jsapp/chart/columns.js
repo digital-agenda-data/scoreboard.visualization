@@ -97,7 +97,7 @@ App.chart_library['columns'] = function(view, options) {
             },
             align: 'left',
             x: 45,
-            y: App.visualization.embedded ? (marginTop-15) : 70
+            y: marginTop-15
         },
         xAxis: {
             type: 'category',

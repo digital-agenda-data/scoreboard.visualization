@@ -167,7 +167,7 @@ App.chart_library['lines'] = function(view, options) {
             text: options.titles.subtitle,
             align: "left",
             x: 45,
-            y: App.visualization.embedded ? (marginTop-20) : 90,
+            y: marginTop-20,
             style: {
                 color: '#000000',
                 fontFamily: 'Verdana',
