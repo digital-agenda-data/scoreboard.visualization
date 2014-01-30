@@ -45,7 +45,7 @@ App.chart_library['columns'] = function(view, options) {
     var marginTop = 100;
     if ( App.visualization.embedded ) {
         if ( options.titles.title ) {
-            marginTop = 20 + 20 * Math.floor(options.titles.title.length / 60);
+            marginTop = 10 + 20 * Math.ceil(options.titles.title.length / 60);
         } else {
             marginTop = 20;
         }
@@ -78,11 +78,8 @@ App.chart_library['columns'] = function(view, options) {
             text: options.titles.title,
             align: "center",
             x: viewPortWidth/2-25,
-            width: viewPortWidth - 50,
+            width: viewPortWidth - 60,
             y: App.visualization.embedded ? 5 : 35,
-            //x: has_legend?370:500,
-            //width: has_legend?830:900,
-            //y: 40,
             style: {
                 color: '#000000',
                 fontFamily: 'Verdana',
@@ -93,13 +90,14 @@ App.chart_library['columns'] = function(view, options) {
         subtitle: {
             text: options.titles.subtitle,
             style: {
+                color: '#000000',
                 fontWeight: 'bold',
                 fontFamily: 'Verdana',
-                fontSize: (titleFontSize-2) + 'px'
+                fontSize: (titleFontSize-1) + 'px'
             },
             align: 'left',
             x: 45,
-            y: App.visualization.embedded ? (marginTop-20) : 70
+            y: App.visualization.embedded ? (marginTop-15) : 70
         },
         xAxis: {
             type: 'category',
@@ -122,8 +120,8 @@ App.chart_library['columns'] = function(view, options) {
                 text: options.titles.yAxisTitle,
                 style: {
                     color: '#000000',
-                    fontSize: (titleFontSize-4) + 'px',
-                    fontWeight: 'bold'
+                    fontWeight: 'bold',
+                    fontSize: (titleFontSize-2) + 'px'
                 }
             }
         },

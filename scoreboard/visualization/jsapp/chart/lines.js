@@ -67,7 +67,7 @@ App.chart_library['lines'] = function(view, options) {
             text: typeof(options.titles.yAxisTitle) == 'string'?options.titles.yAxisTitle:options.titles.yAxisTitle[0],
             style: {
                 color: '#000000',
-                fontSize: (titleFontSize-4) + 'px',
+                fontSize: (titleFontSize-2) + 'px',
                 fontWeight: 'bold'
             }
         },
@@ -102,7 +102,7 @@ App.chart_library['lines'] = function(view, options) {
                 //text: 'second series',
                 style: {
                     color: '#000',
-                    fontSize: (titleFontSize-4) + 'px',
+                    fontSize: (titleFontSize-2) + 'px',
                     fontWeight: 'bold'
                 }
             },
@@ -122,7 +122,7 @@ App.chart_library['lines'] = function(view, options) {
     var marginTop = 100;
     if ( App.visualization.embedded ) {
         if ( options.titles.title ) {
-            marginTop = 20 + 30 * Math.floor(options.titles.title.length / 100);
+            marginTop = 10 + 20 * Math.ceil(options.titles.title.length / 60);
         } else {
             marginTop = 20;
         }
@@ -166,12 +166,12 @@ App.chart_library['lines'] = function(view, options) {
         subtitle: {
             text: options.titles.subtitle,
             align: "left",
-            x: 25,
-            y: App.visualization.embedded ? 50 : 90,
+            x: 45,
+            y: App.visualization.embedded ? (marginTop-20) : 90,
             style: {
                 color: '#000000',
                 fontFamily: 'Verdana',
-                fontSize: (titleFontSize-2) + 'px',
+                fontSize: (titleFontSize-1) + 'px',
                 fontWeight: 'bold'
             }
         },
@@ -194,11 +194,12 @@ App.chart_library['lines'] = function(view, options) {
             endOnTick: true,
             showLastLabel: true,
             labels: {
-                align: 'left',
+                align: App.visualization.embedded?'right':'left',
+                rotation: App.visualization.embedded?-45:0,
                 style: {
                     color: '#000000'
                 },
-                x: 10
+                x: 20
             }
         },
         yAxis: yAxis,
