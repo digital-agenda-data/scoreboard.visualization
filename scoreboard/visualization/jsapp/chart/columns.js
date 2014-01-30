@@ -45,7 +45,7 @@ App.chart_library['columns'] = function(view, options) {
     var marginTop = 100;
     if ( App.visualization.embedded ) {
         if ( options.titles.title ) {
-            marginTop = 20 + 30 * Math.floor(options.titles.title.length / 100);
+            marginTop = 20 + 20 * Math.floor(options.titles.title.length / 60);
         } else {
             marginTop = 20;
         }
@@ -99,7 +99,7 @@ App.chart_library['columns'] = function(view, options) {
             },
             align: 'left',
             x: 45,
-            y: App.visualization.embedded ? 35 : 70
+            y: App.visualization.embedded ? (marginTop-20) : 70
         },
         xAxis: {
             type: 'category',
