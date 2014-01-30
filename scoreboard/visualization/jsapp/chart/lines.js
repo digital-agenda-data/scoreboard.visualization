@@ -132,7 +132,7 @@ App.chart_library['lines'] = function(view, options) {
             renderTo: container,
             type: 'spline',
             zoomType: 'y',
-            marginLeft: 55,
+            marginLeft: 60,
             marginRight: 70 + (has_legend?legendWidth:0),
             marginTop: marginTop,
             marginBottom: 50,
