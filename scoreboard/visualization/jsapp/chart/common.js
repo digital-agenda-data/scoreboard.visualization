@@ -77,7 +77,7 @@ App.format_series = function (data, sort, multidim, percent, category, highlight
                     'color': countrycolor(notation),
                     'data': data,
                     'marker': {
-                        'radius': 5,
+                        'radius': App.visualization.embedded?3:5,
                         'symbol': 'circle',
                         'states': {
                             hover: {'enabled': true, 'lineColor': 'rgb(100,100,100)'}

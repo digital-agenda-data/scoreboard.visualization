@@ -38,11 +38,11 @@ App.chart_library['bubbles'] = function(view, options) {
             type: 'bubble',
             renderTo: container,
             zoomType: 'xy',
-            marginLeft: 100,
-            marginRight: 150,
+            marginLeft: App.visualization.embedded?80:100,
+            marginRight: App.visualization.embedded?20:150,
             marginTop: 70,
-            marginBottom: 100,
-            height: viewPortWidth-70,
+            marginBottom: App.visualization.embedded?60:100,
+            height: viewPortWidth-(App.visualization.embedded?0:70),
             width: viewPortWidth,
             ignoreHiddenSeries: false
         },
@@ -58,8 +58,8 @@ App.chart_library['bubbles'] = function(view, options) {
         },
         title: {
             text: options.titles.title,
-            x: viewPortWidth/2-150,
-            width: viewPortWidth-250,
+            x: viewPortWidth/2-(App.visualization.embedded?20:150),
+            width: viewPortWidth-(App.visualization.embedded?100:250),
             align: 'center',
             style: {
                 color: '#000000',
@@ -68,11 +68,10 @@ App.chart_library['bubbles'] = function(view, options) {
         },
         subtitle: {
             text: options.titles.subtitle,
-            x: viewPortWidth/2-150,
-            width: viewPortWidth-250,
+            x: viewPortWidth/2-(App.visualization.embedded?20:150),
+            width: viewPortWidth-(App.visualization.embedded?100:250),
             style: {
                 color: '#000000',
-                width: 600,
                 fontWeight: 'bold'
             }
         },
@@ -85,7 +84,7 @@ App.chart_library['bubbles'] = function(view, options) {
                 style: {
                     color: '#000000',
                     fontWeight: 'bold',
-                    width: viewPortWidth-300
+                    width: viewPortWidth-100
                 }
             },
             startOnTick: false,
@@ -127,6 +126,7 @@ App.chart_library['bubbles'] = function(view, options) {
             useHTML: true
         },
         legend: {
+            enabled: !App.visualization.embedded,
             layout: 'vertical',
             align: 'right',
             verticalAlign: 'top',

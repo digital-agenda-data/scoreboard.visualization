@@ -30,18 +30,17 @@ App.chart_library['scatter'] = function(view, options) {
         }
     });
 
-    var viewPortWidth = _.min([$(window).width(), 780]) - 30;
-
+    var viewPortWidth = _.min([$(window).width(), 770]) - 20;
     var chartOptions = {
         chart: {
             renderTo: container,
             defaultSeriesType: 'scatter',
             zoomType: 'xy',
-            marginLeft: 100,
-            marginRight: 150,
+            marginLeft: App.visualization.embedded?80:100,
+            marginRight: App.visualization.embedded?20:150,
             marginTop: 30,
             marginBottom: 70,
-            height: viewPortWidth-100,
+            height: viewPortWidth-(App.visualization.embedded?0:100),
             width: viewPortWidth,
             ignoreHiddenSeries: false
         },
@@ -52,14 +51,14 @@ App.chart_library['scatter'] = function(view, options) {
                 align: 'right',
                 x: -10,
                 verticalAlign: 'bottom',
-                y: -2
+                y: -5
             }
         },
         title: {
             text: options.titles.title,
             align: 'center',
-            x: viewPortWidth/2-150,
-            width: viewPortWidth-250,
+            x: viewPortWidth/2-(App.visualization.embedded?20:150),
+            width: viewPortWidth-(App.visualization.embedded?100:250),
             style: {
                 color: '#000000',
                 fontFamily: 'Verdana',
@@ -75,7 +74,7 @@ App.chart_library['scatter'] = function(view, options) {
                 style: {
                     color: '#000000',
                     fontWeight: 'bold',
-                    width: viewPortWidth-300
+                    width: viewPortWidth-100
                 }
             },
             showLastLabel: true,
@@ -96,7 +95,7 @@ App.chart_library['scatter'] = function(view, options) {
                 style: {
                     color: '#000000',
                     fontWeight: 'bold',
-                    width: viewPortWidth-200
+                    width: viewPortWidth-300
                 },
                 margin: 35
             },
@@ -113,6 +112,7 @@ App.chart_library['scatter'] = function(view, options) {
             useHTML: true
         },
         legend: {
+            enabled: !App.visualization.embedded,
             layout: 'vertical',
             align: 'right',
             verticalAlign: 'top',
@@ -127,6 +127,9 @@ App.chart_library['scatter'] = function(view, options) {
         },
         plotOptions: {
             scatter: {
+                marker: {
+                    // radius:1 // see common.js:App.format_series
+                },
                 states: {
                     hover: {
                         marker: {
@@ -138,7 +141,6 @@ App.chart_library['scatter'] = function(view, options) {
         },
         series: init_series
     };
-
     App.set_default_chart_options(chartOptions);
     App.override_zoom();
     if (!options['legend']){
