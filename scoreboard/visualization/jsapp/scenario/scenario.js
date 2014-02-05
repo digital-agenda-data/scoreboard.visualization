@@ -70,9 +70,14 @@ App.ScenarioChartView = Backbone.View.extend({
 
         _(this.schema['labels']).forEach(function(label_spec, label_name) {
             if (_.chain(this.schema.facets).pluck('name').contains(label_spec.facet).value()){
+                var facet_value = this.model.get(label_spec['facet']);
+                if ( typeof facet_value == "object" ) {
+                    // workaround around multiple values are supported by dimension_labels
+                    facet_value = facet_value[0] || "";
+                }
                 var args = {
                     'dimension': this.dimensions_mapping[label_spec['facet']],
-                    'value': this.model.get(label_spec['facet']),
+                    'value': facet_value,
                     'rev': this.data_revision
                 };
                 var ajax = $.getJSON(this.cube_url + '/dimension_labels', args);

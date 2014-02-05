@@ -274,6 +274,10 @@ App.MultipleSelectFilter = App.SelectFilter.extend({
             }
             else{
                 var default_value = this.default_value || [range[0]];
+                if ( typeof default_value == "string" ) {
+                    // workaround; defautl value should be array
+                    default_value = [default_value];
+                }
                 default_value = _.map(default_value, function(item) {
                     if ( item == '#random' ) {
                         return range[Math.floor( Math.random()*range.length )];
