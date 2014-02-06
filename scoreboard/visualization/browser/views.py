@@ -1,11 +1,18 @@
 """
 """
 import json
+import urllib
 from zope.component import queryUtility
 from Products.Five.browser import BrowserView
 from eea.app.visualization.zopera import IPropertiesTool
 from scoreboard.visualization.jsapp import jsapp_html
 from scoreboard.visualization.config import EU, WHITELIST
+
+from plone.registry.interfaces import IRegistry
+from edw.datacube.interfaces import IDataCubeSettings
+
+from edw.datacube.interfaces import defaults
+
 
 class TestsView(BrowserView):
 
@@ -87,6 +94,22 @@ class CacheView(BrowserView):
 
 
 class IndicatorsListing(BrowserView):
+
+    _cubeSettings = None
+
+    @property
+    def cubeSettings(self):
+        """ Settings
+        """
+        if self._cubeSettings is None:
+            self._cubeSettings = queryUtility(
+                    IRegistry).forInterface(IDataCubeSettings, False)
+        return self._cubeSettings
+
+    @property
+    def defaultSparqlEndpoint(self):
+        return self.cubeSettings.default_user_sparql_endpoint
+
     def dataset_details(self):
         last_group = ""
         data = self.context.get_cube().get_dataset_details()
@@ -96,3 +119,28 @@ class IndicatorsListing(BrowserView):
                 last_group = group_name
                 yield {"type": "header", "indicator": indicator}
             yield {"type": "row", "indicator": indicator}
+
+    def getIndicatorURLData(self, url_type, indicator):
+        notation = indicator["notation"] or indicator["indicator"]
+        indicator = indicator["indicator"]
+
+        data = {
+            "notation": notation,
+            "indicator": indicator,
+        }
+
+        query = getattr(self.cubeSettings, url_type,
+                    getattr(defaults, url_type.upper())
+                ) % data
+
+        return "%(endpoint)s?%(params)s" % {
+            "endpoint": self.defaultSparqlEndpoint,
+            "params": urllib.urlencode({
+                "selectedBookmarkName": "",
+                "query": query,
+                "format": "text/html",
+                "nrOfHits": 100,
+                "execute": "Execute",
+            })
+        }
+
