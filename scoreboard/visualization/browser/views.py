@@ -124,7 +124,7 @@ class IndicatorsListing(BrowserView):
             yield {"type": "row", "indicator": indicator}
 
     def getIndicatorURLData(self, url_type, indicator):
-        notation = indicator["notation"] or indicator["indicator"]
+        notation = indicator.get("notation") or indicator["indicator"]
         indicator = indicator["indicator"]
 
         data = {
