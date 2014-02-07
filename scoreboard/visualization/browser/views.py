@@ -135,13 +135,13 @@ class IndicatorsListing(BrowserView):
      
         query = getattr(self.cubeSettings, url_type)
         if not query:
-            query = getattr(defaults, url_type.upper()) % data
+            query = getattr(defaults, url_type.upper())
             
         return "%(endpoint)s?%(params)s" % {
             "endpoint": self.defaultSparqlEndpoint,
             "params": urllib.urlencode({
                 "selectedBookmarkName": "",
-                "query": query,
+                "query": query % data,
                 "format": "text/html",
                 "nrOfHits": 100,
                 "execute": "Execute",
