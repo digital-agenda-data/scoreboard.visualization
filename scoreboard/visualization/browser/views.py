@@ -108,7 +108,10 @@ class IndicatorsListing(BrowserView):
 
     @property
     def defaultSparqlEndpoint(self):
-        return self.cubeSettings.default_user_sparql_endpoint
+        from_registry = self.cubeSettings.default_user_sparql_endpoint
+        if not from_registry:
+            return defaults.DEFAULT_USER_SPARQL_ENDPOINT
+        return from_registry
 
     def dataset_details(self):
         last_group = ""
@@ -128,11 +131,12 @@ class IndicatorsListing(BrowserView):
             "notation": notation,
             "indicator": indicator,
         }
-
-        query = getattr(self.cubeSettings, url_type,
-                    getattr(defaults, url_type.upper())
-                ) % data
-
+        
+     
+        query = getattr(self.cubeSettings, url_type)
+        if not query:
+            query = getattr(defaults, url_type.upper()) % data
+            
         return "%(endpoint)s?%(params)s" % {
             "endpoint": self.defaultSparqlEndpoint,
             "params": urllib.urlencode({
