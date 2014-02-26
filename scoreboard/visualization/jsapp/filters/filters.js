@@ -157,7 +157,7 @@ App.SelectFilter = Backbone.View.extend({
                 sortBy = 'inner_order';
             }
             this.dimension_options = _(data['options']).sortBy(function(item){
-                if (item[sortBy] && !isNaN(parseInt(item[sortBy]))) {
+                if (item[sortBy] && !isNaN(parseInt(item[sortBy])) && isFinite(item[sortBy])) {
                     return parseInt(item[sortBy]);
                 }
                 return item[sortBy];
