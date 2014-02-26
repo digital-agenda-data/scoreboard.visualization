@@ -272,7 +272,7 @@ App.scenario3_filters_schema = {
             "prefix": null,
             "suffix": null,
             "facet_name": "time-period",
-            "format": "short_label"
+            "format": "label"
           }
         ],
         "subtitle": [],
