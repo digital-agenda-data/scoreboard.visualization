@@ -176,7 +176,7 @@ App.scenario3_filters_schema = {
         "label": "Period",
         "multidim_common": true,
         "name": "time-period",
-        "sortBy": "label",
+        "sortBy": "notation",
         "sortOrder": "reverse",
         "type": "select"
     },

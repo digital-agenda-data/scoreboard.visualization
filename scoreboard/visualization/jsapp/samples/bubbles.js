@@ -203,7 +203,7 @@ App.scenario3_bubbles_filters_schema = {
         "multidim_common": true,
         "name": "time-period",
         "label": "Period",
-        "sortBy": "label",
+        "sortBy": "notation",
         "sortOrder": "reverse",
         "dimension": "time-period",
         "position": "bottom-left",

@@ -130,8 +130,8 @@ App.scenario6_filters_schema = {
       "label": "Period",
       "name": "time-period",
       "position": "upper-left",
-      "sortBy": "order_in_codelist",
-      "sortOrder": "asc",
+      "sortBy": "notation",
+      "sortOrder": "reverse",
       "type": "all-values"
     },
     {
@@ -169,6 +169,7 @@ App.scenario6_filters_schema = {
     "flag": true,
     "note": true
   },
+  "series-ending-label": "long",
   "series-legend-label": "none",
   "series-point-label": "none",
   "titles": {

@@ -93,7 +93,7 @@ App.scenario7_filters_schema = {
         "label": "Period",
         "name": "time-period",
         "position": "upper-left",
-        "sortBy": "label",
+        "sortBy": "notation",
         "sortOrder": "reverse",
         "type": "select"
     },
