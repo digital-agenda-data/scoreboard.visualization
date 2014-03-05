@@ -699,12 +699,61 @@ App.AnnotationsView = Backbone.View.extend({
 
 });
 
+var BaseDialogView = Backbone.View.extend({
+
+    id: 'add-comment',
+    className: '',
+    form_action: '',
+    template: App.get_template('scenario/modal_comment.html'),
+    
+    events: {
+        'click #btn-submit': 'submit',
+        'click #btn-cancel': 'cancel'
+    },
+
+    initialize: function() {
+        _(this).bindAll();
+        this.form_action = this.options.form_action;
+        this.render();
+    },
+
+    submit: function() {
+        var form = this.$el.find('form');
+        
+        var text = form.find('#text').attr('value');
+        var origin = App.jQuery('<a>', {
+            'href': window.location.href,
+            'text': 'Chart location'
+        });
+        text = text + '<p>' + origin[0].outerHTML + '</p>';
+        form.find('#text').attr('value', text);
+        
+        form.submit();
+        
+        this.$el.dialog('close');
+        console.log('submitted');
+    },
+
+    cancel: function() {
+        this.$el.dialog('close');
+        console.log('cancelled');
+    },
+
+    render: function() {
+        var self = this;
+        this.$el.html(this.template()).dialog();
+        this.$el.find('form').attr('action', this.form_action);
+        App.jQuery(this.form).appendTo(this.$el);
+    },
+ });
+
 App.ShareOptionsView = Backbone.View.extend({
 
     events: {
         'click #csv': 'request_csv',
         'click #excel': 'request_excel',
-        'click #embed': 'request_embed'
+        'click #embed': 'request_embed',
+        'click #comment': 'request_comment'
     },
 
     template: App.get_template('scenario/share.html'),
@@ -729,6 +778,16 @@ App.ShareOptionsView = Backbone.View.extend({
     request_embed: function(ev){
         ev.stopPropagation();
         window.location.replace(window.location.pathname + "/embedded" + window.location.hash);
+        return false;
+    },
+
+    request_comment: function(ev){
+        ev.stopPropagation();
+        var dataset_path = App.URL.split(window.location.origin)[App.URL.split(window.location.origin).length-1];
+        var forum = dataset_path.split('/')[dataset_path.split('/').length-1];
+        var form_action = portal_url + '/board/' + forum + '/add_conversation_form';
+        var modal_form = new BaseDialogView({form_action: form_action});
+        modal_form.render();
         return false;
     },
 
