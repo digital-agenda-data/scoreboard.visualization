@@ -718,6 +718,7 @@ var BaseDialogView = Backbone.View.extend({
     },
 
     submit: function() {
+        var self = this;
         var form = this.$el.find('form');
         
         var text = form.find('#text').attr('value');
@@ -726,22 +727,60 @@ var BaseDialogView = Backbone.View.extend({
             'text': 'Chart location'
         });
         text = text + '<p>' + origin[0].outerHTML + '</p>';
-        form.find('#text').attr('value', text);
+
+        var action = form.attr('action');
+        var formData = form.serializeArray();
         
-        form.submit();
-        
-        this.$el.dialog('close');
-        console.log('submitted');
+        for (var i=0; i<formData.length; i++) {
+            if (formData[i].name === 'text') {
+                formData[i].value = text;
+            }
+        }
+
+        var submit_btn = form.find('#btn-submit');
+        formData.push({ name: submit_btn.attr('name'),
+                        value: submit_btn.attr('value') });
+
+        form.on('submit', function(){
+            App.jQuery.post(action, formData, function() {
+                var board_url = action.split('add_conversation_form')[0];
+                self.submitted(board_url);
+            });
+              return false;
+           });
     },
 
     cancel: function() {
         this.$el.dialog('close');
-        console.log('cancelled');
+        return false;
+    },
+
+    submitted: function(board_url){
+        var self = this;
+        var result = App.jQuery('<div>');
+        var msg = App.jQuery('<span>', {
+            'text': 'Message submitted! You can access the discussion board '
+        });
+        var board_link = App.jQuery('<a>', {
+            'href': board_url,
+            'text': 'here'
+        });
+        var ok_btn = $('<button/>', {
+            text: 'OK',
+            click: function () { self.$el.dialog('close'); }
+        });
+        result.append(msg);
+        result.append(board_link);
+        this.$el.empty();
+        this.$el.append(result);
+        this.$el.append(ok_btn);
     },
 
     render: function() {
         var self = this;
-        this.$el.html(this.template()).dialog();
+        this.$el.html(this.template()).dialog({width: 600,
+                                               height:300,
+                                               title: 'Add comment'});
         this.$el.find('form').attr('action', this.form_action);
         App.jQuery(this.form).appendTo(this.$el);
     },
