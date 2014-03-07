@@ -792,6 +792,7 @@ App.ShareOptionsView = Backbone.View.extend({
         'click #csv': 'request_csv',
         'click #excel': 'request_excel',
         'click #embed': 'request_embed',
+        'click #view_comments': 'request_forum',
         'click #comment': 'request_comment'
     },
 
@@ -820,11 +821,23 @@ App.ShareOptionsView = Backbone.View.extend({
         return false;
     },
 
-    request_comment: function(ev){
-        ev.stopPropagation();
+    get_forum_url: function() {
         var dataset_path = App.URL.split(window.location.origin)[App.URL.split(window.location.origin).length-1];
         var forum = dataset_path.split('/')[dataset_path.split('/').length-1];
-        var form_action = portal_url + '/board/' + forum + '/add_conversation_form';
+        var forum_url = portal_url + '/board/' + forum;
+        return forum_url;
+    },
+
+    request_forum: function(ev){
+        ev.stopPropagation();
+        window.location.replace(this.get_forum_url());
+        return false;
+    },
+
+    request_comment: function(ev){
+        ev.stopPropagation();
+        var forum_url = this.get_forum_url();
+        var form_action = forum_url + '/add_conversation_form';
         var modal_form = new BaseDialogView({form_action: form_action});
         modal_form.render();
         return false;
