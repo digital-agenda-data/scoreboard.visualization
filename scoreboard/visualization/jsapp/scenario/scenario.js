@@ -714,7 +714,6 @@ var BaseDialogView = Backbone.View.extend({
     initialize: function() {
         _(this).bindAll();
         this.form_action = this.options.form_action;
-        this.render();
     },
 
     submit: function() {
@@ -742,9 +741,14 @@ var BaseDialogView = Backbone.View.extend({
                         value: submit_btn.attr('value') });
 
         form.on('submit', function(){
-            App.jQuery.post(action, formData, function() {
-                var board_url = action.split('add_conversation_form')[0];
-                self.submitted(board_url);
+            App.jQuery.post(action, formData, function(data) {
+                if(data.indexOf('incorrect-captcha-sol') > -1) {
+                    App.jQuery('#captcha_error').text('Invalid recaptcha solution');
+                    Recaptcha.reload();
+                } else {
+                    var board_url = action.split('add_conversation_form')[0];
+                    self.submitted(board_url);
+                }
             });
               return false;
            });
@@ -779,10 +783,18 @@ var BaseDialogView = Backbone.View.extend({
     render: function() {
         var self = this;
         this.$el.html(this.template()).dialog({width: 600,
-                                               height:300,
+                                               height:450,
                                                title: 'Add comment'});
         this.$el.find('form').attr('action', this.form_action);
-        App.jQuery(this.form).appendTo(this.$el);
+        self.recaptcha = App.jQuery.get('@@captcha_pub', function(data) {
+            Recaptcha.create(data,
+                "captcha_field",
+                {
+                  theme: "red",
+                  callback: Recaptcha.focus_response_field
+                }
+              );
+        });
     },
  });
 

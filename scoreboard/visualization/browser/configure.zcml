@@ -47,6 +47,13 @@
     />
 
   <browser:page
+    name="captcha_pub"
+    for="*"
+    permission="zope2.View"
+    class=".views.ReCaptchaPubView"
+    />
+
+  <browser:page
     name="european-union.json"
     for="zope.interface.Interface"
     permission="zope2.View"

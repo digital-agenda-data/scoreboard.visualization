@@ -2,6 +2,7 @@
 """
 import json
 import urllib
+from collective.recaptcha.settings import getRecaptchaSettings
 from zope.component import queryUtility
 from Products.Five.browser import BrowserView
 from eea.app.visualization.zopera import IPropertiesTool
@@ -148,3 +149,12 @@ class IndicatorsListing(BrowserView):
             })
         }
 
+
+class ReCaptchaPubView(BrowserView):
+    def __init__(self, context, request):
+        self.context = context
+        self.request = request
+        self.settings = getRecaptchaSettings()
+
+    def __call__(self, **kwargs):
+            return self.settings.public_key
