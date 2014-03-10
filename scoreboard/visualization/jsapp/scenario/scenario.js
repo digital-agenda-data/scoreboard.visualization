@@ -755,7 +755,8 @@ var BaseDialogView = Backbone.View.extend({
     },
 
     cancel: function() {
-        this.$el.dialog('close');
+        this.$el.dialog('destroy').remove();
+        Recaptcha.destroy();
         return false;
     },
 
@@ -784,7 +785,12 @@ var BaseDialogView = Backbone.View.extend({
         var self = this;
         this.$el.html(this.template()).dialog({width: 600,
                                                height:450,
-                                               title: 'Add comment'});
+                                               title: 'Add comment',
+                                               close: function(event, ui) 
+                                                    {
+                                                        self.cancel();
+                                                    }
+                                                });
         this.$el.find('form').attr('action', this.form_action);
         self.recaptcha = App.jQuery.get('@@captcha_pub', function(data) {
             Recaptcha.create(data,
@@ -792,8 +798,7 @@ var BaseDialogView = Backbone.View.extend({
                 {
                   theme: "red",
                   callback: Recaptcha.focus_response_field
-                }
-              );
+                });
         });
     },
  });
