@@ -763,8 +763,16 @@ var BaseDialogView = Backbone.View.extend({
     submitted: function(board_url){
         var self = this;
         var result = App.jQuery('<div>');
+        var msg_text;
+
+        if (App.jQuery('body').hasClass('userrole-authenticated')) {
+            msg_text = 'Message submitted! You can access the discussion board ';
+        } else {
+            msg_text = 'Your comment has been submitted for approval. In the meantime you can view other comments ';
+        }
+        
         var msg = App.jQuery('<span>', {
-            'text': 'Message submitted! You can access the discussion board '
+            'text': msg_text
         });
         var board_link = App.jQuery('<a>', {
             'href': board_url,
