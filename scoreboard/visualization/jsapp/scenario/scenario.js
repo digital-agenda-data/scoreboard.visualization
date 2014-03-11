@@ -719,6 +719,16 @@ var BaseDialogView = Backbone.View.extend({
     submit: function() {
         var self = this;
         var form = this.$el.find('form');
+
+        var title = form.find('#title').attr('value');
+        var title_error = App.jQuery('#title_error');
+
+        if (title.length <= 0) {
+            title_error.text('Title required!');
+            return false;
+        } else {
+            title_error.text('');
+        }
         
         var text = form.find('#text').attr('value');
         var origin = App.jQuery('<a>', {
