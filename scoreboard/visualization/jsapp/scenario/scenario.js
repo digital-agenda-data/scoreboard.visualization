@@ -716,7 +716,7 @@ var BaseDialogView = Backbone.View.extend({
         this.form_action = this.options.form_action;
     },
 
-    submit: function() {
+    validate: function() {
         var self = this;
         var form = this.$el.find('form');
 
@@ -728,6 +728,15 @@ var BaseDialogView = Backbone.View.extend({
             return false;
         } else {
             title_error.text('');
+        }
+    },
+
+    submit: function() {
+        var self = this;
+        var form = this.$el.find('form');
+
+        if (self.validate() === false) {
+            return false
         }
         
         var text = form.find('#text').attr('value');
