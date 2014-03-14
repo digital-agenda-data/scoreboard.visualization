@@ -25,6 +25,8 @@ setup(name='scoreboard.visualization',
         'path.py',
         'simplejson',
         'slimit',
+        'xlrd',
+        'xlwt'
       ],
       packages=find_packages(exclude=['ez_setup']),
       namespace_packages=['scoreboard'],

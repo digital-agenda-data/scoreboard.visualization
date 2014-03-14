@@ -1,0 +1,23 @@
+<html metal:use-macro="here/main_template/macros/master"
+  i18n:domain="plone">
+  <div metal:fill-slot="main">
+  <h1>Manage whitelist</h1>
+      <div class="whitelist-manage bootstrap">
+      <form action="." enctype="multipart/form-data" method="post" tal:attributes="action request/getURL">
+          <input type="file" name="file" accept="application/vnd.ms-excel">
+          <input type="submit" class="btn btn-mini btn-primary" name="form.submitted" value="Import XLS" />
+          <a class="btn btn-mini" tal:attributes="href string:$portal_url/whitelistToXLS"><i class="icon-file"></i> Export XLS</a>
+      </form>
+    </div>
+    <div class="whitelist" tal:define="whitelist view/whitelist">
+        <table tal:define="labels view/getLabels">
+            <tr>
+                <th tal:repeat="key labels" tal:content="key"></th>
+            </tr>
+            <tr tal:repeat="item whitelist">
+                <td tal:repeat="key labels" tal:content="python: item.get(key)"/>
+            </tr>
+        </table>
+    </div>
+</div>
+</html>

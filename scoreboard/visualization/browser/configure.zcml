@@ -65,6 +65,23 @@
     for="zope.interface.Interface"
     permission="zope2.View"
     class=".views.WhiteList"
+    attribute="whitelistJSON"
+    />
+
+  <browser:page
+    name="whitelistToXLS"
+    for="zope.interface.Interface"
+    permission="zope2.View"
+    class=".views.WhiteList"
+    attribute="whitelistToXLS"
+    />
+
+  <browser:page
+    name="manage-whitelist"
+    class=".views.WhiteList"
+    permission="cmf.ManagePortal"
+    for="Products.CMFCore.interfaces.ISiteRoot"
+    template="templates/manage_whitelist.pt"
     />
 
   <browser:page

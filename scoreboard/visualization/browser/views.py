@@ -2,7 +2,13 @@
 """
 import json
 import urllib
+<<<<<<< HEAD
 from collective.recaptcha.settings import getRecaptchaSettings
+=======
+import xlrd
+import xlwt
+from StringIO import StringIO
+>>>>>>> WIP: Implement Import/Export WHITELIST from/to xls
 from zope.component import queryUtility
 from Products.Five.browser import BrowserView
 from eea.app.visualization.zopera import IPropertiesTool
@@ -54,6 +60,7 @@ class EuropeanUnion(BrowserView):
     def __call__(self, **kwargs):
         return json.dumps(self.eu)
 
+
 class WhiteList(BrowserView):
     """ Whitelisted indicators
     """
@@ -75,8 +82,58 @@ class WhiteList(BrowserView):
         else:
             return whitelist
 
-    def __call__(self, **kwargs):
+    def getLabels(self):
+        return ['indicator-group', 'indicator', 'breakdown', 'unit-measure']
+
+    def whitelistJSON(self):
         return json.dumps(self.whitelist)
+
+    def whitelistToXLS(self):
+        workbook = xlwt.Workbook()
+        sheet = workbook.add_sheet('Sheet1')
+
+        for idx, val in enumerate(self.getLabels()):
+            sheet.write(0, idx, val)
+
+        for row, elem in enumerate(self.whitelist):
+            for cidx, val in enumerate(elem):
+                sheet.write(row+1, cidx, elem[self.getLabels()[cidx]])
+
+        self.request.response.setHeader(
+            'Content-Type', 'application/vnd.ms-excel')
+        self.request.response.setHeader(
+            'Content-Disposition', 'attachment; filename="whitelist.xls"')
+
+        output = StringIO()
+        workbook.save(output)
+        workbook.save('output.xls')
+
+        output.seek(0)
+
+        return output.read()
+
+    def __call__(self, **kwargs):
+        if 'form.submitted' in self.request.form:
+            file = self.request.form.get('file')
+            ptool = queryUtility(IPropertiesTool)
+            stool = getattr(ptool, 'scoreboard_properties', None)
+            whitelist = stool.getProperty('WHITELIST', None)
+
+            file.seek(0)
+
+            workbook = xlrd.open_workbook(file_contents=file.read())
+            sheet1 = workbook.sheet_by_index(0)
+
+            data = []
+
+            for row in xrange(sheet1.nrows):
+                elem = {}
+                for idx, val in enumerate(self.getLabels()):
+                    elem[val] = sheet1.cell(row, idx).value
+                data.append(elem)
+
+        return self.index()
+
 
 class CacheView(BrowserView):
 
