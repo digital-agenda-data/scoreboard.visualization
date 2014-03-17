@@ -2,11 +2,17 @@
   i18n:domain="plone">
   <div metal:fill-slot="main">
   <h1>Manage whitelist</h1>
-      <div class="whitelist-manage bootstrap">
-      <form action="." enctype="multipart/form-data" method="post" tal:attributes="action request/getURL">
-          <input type="file" name="file" accept="application/vnd.ms-excel">
-          <input type="submit" class="btn btn-mini btn-primary" name="form.submitted" value="Import XLS" />
-          <a class="btn btn-mini" tal:attributes="href string:$portal_url/whitelistToXLS"><i class="icon-file"></i> Export XLS</a>
+      <div class="whitelist-manage bootstrap" tal:define="msg view/msg">
+      <span tal:content="msg" />
+      <form action="." enctype="multipart/form-data" method="post"
+       tal:attributes="action request/getURL;"
+       tal:define="error view/error">
+          <label for="file" class="error" tal:content="error" /><br />
+          <input type="file" name="file">
+          <input type="submit" class="btn btn-mini btn-primary"
+           name="form.submitted" value="Import XLS" />
+          <input type="submit" class="btn btn-mini" name="export"
+           value="Export XLS" />
       </form>
     </div>
     <div class="whitelist" tal:define="whitelist view/whitelist">

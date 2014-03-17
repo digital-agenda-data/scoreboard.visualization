@@ -2,13 +2,11 @@
 """
 import json
 import urllib
-<<<<<<< HEAD
-from collective.recaptcha.settings import getRecaptchaSettings
-=======
 import xlrd
 import xlwt
 from StringIO import StringIO
->>>>>>> WIP: Implement Import/Export WHITELIST from/to xls
+from collective.recaptcha.settings import getRecaptchaSettings
+
 from zope.component import queryUtility
 from Products.Five.browser import BrowserView
 from eea.app.visualization.zopera import IPropertiesTool
@@ -97,7 +95,9 @@ class WhiteList(BrowserView):
 
         for row, elem in enumerate(self.whitelist):
             for cidx, val in enumerate(elem):
-                sheet.write(row+1, cidx, elem[self.getLabels()[cidx]])
+                value = elem.get(self.getLabels()[cidx])
+                if value:
+                    sheet.write(row+1, cidx, elem.get(self.getLabels()[cidx]))
 
         self.request.response.setHeader(
             'Content-Type', 'application/vnd.ms-excel')
@@ -112,25 +112,65 @@ class WhiteList(BrowserView):
 
         return output.read()
 
+    def parseXLS(self, xls):
+        data = []
+        xls.seek(0)
+
+        try:
+            workbook = xlrd.open_workbook(file_contents=xls.read())
+        except Exception:
+            return None
+
+        sheet1 = workbook.sheet_by_index(0)
+        for row in xrange(sheet1.nrows):
+            elem = {}
+            for idx, val in enumerate(self.getLabels()):
+                if sheet1.row(row)[idx].ctype != 0:
+                    value = sheet1.cell(row, idx).value.strip()
+                    if value:
+                        elem[val] = value
+            if elem:
+                data.append(elem)
+
+        return data
+
     def __call__(self, **kwargs):
+        self.error = None
+        self.msg = None
+
         if 'form.submitted' in self.request.form:
             file = self.request.form.get('file')
-            ptool = queryUtility(IPropertiesTool)
-            stool = getattr(ptool, 'scoreboard_properties', None)
-            whitelist = stool.getProperty('WHITELIST', None)
+            if not file:
+                self.error = 'Select a spreadsheet file to import'
+            else:
+                ptool = queryUtility(IPropertiesTool)
+                stool = getattr(ptool, 'scoreboard_properties', None)
 
-            file.seek(0)
+                if not stool:
+                    ptool.manage_addPropertySheet(
+                        'scoreboard_properties', 'Scoreboard Properties')
+                    stool = getattr(ptool, 'scoreboard_properties', None)
 
-            workbook = xlrd.open_workbook(file_contents=file.read())
-            sheet1 = workbook.sheet_by_index(0)
+                data = self.parseXLS(file)
+                if not data:
+                    self.error = 'Unable to parse file'
+                else:
+                    default = json.dumps(data[1:], indent=2)
+                    whitelist = stool.getProperty('WHITELIST', None)
 
-            data = []
+                    if whitelist:
+                        try:
+                            stool.manage_changeProperties(WHITELIST=default)
+                        except Exception:
+                            self.error = 'Unable to import the spreadsheet'
+                    else:
+                        stool.manage_addProperty('WHITELIST', default, 'text')
 
-            for row in xrange(sheet1.nrows):
-                elem = {}
-                for idx, val in enumerate(self.getLabels()):
-                    elem[val] = sheet1.cell(row, idx).value
-                data.append(elem)
+                    self.msg = 'XLS file imported successfuly!'
+
+        if 'export' in self.request.form:
+            redirect_url = "%s/@@whitelistToXLS" % self.context.absolute_url()
+            self.request.response.redirect(redirect_url)
 
         return self.index()
 
@@ -205,7 +245,6 @@ class IndicatorsListing(BrowserView):
                 "execute": "Execute",
             })
         }
-
 
 class ReCaptchaPubView(BrowserView):
     def __init__(self, context, request):
