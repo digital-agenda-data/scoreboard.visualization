@@ -3,7 +3,7 @@
   <div metal:fill-slot="main">
   <h1>Manage whitelist</h1>
       <div class="whitelist-manage bootstrap" tal:define="msg view/msg">
-      <span tal:content="msg" />
+      <span class="info-msg" tal:content="msg" />
       <form action="." enctype="multipart/form-data" method="post"
        tal:attributes="action request/getURL;"
        tal:define="error view/error">
