@@ -105,7 +105,7 @@ App.scenario6_filters_schema = {
       "default_value": [
         "BE","BG","CZ","DK","DE","EE","IE","EL","ES","FR",
         "IT","CY","LV","LT","LU","HU","MT","NL","AT","PL",
-        "PT","RO","SI","SK","FI","SE","UK","EU27"
+        "PT","RO","SI","SK","FI","SE","UK","EU27", "HR"
       ],
       "dimension": "ref-area",
       "highlights": [

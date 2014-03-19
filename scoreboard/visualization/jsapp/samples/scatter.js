@@ -193,7 +193,7 @@ App.scenario3_filters_schema = {
             "time-period": "time-period"
         },
         "default_value": ["BE", "BG", "CZ", "DK", "DE",
-        "EE", "IE", "EL", "ES", "FR",
+        "EE", "IE", "EL", "ES", "FR", "HR",
         "IT", "CY", "LV", "LT", "LU",
         "HU", "MT", "NL", "AT", "PL",
         "PT", "RO", "SI", "SK", "FI",
