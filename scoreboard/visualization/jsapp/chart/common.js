@@ -276,7 +276,7 @@ App.compute_plotLines = function compute_plotLines(coord, series, axis_type){
             ['max', max]
         ]);
     };
-    values = values.pluck('data').map(map_stage).reduce(reduce_stage).value();
+    values = values.pluck('data').map(map_stage).reduce(reduce_stage, [0]).value();
     return (values.min + values.max)/2;
 }
 
