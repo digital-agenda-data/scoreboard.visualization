@@ -186,6 +186,7 @@ App.format_series = function (data, sort, multidim, percent, category, highlight
                                 ['ending_label', data['ending_label']],
                                 ['order', data['inner_order']],
                                 ['attributes', attributes],
+                                // if y is null, column is not displayed
                                 ['y', null]])
                   );
               });

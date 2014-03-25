@@ -184,16 +184,20 @@ App.ScenarioChartView = Backbone.View.extend({
                     if ( multidim ) {
                         out += '<b>y</b>: ';
                     }
-                    out += Math.round(this.y*10)/10;
+                    if ( this.point.isNA ) {
+                        out += '<b>Data not available</b>'
+                    } else {
+                        out += Math.round(this.y*10)/10;
+                    }
                     if ( multidim ) {
                         if (unit_is_pc[1]) out += '%';
                     } else {
-                        // no multidim, but may be multi-lines
+                        // no multidim, but may be multi-lines chart
                         var series_is_pc = unit_is_pc[0];
                         if (typeof unit_is_pc[this.series.index] != 'undefined') {
                             series_is_pc = unit_is_pc[this.series.index];
                         }
-                        if (series_is_pc) {
+                        if (series_is_pc && !this.point.isNA) {
                             out += '%';
                         }
                     }

@@ -16,6 +16,28 @@ App.chart_library['columns'] = function(view, options) {
                     options['category_facet'],
                     options['highlights'],
                     options['animation']);
+    // add N/A labels for missing values
+    var dataLabels = {
+        enabled: true,
+        align: 'center',
+        verticalAlign: 'top',
+        x: 0,
+        y: -10,
+        format: 'N/A'
+    };
+    _(series).each(function(serie) {
+        _(serie.data).map(function(point){
+            if ( point.y == null ) {
+                point.isNA = true;
+                point.dataLabels = dataLabels;
+                point.y = 0;
+            } else {
+                point.isNA = false;
+                point.dataLabels = null;
+            }
+        });
+    });
+
     var init_series = series;
     var max_value = null;
     if (options['animation']){
@@ -30,6 +52,8 @@ App.chart_library['columns'] = function(view, options) {
             });
         });
     }
+
+
     var has_legend = options['series-legend-label'] && options['series-legend-label'] != 'none';
     var viewPortWidth = _.min([$(window).width(), 1130]) - 30;
     var legendWidth = _.min([viewPortWidth * 0.3, 170]);

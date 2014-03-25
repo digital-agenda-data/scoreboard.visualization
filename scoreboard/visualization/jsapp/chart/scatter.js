@@ -24,6 +24,7 @@ App.chart_library['scatter'] = function(view, options) {
     var init_series = JSON.parse(JSON.stringify(series[0]));
 
     // formatter is lost after stringify
+    // TODO: use dataLabels.format = "{point.name}"
     _(init_series).each(function(item){
         item['dataLabels']['formatter'] = function(){
             return this.point.name;
