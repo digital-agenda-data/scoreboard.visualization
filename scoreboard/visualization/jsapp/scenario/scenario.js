@@ -185,6 +185,7 @@ App.ScenarioChartView = Backbone.View.extend({
                         out += '<b>y</b>: ';
                     }
                     if ( this.point.isNA ) {
+                        out += '<br><b>' + this.series.name  + '</b>';
                         out += '<b>Data not available</b>'
                     } else {
                         out += Math.round(this.y*10)/10;
