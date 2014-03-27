@@ -277,8 +277,10 @@ App.compute_plotLines = function compute_plotLines(coord, series, axis_type){
             ['max', max]
         ]);
     };
-    values = values.pluck('data').map(map_stage).reduce(reduce_stage, [0]).value();
-    return (values.min + values.max)/2;
+    if (series.length > 0 ) {
+      values = values.pluck('data').map(map_stage).reduce(reduce_stage).value();
+      return (values.min + values.max)/2;
+    } else return 0;
 }
 
 App.add_plotLines = function(chart, series, chart_type){
