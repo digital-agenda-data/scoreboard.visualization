@@ -1,3 +1,10 @@
+========================
+Scoreboard Visualization
+========================
+
+This repo enables the user to edit/view/filter a chart using the Javascript application.
+The charts can also be embedded in external pages through a special view available in scoreboard.visualization.
+
 .. contents::
 
 .. Note!
