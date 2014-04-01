@@ -197,7 +197,7 @@ App.scenario3_filters_schema = {
         "IT", "CY", "LV", "LT", "LU",
         "HU", "MT", "NL", "AT", "PL",
         "PT", "RO", "SI", "SK", "FI",
-        "SE", "UK"],
+        "SE", "UK", "IS", "NO"],
         "dimension": "ref-area",
         "ignore_values": ["EU27"],
         "label": "Country / Countries",
