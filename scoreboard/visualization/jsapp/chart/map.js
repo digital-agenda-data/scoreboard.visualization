@@ -100,26 +100,26 @@ App.chart_library['map'] = function(view, options) {
     */
     $(container).append(map_div);
 
-	var is_embedded = false;
-	var n_boxes = 6;
-	var viewPortWidth = _.min([$(window).width(), 1130])-30;
+    var is_embedded = false;
+    var n_boxes = 6;
+    var viewPortWidth = _.min([$(window).width(), 1130])-30;
     var legendWidth = _.min([viewPortWidth * 0.04, 40]);
-	var legendHeight = 20;
-    var viewPortHeight = _.min([$(window).height()-100, 450]);
+    var legendHeight = 20;
+    var viewPortHeight = _.min([$(window).height()-100, 845]);
     if ( App.visualization.embedded ) {
         viewPortHeight = _.min([$(window).height(), 470]) - 20;
-		is_embedded = true;
+        is_embedded = true;
     }
-	
+
     // add a form to request a png download if not embbeded
-	if(!is_embedded || (is_embedded && viewPortWidth > 500))
-		$(container).append(
-			$('<form method="POST" action="' + App.URL + '/svg2png"></form>').append(
-				$("<input/>").attr("type", "hidden").attr("name", "svg")
-			).append(
-				$("<input/>").attr("type", "submit").attr("value", "Download").addClass('mapExportPngButton')
-			)
-		);
+    if(!is_embedded || (is_embedded && viewPortWidth > 500))
+        $(container).append(
+            $('<form method="POST" action="' + App.URL + '/svg2png"></form>').append(
+                $("<input/>").attr("type", "hidden").attr("name", "svg")
+            ).append(
+                $("<input/>").attr("type", "submit").attr("value", "Download").addClass('mapExportPngButton')
+            )
+        );
 
     var series = App.format_series(
                     options['series'],
@@ -136,7 +136,7 @@ App.chart_library['map'] = function(view, options) {
         limits: [0, max_value]
     });
     var unit = options['meta_data']['unit-measure'];
-	
+
     var map = Kartograph.map(map_div[0], viewPortWidth, viewPortHeight);
     App.kartograph_map = map;
     map.loadMap(App.JSAPP + '/europe.svg', function() {
@@ -177,43 +177,43 @@ App.chart_library['map'] = function(view, options) {
                 {text: unit, is_pc: options.unit_is_pc[0]});
         */
         //vertical
-		if(!is_embedded || (is_embedded && viewPortWidth>500))
-			draw_legend(map.paper, colorscale, 10, viewPortHeight/2 - n_boxes/2 * legendHeight + 2* legendHeight, 0, max_value,
-					{text: unit.short_label, is_pc: options.unit_is_pc[0]},
-					'vertical',
-					legendWidth, legendHeight, n_boxes);
-		
+        if(!is_embedded || (is_embedded && viewPortWidth>500))
+            draw_legend(map.paper, colorscale, 10, viewPortHeight/2 - n_boxes/2 * legendHeight + 2* legendHeight, 0, max_value,
+                    {text: unit.short_label, is_pc: options.unit_is_pc[0]},
+                    'vertical',
+                    legendWidth, legendHeight, n_boxes);
+
         // add title over a white box
-		var char_per_row;
-		var font_size;
-		if(viewPortWidth > 900) {char_per_row = 110; font_size = 16;} else
-		if(viewPortWidth > 600) {char_per_row = 80;  font_size = 14;} else
-		if(viewPortWidth > 400) {char_per_row = 60;  font_size = 11;} else
-								{char_per_row = 50;  font_size = 11;}
-		
-		var title = wordwrap(options.titles.title, char_per_row, '\n');
-		var lines = (title.match(/\n/g)||[]).length + 1;
-		if(viewPortWidth>500) {
-			map.paper.rect(10, 0, 0.9 * viewPortWidth, lines*20).attr({fill: '#FEFEFE', 'stroke-width': 0});
-			map.paper.text(0.5 * viewPortWidth, 20*lines/2, title).attr({
-				'font-size': font_size,
-				'font-weight': 'bold',
-				'text-anchor': 'middle',
-				'font-family': 'Verdana, Arial, sans-serif'
-			});
-		}
-		else {
-			map.paper.rect(10, 0, 0.9 * viewPortWidth, 20).attr({fill: '#FEFEFE', 'stroke-width': 0});
-			var row_text = title.split('\n')[0];
-			map.paper.text(0.5 * viewPortWidth, 10, 
-						   row_text.substring(0, row_text.length-6).concat('...')).attr({
-				'font-size': font_size,
-				'font-weight': 'bold',
-				'text-anchor': 'middle',
-				'font-family': 'Verdana, Arial, sans-serif',
-				'title': title
-			});
-		}
+        var char_per_row;
+        var font_size;
+        if(viewPortWidth > 900) {char_per_row = 110; font_size = 16;} else
+        if(viewPortWidth > 600) {char_per_row = 80;  font_size = 14;} else
+        if(viewPortWidth > 400) {char_per_row = 60;  font_size = 11;} else
+                                {char_per_row = 50;  font_size = 11;}
+
+        var title = wordwrap(options.titles.title, char_per_row, '\n');
+        var lines = (title.match(/\n/g)||[]).length + 1;
+        if(viewPortWidth>500) {
+            map.paper.rect(0, 0, viewPortWidth, lines*20).attr({fill: '#FEFEFE', 'stroke-width': 0});
+            map.paper.text(0.5 * viewPortWidth, 20*lines/2, title).attr({
+                'font-size': font_size,
+                'font-weight': 'bold',
+                'text-anchor': 'middle',
+                'font-family': 'Verdana, Arial, sans-serif'
+            });
+        }
+        else {
+            map.paper.rect(0, 0, viewPortWidth, 20).attr({fill: '#FEFEFE', 'stroke-width': 0});
+            var row_text = title.split('\n')[0];
+            map.paper.text(0.5 * viewPortWidth, 10,
+                           row_text.substring(0, row_text.length-6).concat('...')).attr({
+                'font-size': font_size,
+                'font-weight': 'bold',
+                'text-anchor': 'middle',
+                'font-family': 'Verdana, Arial, sans-serif',
+                'title': title
+            });
+        }
         // load svg html into the form for png download
         // use toSVG function provided by raphael.export.js (IE 8 compatibility)
         $("input[name='svg']").val(map.paper.toSVG());

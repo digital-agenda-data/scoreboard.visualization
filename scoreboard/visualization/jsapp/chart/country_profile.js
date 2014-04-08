@@ -367,20 +367,18 @@ App.CountryProfileView = Backbone.View.extend({
 
     render: function(){
 
-		var data = this.options.data;
-		var viewPortWidth = _.min([$(window).width(), 1130])-30;
-		var viewPortHeight = _.min([$(window).height()-100, 450]);
+        var data = this.options.data;
+        var viewPortWidth = _.min([$(window).width(), 1130])-30;
+        var viewPortHeight = _.min([$(window).height()-100, 450]);
 
-		var font_size = 14;
-		if ( App.visualization.embedded ) {
-			viewPortHeight = _.min([$(window).height(), 470]) - 20;
-			if     (viewPortWidth<200)  font_size = 10;
-			else if(viewPortWidth<400)  font_size = 11;
-			else if(viewPortWidth<600)  font_size = 12;
-			else if(viewPortWidth<800)  font_size = 13;
-			else                        font_size = 14;
-		}
-		
+        var font_size = 11;
+        if ( App.visualization.embedded ) {
+            viewPortHeight = _.min([$(window).height(), 470]) - 20;
+            if     (viewPortWidth<200)  font_size = 9;
+            else if(viewPortWidth<400)  font_size = 10;
+            else                        font_size = 11;
+        }
+
         this.$el.html(
             this.template({
                 'ref-area': data['ref-area'].label,
@@ -389,7 +387,7 @@ App.CountryProfileView = Backbone.View.extend({
                 'year-1': data.latest-1,
                 'year-2': data.latest-2,
                 'year-3': data.latest-3,
-				'font_size': font_size,
+                'font_size': font_size,
                 'has-rank': data['has-rank'],
                 'EU28': (data.latest >= 2013)?'EU28':'EU27',
                 'table': this.table()
