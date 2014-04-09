@@ -105,6 +105,7 @@ App.SelectFilter = Backbone.View.extend({
         this.loadstate.set(this.name, true);
         var incomplete = false;
         var args = {'dimension': this.dimension};
+        this.display_in_groups = false;
         _(this.constraints).forEach(function(other_name, other_dimension) {
             var other_option = this.model.get(other_name);
             var other_loading = this.loadstate.get(other_name);
@@ -114,9 +115,6 @@ App.SelectFilter = Backbone.View.extend({
             args[other_dimension] = other_option;
             if(other_option == 'any' && App.groupers[this.dimension] == other_dimension){
                 this.display_in_groups = true;
-            }
-            else{
-                this.display_in_groups = false;
             }
         }, this);
         // if grouper not found in constraints at all, display in groups
