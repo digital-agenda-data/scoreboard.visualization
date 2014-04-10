@@ -1,10 +1,12 @@
 <h3 style="font-family: 'Segoe UI', Verdana, Arial, sans-serif">
   Country profile for {{{ ref-area }}}
 </h3>
+{{#unless is-embedded}}
 <p style="font-size: {{{ font_size }}}px; font-family: 'Segoe UI', Verdana, Arial, sans-serif;">
   The following table presents the original values of all the indicators
   for the country you have selected.
 </p>
+{{/unless}}
 
 <table style="border:1px solid grey; width:100%; font-size: {{{ font_size }}}px; font-family: 'Segoe UI', Verdana, Arial, sans-serif;">
   <thead style="background-color: #E1F0F7">

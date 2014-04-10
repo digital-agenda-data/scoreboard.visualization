@@ -388,6 +388,7 @@ App.CountryProfileView = Backbone.View.extend({
                 'year-2': data.latest-2,
                 'year-3': data.latest-3,
                 'font_size': font_size,
+                'is-embedded': App.visualization.embedded,
                 'has-rank': data['has-rank'],
                 'EU28': (data.latest >= 2013)?'EU28':'EU27',
                 'table': this.table()
