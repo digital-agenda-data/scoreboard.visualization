@@ -740,11 +740,13 @@ var BaseDialogView = Backbone.View.extend({
         }
         
         var text = form.find('#text').attr('value');
+        var chart_title = $('#the-chart').find(".highcharts-title").text()
         var origin = App.jQuery('<a>', {
             'href': window.location.href,
-            'text': 'Chart location'
+            'text': chart_title,
+            'target' : '_blank'
         });
-        text = text + '<p>' + origin[0].outerHTML + '</p>';
+        text = text + '<p> This comment is related to chart ' + origin[0].outerHTML + '</p>';
 
         var action = form.attr('action');
         var formData = form.serializeArray();
