@@ -223,8 +223,8 @@ App.chart_library['country_profile'] = function(view, options) {
             },
             yAxis: [{
                 min: 0,
-                tickPositions: [0, 1, 2],
-                 labels: {
+                tickInterval: 1,
+                labels: {
                     formatter: function() {
                         return ['lowest EU country', 'EU average', 'highest EU country'][this.value];
                     },
@@ -244,14 +244,13 @@ App.chart_library['country_profile'] = function(view, options) {
             {
                 title: {text: null},
                 min: 0,
-                max: 2,
-                tickPositions: [0, 1, 2],
                 plotBands: [{
                     color: 'red',
                     width: 2,
                     value: 1,
                     zIndex: 5
                 }],
+                tickPositions: [0, 1, 2],
                 labels: {
                     formatter: function() {
                         return ['lowest EU country', 'EU average', 'highest EU country'][this.value];
