@@ -30,6 +30,11 @@
     file="./js/datacube-indicators.js"
    />
 
+  <browser:resource
+    name="scoreboard.visualization.manage-whitelist.js"
+    file="./js/manage-whitelist.js"
+   />
+
   <browser:page
     name="indicators"
     for="edw.datacube.interfaces.IDataCube"
@@ -60,9 +65,17 @@
     class=".views.EuropeanUnion"
     />
 
-  <browser:page
+<!--   <browser:page
     name="whitelist.json"
     for="zope.interface.Interface"
+    permission="zope2.View"
+    class=".views.WhiteList"
+    attribute="whitelistJSON"
+    /> -->
+
+  <browser:page
+    name="whitelist.json"
+    for="edw.datacube.interfaces.IDataCube"
     permission="zope2.View"
     class=".views.WhiteList"
     attribute="whitelistJSON"

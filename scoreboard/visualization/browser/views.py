@@ -8,6 +8,7 @@ from StringIO import StringIO
 from collective.recaptcha.settings import getRecaptchaSettings
 
 from zope.component import queryUtility
+from Products.CMFCore.utils import getToolByName
 from Products.Five.browser import BrowserView
 from eea.app.visualization.zopera import IPropertiesTool
 from scoreboard.visualization.jsapp import jsapp_html
@@ -83,34 +84,49 @@ class WhiteList(BrowserView):
     def getLabels(self):
         return ['indicator-group', 'indicator', 'breakdown', 'unit-measure']
 
+    def dataCubes(self):
+        ctool = getToolByName(self.context, 'portal_catalog')
+        return ctool(portal_type='DataCube')
+
+    def dataSets(self):
+        brains = self.dataCubes()
+        result = [(brain.getId, brain.Title) for brain in brains]
+        result.insert(0, ('', ''))
+
+        return result
+
     def whitelistJSON(self):
         return json.dumps(self.whitelist)
 
     def whitelistToXLS(self):
         workbook = xlwt.Workbook()
         sheet = workbook.add_sheet('Sheet1')
+        dataset = self.request.form.get('dataset')
+        settings = self.whitelist
+        if dataset and self.whitelist.get(dataset):
+            settings = self.whitelist.get(dataset)
 
-        for idx, val in enumerate(self.getLabels()):
-            sheet.write(0, idx, val)
+            for idx, val in enumerate(self.getLabels()):
+                sheet.write(0, idx, val)
 
-        for row, elem in enumerate(self.whitelist):
-            for cidx, val in enumerate(elem):
-                value = elem.get(self.getLabels()[cidx])
-                if value:
-                    sheet.write(row+1, cidx, elem.get(self.getLabels()[cidx]))
+            for row, elem in enumerate(settings):
+                for cidx, val in enumerate(elem):
+                    value = elem.get(self.getLabels()[cidx])
+                    if value:
+                        sheet.write(row+1, cidx, elem.get(self.getLabels()[cidx]))
 
-        self.request.response.setHeader(
-            'Content-Type', 'application/vnd.ms-excel')
-        self.request.response.setHeader(
-            'Content-Disposition', 'attachment; filename="whitelist.xls"')
+            self.request.response.setHeader(
+                'Content-Type', 'application/vnd.ms-excel')
+            self.request.response.setHeader(
+                'Content-Disposition', 'attachment; filename="whitelist.xls"')
 
-        output = StringIO()
-        workbook.save(output)
-        workbook.save('output.xls')
+            output = StringIO()
+            workbook.save(output)
+            workbook.save('output.xls')
 
-        output.seek(0)
+            output.seek(0)
 
-        return output.read()
+            return output.read()
 
     def parseXLS(self, xls):
         data = []
@@ -139,9 +155,14 @@ class WhiteList(BrowserView):
         self.msg = None
 
         if 'form.submitted' in self.request.form:
+            datacubes = [b.getId for b in self.dataCubes()]
             file = self.request.form.get('file')
+            dataset = self.request.form.get('datasets')
+
             if not file:
                 self.error = 'Select a spreadsheet file to import'
+            elif dataset not in datacubes:
+                self.error = 'Wrong datacube selection'
             else:
                 ptool = queryUtility(IPropertiesTool)
                 stool = getattr(ptool, 'scoreboard_properties', None)
@@ -155,12 +176,16 @@ class WhiteList(BrowserView):
                 if not data:
                     self.error = 'Unable to parse file'
                 else:
-                    default = json.dumps(data[1:], indent=2)
+                    default = dict(dataset=data[1:])
+                    default = json.dumps(default, indent=2)
                     whitelist = stool.getProperty('WHITELIST', None)
 
                     if whitelist:
+                        settings = json.loads(whitelist)
+                        settings[dataset] = data[1:]
+                        settings = json.dumps(settings, indent=2)
                         try:
-                            stool.manage_changeProperties(WHITELIST=default)
+                            stool.manage_changeProperties(WHITELIST=settings)
                         except Exception:
                             self.error = 'Unable to import the spreadsheet'
                     else:
@@ -169,8 +194,12 @@ class WhiteList(BrowserView):
                     self.msg = 'XLS file imported successfuly!'
 
         if 'export' in self.request.form:
-            redirect_url = "%s/@@whitelistToXLS" % self.context.absolute_url()
-            self.request.response.redirect(redirect_url)
+            dataset = self.request.form.get('datasets')
+            if dataset:
+                redirect_url = "%s/@@whitelistToXLS?dataset=%s" % (self.context.absolute_url(), dataset)
+            # else:
+            #     redirect_url = "%s/@@whitelistToXLS" % self.context.absolute_url()
+                self.request.response.redirect(redirect_url)
 
         return self.index()
 
