@@ -5,6 +5,18 @@
   i18n_domain="scoreboard.visualization">
 
   <genericsetup:upgradeSteps
+      source="1.1"
+      destination="1.2"
+      profile="scoreboard.visualization:default">
+    
+    <genericsetup:upgradeStep
+      title="Migrate whitelist property to each datacube"
+      handler="scoreboard.visualization.upgrades.evolve12.migrate_whitelist"
+      />
+
+  </genericsetup:upgradeSteps>
+
+  <genericsetup:upgradeSteps
       source="1.0"
       destination="1.1"
       profile="scoreboard.visualization:default">
