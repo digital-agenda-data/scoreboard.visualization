@@ -1,7 +1,8 @@
 <html metal:use-macro="here/main_template/macros/master"
   i18n:domain="plone">
   <tal:js metal:fill-slot="javascript_head_slot">
-    <script type="text/javascript" tal:content="string: whitelist_string='${view/whitelistJSON}';"></script>
+    <script type="text/javascript" tal:content="string: whitelist=${view/globalWhitelistJSON};"></script>
+    <script type="text/javascript" tal:content='string: whitelist_labels=${view/getLabels};'></script>
     <script tal:attributes="src string:${portal_url}/++resource++scoreboard.visualization.manage-whitelist.js"></script>
   </tal:js>
   <div metal:fill-slot="main">
@@ -36,9 +37,6 @@
             </tr>
           </thead>
           <tbody>
-<!--             <tr tal:repeat="item whitelist">
-                <td tal:repeat="key labels" tal:content="python: item.get(key)"/>
-            </tr> -->
           </tbody>
         </table>
     </div>

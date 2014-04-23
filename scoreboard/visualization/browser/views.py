@@ -81,30 +81,35 @@ class WhiteList(BrowserView):
         else:
             return whitelist
 
+    def contextualWhitelist(self):
+        return self.whitelist.get(self.context.getId(), [])
+
     def getLabels(self):
         return ['indicator-group', 'indicator', 'breakdown', 'unit-measure']
 
-    def dataCubes(self):
+    def dataCubes(self, query={'portal_type': 'DataCube'}):
         ctool = getToolByName(self.context, 'portal_catalog')
-        return ctool(portal_type='DataCube')
+        return ctool(**query)
 
     def dataSets(self):
         brains = self.dataCubes()
         result = [(brain.getId, brain.Title) for brain in brains]
-        result.insert(0, ('', ''))
+        result.insert(0, ('', ' - Select Dataset - '))
 
         return result
 
     def whitelistJSON(self):
+        return json.dumps(self.contextualWhitelist())
+
+    def globalWhitelistJSON(self):
         return json.dumps(self.whitelist)
 
     def whitelistToXLS(self):
         workbook = xlwt.Workbook()
         sheet = workbook.add_sheet('Sheet1')
-        dataset = self.request.form.get('dataset')
-        settings = self.whitelist
-        if dataset and self.whitelist.get(dataset):
-            settings = self.whitelist.get(dataset)
+        dataset_id = self.context.getId()
+        settings = self.whitelist.get(dataset_id)
+        if settings:
 
             for idx, val in enumerate(self.getLabels()):
                 sheet.write(0, idx, val)
@@ -158,7 +163,6 @@ class WhiteList(BrowserView):
             datacubes = [b.getId for b in self.dataCubes()]
             file = self.request.form.get('file')
             dataset = self.request.form.get('datasets')
-
             if not file:
                 self.error = 'Select a spreadsheet file to import'
             elif dataset not in datacubes:
@@ -176,31 +180,31 @@ class WhiteList(BrowserView):
                 if not data:
                     self.error = 'Unable to parse file'
                 else:
-                    default = dict(dataset=data[1:])
-                    default = json.dumps(default, indent=2)
-                    whitelist = stool.getProperty('WHITELIST', None)
-
-                    if whitelist:
-                        settings = json.loads(whitelist)
-                        settings[dataset] = data[1:]
-                        settings = json.dumps(settings, indent=2)
+                    settings = self.whitelist
+                    settings[dataset] = data[1:]
+                    settings = json.dumps(settings, indent=2)
+                    if stool.getProperty('WHITELIST', None):
                         try:
                             stool.manage_changeProperties(WHITELIST=settings)
                         except Exception:
                             self.error = 'Unable to import the spreadsheet'
                     else:
-                        stool.manage_addProperty('WHITELIST', default, 'text')
+                        stool.manage_addProperty('WHITELIST', settings, 'text')
 
                     self.msg = 'XLS file imported successfuly!'
 
         if 'export' in self.request.form:
             dataset = self.request.form.get('datasets')
             if dataset:
-                redirect_url = "%s/@@whitelistToXLS?dataset=%s" % (self.context.absolute_url(), dataset)
-            # else:
-            #     redirect_url = "%s/@@whitelistToXLS" % self.context.absolute_url()
-                self.request.response.redirect(redirect_url)
-
+                query = {'portal_type': 'DataCube',
+                         'id': dataset}
+                results = self.dataCubes(query)
+                if results:
+                    url = results[0].getURL()
+                    redirect_url = "%s/@@whitelistToXLS?dataset=%s" % (
+                        url, dataset)
+                    self.request.response.redirect(redirect_url)
+            self.error = "Unable to export whitelist for currently selected dataset"
         return self.index()
 
 

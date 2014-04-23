@@ -18,9 +18,8 @@ scoreboard.visualization.whitelist_manager = {
     initialize: function(){
         var self = scoreboard.visualization.whitelist_manager;
         self.dataset = $('#datasets option:selected').val();
-        self.whitelist = $.parseJSON(whitelist_string);
+        self.whitelist = whitelist;
         self.fragment = document.createDocumentFragment();
-
         var th_elems = $(self.whitelist_table).find('th');
         $.each(th_elems, function(idx, elem) {
             self.labels.push($(elem).text());
@@ -58,7 +57,12 @@ scoreboard.visualization.whitelist_manager = {
 
     renderTable: function(t_body) {
         var self = scoreboard.visualization.whitelist_manager;
-        t_body.html(self.fragment);
+        if (self.fragment.childElementCount > 0) {
+            t_body.html(self.fragment);
+            $(self.whitelist_table).show();
+        } else {
+            $(self.whitelist_table).hide();
+        }
     }
 }
 

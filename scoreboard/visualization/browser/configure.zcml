@@ -65,14 +65,6 @@
     class=".views.EuropeanUnion"
     />
 
-<!--   <browser:page
-    name="whitelist.json"
-    for="zope.interface.Interface"
-    permission="zope2.View"
-    class=".views.WhiteList"
-    attribute="whitelistJSON"
-    /> -->
-
   <browser:page
     name="whitelist.json"
     for="edw.datacube.interfaces.IDataCube"
@@ -83,7 +75,7 @@
 
   <browser:page
     name="whitelistToXLS"
-    for="zope.interface.Interface"
+    for="edw.datacube.interfaces.IDataCube"
     permission="zope2.View"
     class=".views.WhiteList"
     attribute="whitelistToXLS"
