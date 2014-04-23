@@ -1,6 +1,6 @@
 """
 """
-import json
+import simplejson as json
 import urllib
 import xlrd
 import xlwt
@@ -18,6 +18,11 @@ from plone.registry.interfaces import IRegistry
 from edw.datacube.interfaces import IDataCubeSettings
 
 from edw.datacube.interfaces import defaults
+try:
+    from collections import OrderedDict
+except ImportError:
+    # python 2.6 or earlier, use backport
+    from ordereddict import OrderedDict
 
 
 class TestsView(BrowserView):
@@ -75,7 +80,7 @@ class WhiteList(BrowserView):
             return WHITELIST
 
         try:
-            whitelist = json.loads(whitelist)
+            whitelist = json.loads(whitelist, object_pairs_hook=OrderedDict)
         except Exception:
             return WHITELIST
         else:
@@ -83,9 +88,6 @@ class WhiteList(BrowserView):
 
     def contextualWhitelist(self):
         return self.whitelist.get(self.context.getId(), [])
-
-    def getLabels(self):
-        return ['indicator-group', 'indicator', 'breakdown', 'unit-measure']
 
     def dataCubes(self, query={'portal_type': 'DataCube'}):
         ctool = getToolByName(self.context, 'portal_catalog')
@@ -109,16 +111,21 @@ class WhiteList(BrowserView):
         sheet = workbook.add_sheet('Sheet1')
         dataset_id = self.context.getId()
         settings = self.whitelist.get(dataset_id)
-        if settings:
 
-            for idx, val in enumerate(self.getLabels()):
-                sheet.write(0, idx, val)
+        if settings:
+            headers = settings[0].keys()
 
             for row, elem in enumerate(settings):
                 for cidx, val in enumerate(elem):
-                    value = elem.get(self.getLabels()[cidx])
+                    if val not in headers:
+                        idx = elem.keys().index(val)
+                        headers.insert(idx, val)
+                    value = elem.get(val)
                     if value:
-                        sheet.write(row+1, cidx, elem.get(self.getLabels()[cidx]))
+                        sheet.write(row+1, cidx, elem.get(val))
+
+            for idx, val in enumerate(headers):
+                sheet.write(0, idx, val)
 
             self.request.response.setHeader(
                 'Content-Type', 'application/vnd.ms-excel')
@@ -143,11 +150,13 @@ class WhiteList(BrowserView):
             return None
 
         sheet1 = workbook.sheet_by_index(0)
+        headers = [sheet1.cell_value(0, i) for i in xrange(sheet1.ncols)]
+
         for row in xrange(sheet1.nrows):
-            elem = {}
-            for idx, val in enumerate(self.getLabels()):
+            elem = OrderedDict()
+            for idx, val in enumerate(headers):
                 if sheet1.row(row)[idx].ctype != 0:
-                    value = sheet1.cell(row, idx).value.strip()
+                    value = str(sheet1.cell(row, idx).value).strip()
                     if value:
                         elem[val] = value
             if elem:

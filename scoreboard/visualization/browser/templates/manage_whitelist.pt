@@ -2,7 +2,6 @@
   i18n:domain="plone">
   <tal:js metal:fill-slot="javascript_head_slot">
     <script type="text/javascript" tal:content="string: whitelist=${view/globalWhitelistJSON};"></script>
-    <script type="text/javascript" tal:content='string: whitelist_labels=${view/getLabels};'></script>
     <script tal:attributes="src string:${portal_url}/++resource++scoreboard.visualization.manage-whitelist.js"></script>
   </tal:js>
   <div metal:fill-slot="main">
@@ -27,14 +26,9 @@
            value="Export XLS" />
       </form>
       </div>
-    <div class="whitelist"
-     tal:define="whitelist view/whitelist;
-                ">
-        <table tal:define="labels view/getLabels" id="whitelist-table">
+    <div class="whitelist">
+        <table id="whitelist-table">
           <thead>
-            <tr>
-                <th tal:repeat="key labels" tal:content="key"></th>
-            </tr>
           </thead>
           <tbody>
           </tbody>
