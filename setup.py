@@ -26,7 +26,8 @@ setup(name='scoreboard.visualization',
         'simplejson',
         'slimit',
         'xlrd',
-        'xlwt'
+        'xlwt',
+        'ordereddict'
       ],
       packages=find_packages(exclude=['ez_setup']),
       namespace_packages=['scoreboard'],

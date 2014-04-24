@@ -1,12 +1,23 @@
 <html metal:use-macro="here/main_template/macros/master"
   i18n:domain="plone">
+  <tal:js metal:fill-slot="javascript_head_slot">
+    <script type="text/javascript" tal:content="string: whitelist=${view/globalWhitelistJSON};"></script>
+    <script tal:attributes="src string:${portal_url}/++resource++scoreboard.visualization.manage-whitelist.js"></script>
+  </tal:js>
   <div metal:fill-slot="main">
   <h1>Manage whitelist</h1>
+    <div class="whitelist-content"
+     tal:define="datasets view/dataSets">
       <div class="whitelist-manage bootstrap" tal:define="msg view/msg">
       <span class="info-msg" tal:content="msg" />
       <form action="." enctype="multipart/form-data" method="post"
        tal:attributes="action request/getURL;"
        tal:define="error view/error">
+          <select id="datasets" name="datasets">
+            <option tal:repeat="dataset datasets"
+              tal:attributes="value python: dataset[0]"
+              tal:content="python: dataset[1]" />
+          </select>
           <label for="file" class="error" tal:content="error" /><br />
           <input type="file" name="file">
           <input type="submit" class="btn btn-mini btn-primary"
@@ -14,16 +25,15 @@
           <input type="submit" class="btn btn-mini" name="export"
            value="Export XLS" />
       </form>
-    </div>
-    <div class="whitelist" tal:define="whitelist view/whitelist">
-        <table tal:define="labels view/getLabels">
-            <tr>
-                <th tal:repeat="key labels" tal:content="key"></th>
-            </tr>
-            <tr tal:repeat="item whitelist">
-                <td tal:repeat="key labels" tal:content="python: item.get(key)"/>
-            </tr>
+      </div>
+    <div class="whitelist">
+        <table id="whitelist-table">
+          <thead>
+          </thead>
+          <tbody>
+          </tbody>
         </table>
     </div>
+  </div>
 </div>
 </html>
