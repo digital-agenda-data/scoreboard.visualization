@@ -15,6 +15,7 @@ scoreboard.visualization.whitelist_manager = {
     fragment: null,
     labels: [],
     table: '',
+    no_rows: 0,
 
     initialize: function(){
         var self = scoreboard.visualization.whitelist_manager;
@@ -25,6 +26,7 @@ scoreboard.visualization.whitelist_manager = {
 
         jQuery('#datasets').on('change', function() {
             self.labels = [];
+            self.no_rows = 0;
             var settings = self.whitelist[this.value] || [];
             self.render(settings);
         });
@@ -69,12 +71,13 @@ scoreboard.visualization.whitelist_manager = {
                 cell.appendTo(brow);
             });
             self.fragment.appendChild(brow[0]);
+            self.no_rows += 1;
         }
     },
 
     renderTable: function() {
         var self = scoreboard.visualization.whitelist_manager;
-        if (self.fragment.childElementCount > 0) {
+        if (self.no_rows > 0) {
             jQuery(self.whitelist_table).find('tbody').html(self.fragment);
             jQuery(self.whitelist_table).show();
         } else {
