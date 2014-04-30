@@ -1,4 +1,4 @@
-""" Upgrade scripts to version 1.2
+""" Upgrade scripts to version 1.3
 """
 
 import logging
@@ -6,6 +6,7 @@ import json
 from eea.app.visualization.zopera import IPropertiesTool
 from Products.CMFCore.utils import getToolByName
 from zope.component import queryUtility
+from DateTime import DateTime
 try:
     from collections import OrderedDict
 except ImportError:
@@ -29,8 +30,11 @@ def migrate_whitelist(context):
         whitelist = stool.getProperty('WHITELIST', None)
         if whitelist:
             whitelist = json.loads(whitelist)
-            for dataset_id in dataset_ids:
-                c_whitelist[dataset_id] = whitelist
+            for key, value in whitelist.iteritems():
+                setting = OrderedDict()
+                setting['whitelist'] = value
+                setting['timestamp'] = DateTime().ISO()
+                c_whitelist[key] = setting
             if c_whitelist:
                 c_whitelist = json.dumps(c_whitelist, indent=2)
                 stool.manage_changeProperties(WHITELIST=c_whitelist)
