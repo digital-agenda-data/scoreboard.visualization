@@ -7,12 +7,15 @@ import xlwt
 from StringIO import StringIO
 from collective.recaptcha.settings import getRecaptchaSettings
 
+from zope.event import notify
 from zope.component import queryUtility
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser import BrowserView
 from eea.app.visualization.zopera import IPropertiesTool
+from eea.cache.event import InvalidateCacheEvent
 from scoreboard.visualization.jsapp import jsapp_html
 from scoreboard.visualization.config import EU, WHITELIST
+from DateTime import DateTime
 
 from plone.registry.interfaces import IRegistry
 from edw.datacube.interfaces import IDataCubeSettings
@@ -87,7 +90,12 @@ class WhiteList(BrowserView):
             return whitelist
 
     def contextualWhitelist(self):
-        return self.whitelist.get(self.context.getId(), [])
+        settings = self.whitelist.get(self.context.getId(), {})
+        return settings.get('whitelist', [])
+
+    def contextualWlTimestamp(self):
+        settings = self.whitelist.get(self.context.getId(), {})
+        return settings.get('timestamp', DateTime().ISO())
 
     def dataCubes(self, query={'portal_type': 'DataCube'}):
         ctool = getToolByName(self.context, 'portal_catalog')
@@ -110,7 +118,7 @@ class WhiteList(BrowserView):
         workbook = xlwt.Workbook()
         sheet = workbook.add_sheet('Sheet1')
         dataset_id = self.context.getId()
-        settings = self.whitelist.get(dataset_id)
+        settings = self.contextualWhitelist()
 
         if settings:
             headers = settings[0].keys()
@@ -190,8 +198,11 @@ class WhiteList(BrowserView):
                     self.error = 'Unable to parse file'
                 else:
                     settings = self.whitelist
-                    settings[dataset] = data[1:]
+                    settings[dataset] = OrderedDict()
+                    settings[dataset]['whitelist'] = data[1:]
+                    settings[dataset]['timestamp'] = DateTime().ISO()
                     settings = json.dumps(settings, indent=2)
+
                     if stool.getProperty('WHITELIST', None):
                         try:
                             stool.manage_changeProperties(WHITELIST=settings)

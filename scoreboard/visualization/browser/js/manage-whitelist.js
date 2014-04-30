@@ -9,7 +9,6 @@ if(scoreboard.visualization === undefined){
 }
 
 scoreboard.visualization.whitelist_manager = {
-    dataset: null,
     whitelist: null,
     whitelist_table: '#whitelist-table',
     fragment: null,
@@ -19,19 +18,26 @@ scoreboard.visualization.whitelist_manager = {
 
     initialize: function(){
         var self = scoreboard.visualization.whitelist_manager;
-        self.dataset = jQuery('#datasets option:selected').val();
+        var dataset = jQuery('#datasets option:selected').val();
         self.whitelist = whitelist;
         self.fragment = document.createDocumentFragment();
-        self.render(self.whitelist[self.dataset] || []);
+        self.render(self.getWhitelistSettings(dataset));
 
         jQuery('#datasets').on('change', function() {
             self.labels = [];
             self.no_rows = 0;
-            var settings = self.whitelist[this.value] || [];
-            self.render(settings);
+            self.render(self.getWhitelistSettings(this.value));
         });
     },
 
+    getWhitelistSettings: function(key) {
+        var self = scoreboard.visualization.whitelist_manager;
+        var dataset_settings = self.whitelist[key];
+        if (dataset_settings) {
+            return dataset_settings.whitelist;
+        }
+        return [];
+    },
     render: function(dataset_settings) {
         var self = scoreboard.visualization.whitelist_manager;
         self.constructTable(dataset_settings);
