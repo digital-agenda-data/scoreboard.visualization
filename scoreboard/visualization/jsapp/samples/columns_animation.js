@@ -68,7 +68,7 @@ App.scenario6_filters_schema = {
         "indicator-group": "indicator-group",
         "indicator": "indicator"
       },
-      "default_value": "#random",
+      "default_value": ["1M_websites", "HH_total", "IND_TOTAL", "RURAL_POP", "TOTAL", "TOTAL_FBB", "TOTAL_MBB", "TOTAL_MOB", "TOTAL_POP","TOTAL_POPHH", "TOTAL_TEL", "ent_all_xfin", "orgclass_total", "tot_ict_products", "total_offers8plus"],
       "dimension": "breakdown",
       "label": "Breakdown",
       "name": "breakdown",
