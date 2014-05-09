@@ -169,6 +169,11 @@ App.chart_library['columns'] = function(view, options) {
             formatter: options['tooltip_formatter'],
             useHTML: true
         },
+        plotOptions: {
+            column: {
+                stacking: (options['stacked']?'normal':null)
+            }
+        },
         series: init_series
     };
 

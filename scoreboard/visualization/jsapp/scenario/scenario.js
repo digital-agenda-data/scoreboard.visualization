@@ -394,7 +394,6 @@ App.ScenarioChartView = Backbone.View.extend({
         _(this.get_meta_data(chart_data)).forEach(function(req) {
             requests.push(req);
         });
-
         this.requests_in_flight = requests;
 
         var that = this;
@@ -445,6 +444,14 @@ App.ScenarioChartView = Backbone.View.extend({
                                                        chart_data.meta_data)];
                 }, this)
             );
+            
+            if ( this.model.get('indicator') && this.model.get('unit-measure') ) {
+                // enable stacking of breakdowns
+                if (this.model.get('unit-measure') == 'pc_' + this.model.get('indicator')) {
+                    chart_data['stacked'] = true;
+                }
+            }
+
             this.data = chart_data;
             this.render();
         }, this)).fail(function(){
