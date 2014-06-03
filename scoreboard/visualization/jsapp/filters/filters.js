@@ -155,8 +155,8 @@ App.SelectFilter = Backbone.View.extend({
                 sortBy = 'inner_order';
             }
             this.dimension_options = _(data['options']).sortBy(function(item){
-                if (item[sortBy] && !isNaN(parseInt(item[sortBy])) && isFinite(item[sortBy])) {
-                    return parseInt(item[sortBy]);
+                if (item[sortBy] && !isNaN(parseInt(item[sortBy], 10)) && isFinite(item[sortBy])) {
+                    return parseInt(item[sortBy], 10);
                 }
                 return item[sortBy];
             });
@@ -177,6 +177,21 @@ App.SelectFilter = Backbone.View.extend({
         }, this));
     },
 
+    grab_dataset_url: function(dataset_name) {
+        var selectable_dataset = true;
+        if (!selectable_dataset){
+            return this.cube_url;
+        } else {
+          var filters = App.visualization.filters_box.filters;
+          var selected_dataset_string = App.visualization.filters_box.model.get(dataset_name);
+          var selected_dataset = _(filters).findWhere({name:dataset_name});
+          var dataset_definition = _(selected_dataset.dimension_options).findWhere({
+            notation:selected_dataset_string
+          });
+          return dataset_definition.uri;
+        }
+    },
+
     fetch_options: function(args) {
         var view_name = '';
         if(this.multidim == 3) {
@@ -192,7 +207,7 @@ App.SelectFilter = Backbone.View.extend({
         else {
             view_name = 'dimension_options';
         }
-        var relevant_args = {}
+        var relevant_args = {};
         _(args).each(function(value, key){
             if (value!='any'){
                 var pair = _.object([[key, value]]);
@@ -200,7 +215,19 @@ App.SelectFilter = Backbone.View.extend({
             }
         });
         relevant_args['rev'] = this.data_revision;
-        return $.getJSON(this.cube_url + '/' + view_name, relevant_args);
+
+        delete relevant_args["__dataset"];
+
+        var dataset_url;
+        try{
+            dataset_url = this.grab_dataset_url(this.name.slice(0,2) + "__dataset");
+        }
+        catch(err){
+            dataset_url = this.cube_url;
+        }
+
+        console.log(this.name, dataset_url);
+        return $.getJSON(dataset_url + '/' + view_name, relevant_args);
     },
 
     render: function() {
@@ -212,10 +239,10 @@ App.SelectFilter = Backbone.View.extend({
         var template_data = {
             'dimension_options': options,
             'filter_label': this.label
-        }
+        };
         if (this.display_in_groups){
             var grouped_data = _(this.dimension_options).groupBy('group_notation');
-            var groups = _.zip(_(grouped_data).keys(), _(grouped_data).values())
+            var groups = _.zip(_(grouped_data).keys(), _(grouped_data).values());
             var grouper = _.chain(App.visualization.filters_box.filters).
               findWhere({name: App.groupers[this.name]}).value();
             template_data['groups'] = _.chain(groups).map(function(item){
@@ -225,7 +252,7 @@ App.SelectFilter = Backbone.View.extend({
                 } else if ( grouper.options_labels[item[0]] ) {
                     label = grouper.options_labels[item[0]].short_label ||
                             grouper.options_labels[item[0]].label;
-                };
+                }
                 options = _(item[1]).map(function(item) {
                     var selected = (item['notation'] == selected_value);
                     return _({'selected': selected}).extend(item);
@@ -249,6 +276,22 @@ App.SelectFilter = Backbone.View.extend({
 
 });
 
+App.DatasetSelectFilter = App.SelectFilter.extend({
+
+  initialize: function(){
+      App.SelectFilter.prototype.initialize.apply(this, arguments);
+      this.default_value = this.cube_url;
+  },
+
+  fetch_options: function(args){
+      var split = this.cube_url.split("/");
+      var url = split.splice(0, split.length - 2).join("/");
+      return $.getJSON(url + "/datacubesForSelect");
+  }
+
+
+});
+
 
 App.MultipleSelectFilter = App.SelectFilter.extend({
 
@@ -266,7 +309,7 @@ App.MultipleSelectFilter = App.SelectFilter.extend({
             this.model.set(this.name, current_value);
         }
         var range = _(this.dimension_options).pluck('notation');
-        if(_.intersection(range, current_value).length == 0){
+        if(_.intersection(range, current_value).length === 0){
             if(this.default_all){
                 this.model.set(this.name, range);
             }
@@ -411,6 +454,7 @@ App.FiltersBox = Backbone.View.extend({
 
     filter_types: {
         'select': App.SelectFilter,
+        'dataset_select': App.DatasetSelectFilter,
         'multiple_select': App.MultipleSelectFilter,
         'all-values': App.AllValuesFilter
     },
@@ -422,9 +466,9 @@ App.FiltersBox = Backbone.View.extend({
         this.data_revision = options['data_revision'] || '';
         var schema = options['schema'];
         _(options['filters_schema']).forEach(function(item) {
-            var cls = this.filter_types[item['type']];
+            var Cls = this.filter_types[item['type']];
             var default_all = (item['name'] == schema['category_facet']) && !item['default_value'];
-            var filter = new cls({
+            var filter = new Cls({
                 model: this.model,
                 loadstate: this.loadstate,
                 cube_url: this.cube_url,
@@ -444,6 +488,7 @@ App.FiltersBox = Backbone.View.extend({
                 include_wildcard: item['include_wildcard'],
                 constraints: item['constraints']
             });
+
             this.filters.push(filter);
             if(item.position == 'upper-right' || item.type == 'multiple_select'){
                 $(filter.el).appendTo($('.upper-right', this.$el));

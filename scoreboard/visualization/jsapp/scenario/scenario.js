@@ -101,6 +101,7 @@ App.ScenarioChartView = Backbone.View.extend({
         });
         App.trim_dimension_group_args(relevant_args, this.dimension_group_map);
         relevant_args = _({rev: this.data_revision}).extend(relevant_args);
+        delete relevant_args["__dataset"];
         return $.getJSON(url, relevant_args);
     },
 
@@ -311,20 +312,20 @@ App.ScenarioChartView = Backbone.View.extend({
                 multiseries_values = ['x', 'y'];
                 //this.client_filter = null;
 
-                var xpairs = _.filter(_.pairs(args), function(pair) {return pair[0].substr(0,2) != 'y-'}); 
-                var ypairs = _.filter(_.pairs(args), function(pair) {return pair[0].substr(0,2) != 'x-'}); 
+                var xpairs = _.filter(_.pairs(args), function(pair) {return pair[0].substr(0,2) != 'y-'});
+                var ypairs = _.filter(_.pairs(args), function(pair) {return pair[0].substr(0,2) != 'x-'});
 
-                _(xpairs).map(function(pair) { 
-                    if ( pair[0].substr(0,2) == 'x-' ) { 
-                        pair[0] = pair[0].substr(2) 
-                    }; 
+                _(xpairs).map(function(pair) {
+                    if ( pair[0].substr(0,2) == 'x-' ) {
+                        pair[0] = pair[0].substr(2)
+                    };
                     return;
                 });
 
-                _(ypairs).map(function(pair) { 
-                    if ( pair[0].substr(0,2) == 'y-' ) { 
-                        pair[0] = pair[0].substr(2) 
-                    }; 
+                _(ypairs).map(function(pair) {
+                    if ( pair[0].substr(0,2) == 'y-' ) {
+                        pair[0] = pair[0].substr(2)
+                    };
                     return;
                 });
 
@@ -333,7 +334,7 @@ App.ScenarioChartView = Backbone.View.extend({
 
                 requests.push(this.request_datapoints(datapoints_url, xargs));
                 requests.push(this.request_datapoints(datapoints_url, yargs));
-            } else { 
+            } else {
                 var groupby_dimension = this.dimensions_mapping[
                     this.multiple_series];
                 multiseries_values = this.model.get(this.multiple_series);
@@ -444,7 +445,7 @@ App.ScenarioChartView = Backbone.View.extend({
                                                        chart_data.meta_data)];
                 }, this)
             );
-            
+
             if ( this.model.get('indicator') && this.model.get('unit-measure') ) {
                 // enable stacking of breakdowns
                 if (this.model.get('unit-measure') == 'pc_' + this.model.get('indicator')) {
@@ -712,7 +713,7 @@ var BaseDialogView = Backbone.View.extend({
     className: '',
     form_action: '',
     template: App.get_template('scenario/modal_comment.html'),
-    
+
     events: {
         'click #btn-submit': 'submit',
         'click #btn-cancel': 'cancel'
@@ -745,7 +746,7 @@ var BaseDialogView = Backbone.View.extend({
         if (self.validate() === false) {
             return false
         }
-        
+
         var text = form.find('#text').attr('value');
         var chart_title = $('#the-chart').find(".highcharts-title").text()
         var origin = App.jQuery('<a>', {
@@ -757,7 +758,7 @@ var BaseDialogView = Backbone.View.extend({
 
         var action = form.attr('action');
         var formData = form.serializeArray();
-        
+
         for (var i=0; i<formData.length; i++) {
             if (formData[i].name === 'text') {
                 formData[i].value = text;
@@ -798,7 +799,7 @@ var BaseDialogView = Backbone.View.extend({
         } else {
             msg_text = 'Your comment has been submitted for approval. In the meantime you can view other comments ';
         }
-        
+
         var msg = App.jQuery('<span>', {
             'text': msg_text
         });
@@ -822,7 +823,7 @@ var BaseDialogView = Backbone.View.extend({
         this.$el.html(this.template()).dialog({width: 600,
                                                height:450,
                                                title: 'Add comment',
-                                               close: function(event, ui) 
+                                               close: function(event, ui)
                                                     {
                                                         self.cancel();
                                                     }
