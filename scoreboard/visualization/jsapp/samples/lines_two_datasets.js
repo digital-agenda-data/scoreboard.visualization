@@ -2,6 +2,12 @@
   "annotations": {
     "filters": [
     {
+      "name": "x-__dataset"
+    },
+    {
+      "name": "y-__dataset"
+    },
+    {
       "name": "x-indicator"
     },
     {
@@ -187,7 +193,9 @@
       "y-indicator": "y-indicator",
       "y-unit-measure": "y-unit-measure",
       "x-breakdown": "x-breakdown",
-      "y-breakdown": "y-breakdown"
+      "y-breakdown": "y-breakdown",
+      "x-__dataset": "x-__dataset",
+      "y-__dataset": "y-__dataset"
     },
     "dimension": "ref-area",
     "default_value": "EU27",
@@ -206,6 +214,8 @@
       "y-indicator": "y-indicator",
       "y-unit-measure": "y-unit-measure",
       "y-breakdown": "y-breakdown",
+      "x-__dataset": "x-__dataset",
+      "y-__dataset": "y-__dataset",
       "ref-area": "ref-area"
     },
     "dimension": "time-period",

@@ -332,8 +332,8 @@ App.ScenarioChartView = Backbone.View.extend({
                 var xargs = _.object(xpairs);
                 var yargs = _.object(ypairs);
 
-                requests.push(this.request_datapoints(datapoints_url, xargs));
-                requests.push(this.request_datapoints(datapoints_url, yargs));
+                requests.push(this.request_datapoints(xargs.__dataset + "/datapoints", xargs));
+                requests.push(this.request_datapoints(yargs.__dataset + "/datapoints", yargs));
             } else {
                 var groupby_dimension = this.dimensions_mapping[
                     this.multiple_series];

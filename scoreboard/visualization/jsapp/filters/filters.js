@@ -219,14 +219,20 @@ App.SelectFilter = Backbone.View.extend({
         delete relevant_args["__dataset"];
 
         var dataset_url;
+        var prefix = this.name.slice(0,2);
+        var dataset_name;
+        if (prefix === "x-" || prefix === "y-"){
+          dataset_name = prefix + "__dataset";
+        } else {
+          dataset_name = "x-__dataset";
+        }
         try{
-            dataset_url = this.grab_dataset_url(this.name.slice(0,2) + "__dataset");
+            dataset_url = this.grab_dataset_url(dataset_name);
         }
         catch(err){
             dataset_url = this.cube_url;
         }
 
-        console.log(this.name, dataset_url);
         return $.getJSON(dataset_url + '/' + view_name, relevant_args);
     },
 
