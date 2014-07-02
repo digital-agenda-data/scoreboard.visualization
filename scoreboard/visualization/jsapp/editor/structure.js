@@ -53,7 +53,7 @@ App.StructureEditorField = Backbone.View.extend({
         var params = {
             placeholder: "Click to select values",
             allowClear: true
-        }
+        };
     },
 
     on_change_type: function(evt) {
@@ -161,15 +161,13 @@ App.StructureEditor = Backbone.View.extend({
             // is number for multilines chart
             this.model.set('multiple_series', null);
         }
-        var category_facet = (free_dimensions.length == 1
-                             ? free_dimensions[0]
-                             : null);
+        var category_facet = (free_dimensions.length == 1 ? free_dimensions[0] : null);
         this.facet_roles = {
             series_options: series_options,
             err_too_few: (free_dimensions.length < 1),
             err_too_many: (free_dimensions.length > 1),
             category_facet: category_facet
-        }
+        };
         this.categoryby.update();
         this.multipleseries.update();
 
@@ -216,7 +214,7 @@ App.StructureEditor = Backbone.View.extend({
     apply_changes: function() {
         this.compute_facet_roles();
         this.save_value();
-        this.render()
+        this.render();
     }
 
 });
