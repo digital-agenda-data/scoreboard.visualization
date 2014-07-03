@@ -99,19 +99,21 @@ App.StructureEditor = Backbone.View.extend({
 
     initialize: function(options) {
         this.categoryby = new App.CategoriesView({
-            model: new Backbone.Model({
-            }),
+            model: new Backbone.Model({}),
             parent_view: this
         });
         this.multipleseries = new App.MultipleSeriesView({
-            model: new Backbone.Model(),
+            model: new Backbone.Model({}),
             parent_view: this
         });
         this.multipleseries.model.on('change', this.update_model, this);
         this.categoryby.model.on('change', this.update_model, this);
 
-        if(! this.model.has('multiple_series')) {
+        if(!this.model.has('multiple_series')) {
             this.model.set('multiple_series', null);
+        }
+        if(!this.model.has('category_facet')) {
+            this.model.set('category_facet', null);
         }
         this.facet_views = _.object(this.model.facets.map(function(facet_model) {
             var facet_view = new App.StructureEditorField({
@@ -128,7 +130,6 @@ App.StructureEditor = Backbone.View.extend({
     compute_facet_roles: function() {
         var series_options = [];
         var no_multiple_series = true;
-        var free_dimensions = [];
         var is_multilines = typeof this.model.get('multiple_series') == 'number';
         this.model.facets.forEach(function(facet_model) {
             var facet = facet_model.toJSON();
@@ -151,9 +152,6 @@ App.StructureEditor = Backbone.View.extend({
                     option['selected'] = true;
                     no_multiple_series = false;
                 }
-                else {
-                    free_dimensions.push(option);
-                }
                 series_options.push(option);
             }
         }, this);
@@ -161,13 +159,11 @@ App.StructureEditor = Backbone.View.extend({
             // is number for multilines chart
             this.model.set('multiple_series', null);
         }
-        var category_facet = (free_dimensions.length == 1 ? free_dimensions[0] : null);
+
         this.facet_roles = {
-            series_options: series_options,
-            err_too_few: (free_dimensions.length < 1),
-            err_too_many: (free_dimensions.length > 1),
-            category_facet: category_facet
+            series_options: series_options
         };
+
         this.categoryby.update();
         this.multipleseries.update();
 
@@ -260,44 +256,49 @@ App.CategoriesView = Backbone.View.extend({
     template: App.get_template('editor/categories.html'),
 
     events: {
+        'change [name="categories"]': 'on_change_categories'
     },
 
     initialize: function(options){
         this.parent_view = options.parent_view;
+        this.model.on('change', this.render, this);
         this.update();
     },
 
     update: function(){
         var category_config = {};
         if(this.parent_view.facet_roles) {
-            if (this.parent_view.facet_roles.category_facet){
-                category_config['category_facet'] = this.parent_view.facet_roles.category_facet['name'];
-            }
+            var series_options = this.parent_view.facet_roles.series_options;
+            var category_facet = this.parent_view.model.get("category_facet");
+
             _(category_config).extend({
-                err_too_few: this.parent_view.facet_roles.err_too_few,
-                err_too_many: this.parent_view.facet_roles.err_too_many
-            });
-        }
-        else{
-            _(category_config).extend({
-                category_facet: null,
-                err_too_few: null,
-                err_too_many: null
+                category_facet: category_facet,
+                series_options: _(series_options)
+                  .map(_.clone)
+                  .filter(function(item){
+                    item.selected = false;
+                    if(item.name === category_facet){
+                      item.selected = true;
+                    }
+                    return item;
+                  }, this)
             });
         }
         this.model.set(category_config);
         this.render();
     },
 
+    on_change_categories: function() {
+        var select = this.$el.find('[name="categories"]');
+        this.model.set('category_facet', select.val() || null);
+    },
+
     get_values: function(){
-        return _(this.model.toJSON()).pick(
-            'highlights',
-            'category_facet');
+        return _(this.model.toJSON()).pick('category_facet');
     },
 
     render: function(){
-        var context = _({
-        }).extend(this.model.toJSON(), this.parent_view.facet_roles);
+        var context = _({}).extend(this.model.toJSON());
         this.$el.html(this.template(context));
     }
 });
