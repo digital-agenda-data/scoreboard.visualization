@@ -517,6 +517,7 @@ App.EmbeddedFiltersBox = App.FiltersBox.extend({
 
     filter_types: {
         'select': App.EmbeddedSelectFilter,
+        'dataset_select': App.DatasetSelectFilter,
         'multiple_select': App.EmbeddedMultipleSelectFilter,
         'all-values': App.AllValuesFilter
     }
