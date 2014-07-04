@@ -176,6 +176,9 @@ App.SelectFilter = Backbone.View.extend({
             this.$el.removeClass('loading-small');
             this.render();
             this.loadstate.set(this.name, false);
+            if ( _.isEmpty(this.dimension_options) ) {
+                App.visualization.chart_view.remove_loading_add_msg('No data.');
+            }
         }, this));
     },
 
