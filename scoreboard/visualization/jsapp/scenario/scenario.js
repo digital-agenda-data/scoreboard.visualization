@@ -332,8 +332,14 @@ App.ScenarioChartView = Backbone.View.extend({
                 var xargs = _.object(xpairs);
                 var yargs = _.object(ypairs);
 
-                requests.push(this.request_datapoints(xargs.__dataset + "/datapoints", xargs));
-                requests.push(this.request_datapoints(yargs.__dataset + "/datapoints", yargs));
+                if ( xargs.__dataset ) {
+                    requests.push(this.request_datapoints(xargs.__dataset + "/datapoints", xargs));
+                    requests.push(this.request_datapoints(yargs.__dataset + "/datapoints", yargs));
+                } else {
+                    // compatibility with charts that do not user dataset selector
+                    requests.push(this.request_datapoints(datapoints_url, xargs));
+                    requests.push(this.request_datapoints(datapoints_url, yargs));
+                }
             } else {
                 var groupby_dimension = this.dimensions_mapping[
                     this.multiple_series];
@@ -959,6 +965,8 @@ App.ShareOptionsView = Backbone.View.extend({
 App.main = function() {
     if(App.chart_config.chart_entry_point) {
         // obsolete bootstrapping method
+        // still used for country profile
+        // (see samples country_profile_bar.js, country_profile_table.js)
         eval(App.chart_config.chart_entry_point)();
     }
     else {
