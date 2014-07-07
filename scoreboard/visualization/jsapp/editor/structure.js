@@ -273,7 +273,7 @@ App.CategoriesView = Backbone.View.extend({
 
             _(category_config).extend({
                 category_facet: category_facet,
-                series_options: _(series_options)
+                series_options: _.chain(series_options)
                   .map(_.clone)
                   .filter(function(item){
                     item.selected = false;
@@ -281,7 +281,8 @@ App.CategoriesView = Backbone.View.extend({
                       item.selected = true;
                     }
                     return item;
-                  }, this)
+                  })
+                  .value()
             });
         }
         this.model.set(category_config);
