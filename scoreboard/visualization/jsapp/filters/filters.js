@@ -286,6 +286,7 @@ App.DatasetSelectFilter = App.SelectFilter.extend({
 
   initialize: function(){
       App.SelectFilter.prototype.initialize.apply(this, arguments);
+      this.default_value = this.model.get(this.name);
   },
 
   fetch_options: function(args){
