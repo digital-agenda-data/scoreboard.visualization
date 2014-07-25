@@ -1,11 +1,4 @@
-/*global App, Backbone, _ */
-/*jshint sub:true */
-
-(function($) {
-"use strict";
-
-
-App.scenario7_filters_schema = {
+{
     "annotations": {
         "filters": [
         {
@@ -197,13 +190,4 @@ App.scenario7_filters_schema = {
         "note": true,
         "unit-measure": true
     }
-};
-
-
-App.scenario7_initialize = function() {
-    App.create_visualization($('#scenario-box')[0],
-                             App.scenario7_filters_schema);
-};
-
-
-})(App.jQuery);
+}

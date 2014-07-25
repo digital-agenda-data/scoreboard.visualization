@@ -62,11 +62,10 @@
     "sortBy": "order_in_codelist",
     "sortOrder": "asc",
     "default_value": "#random",
-    "type": "select"
+    "type": "all-values"
   },
   {
     "constraints": {
-      "indicator-group": "x-indicator-group"
     },
     "dimension": "indicator",
     "label": "Indicator",
@@ -80,7 +79,6 @@
     "name": "x-breakdown-group",
     "label": "(X) breakdown group",
     "constraints": {
-      "indicator-group": "x-indicator-group",
       "indicator": "x-indicator"
     },
     "dimension": "breakdown-group",
@@ -90,7 +88,6 @@
   },
   {
     "constraints": {
-      "indicator-group": "x-indicator-group",
       "indicator": "x-indicator"
     },
     "dimension": "breakdown",
@@ -103,7 +100,6 @@
   },
   {
     "constraints": {
-      "indicator-group": "x-indicator-group",
       "indicator": "x-indicator",
       "breakdown": "x-breakdown"
     },
@@ -125,11 +121,10 @@
     "sortOrder": "asc",
     "default_value": "#random",
     "position": "upper-right",
-    "type": "select"
+    "type": "all-values"
   },
   {
     "constraints": {
-      "indicator-group": "y-indicator-group"
     },
     "dimension": "indicator",
     "label": "Indicator",
@@ -144,7 +139,6 @@
     "name": "y-breakdown-group",
     "label": "(Y) breakdown group",
     "constraints": {
-      "indicator-group": "y-indicator-group",
       "indicator": "y-indicator"
     },
     "dimension": "breakdown-group",
@@ -155,7 +149,6 @@
   },
   {
     "constraints": {
-      "indicator-group": "y-indicator-group",
       "indicator": "y-indicator"
     },
     "dimension": "breakdown",
@@ -169,7 +162,6 @@
   },
   {
     "constraints": {
-      "indicator-group": "y-indicator-group",
       "indicator": "y-indicator",
       "breakdown": "y-breakdown"
     },

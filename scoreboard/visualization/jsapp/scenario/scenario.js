@@ -332,17 +332,23 @@ App.ScenarioChartView = Backbone.View.extend({
                 var xargs = _.object(xpairs);
                 var yargs = _.object(ypairs);
 
-                var get_cube_uri = function(dataset, name){
-                  var fields = App.visualization.filters_box.filters;
-                  var dimension_options = _.findWhere(fields, {name: name}).dimension_options;
-                  return _.findWhere(dimension_options, {notation: dataset}).uri;
-                };
+                if ( xargs.__dataset ) {
+                    var get_cube_uri = function(dataset, name){
+                      var fields = App.visualization.filters_box.filters;
+                      var dimension_options = _.findWhere(fields, {name: name}).dimension_options;
+                      return _.findWhere(dimension_options, {notation: dataset}).uri;
+                    };
 
-                var xdatacube = get_cube_uri(xargs.__dataset, "x-__dataset");
-                var ydatacube = get_cube_uri(yargs.__dataset, "y-__dataset");
+                    var xdatacube = get_cube_uri(xargs.__dataset, "x-__dataset");
+                    var ydatacube = get_cube_uri(yargs.__dataset, "y-__dataset");
 
-                requests.push(this.request_datapoints(xdatacube + "/datapoints", xargs));
-                requests.push(this.request_datapoints(ydatacube + "/datapoints", yargs));
+                    requests.push(this.request_datapoints(xdatacube + "/datapoints", xargs));
+                    requests.push(this.request_datapoints(ydatacube + "/datapoints", yargs));
+                } else {
+                    // compatibility with charts that do not user dataset selector
+                    requests.push(this.request_datapoints(datapoints_url, xargs));
+                    requests.push(this.request_datapoints(datapoints_url, yargs));
+                }
             } else {
                 var groupby_dimension = this.dimensions_mapping[
                     this.multiple_series];
@@ -968,6 +974,8 @@ App.ShareOptionsView = Backbone.View.extend({
 App.main = function() {
     if(App.chart_config.chart_entry_point) {
         // obsolete bootstrapping method
+        // still used for country profile
+        // (see samples country_profile_bar.js, country_profile_table.js)
         eval(App.chart_config.chart_entry_point)();
     }
     else {

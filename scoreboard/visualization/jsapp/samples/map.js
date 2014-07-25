@@ -1,11 +1,4 @@
-/*global App, $script */
-/*jshint sub:true */
-
-(function($) {
-"use strict";
-
-
-App.scenario5_filters_schema = {
+{
     "animation": false,
     "annotations": {
         "filters": [{
@@ -184,13 +177,4 @@ App.scenario5_filters_schema = {
         "note": true,
         "unit-measure": true
     }
-};
-
-
-App.scenario5_initialize = function() {
-    App.create_visualization($('#scenario-box')[0],
-                             App.scenario5_filters_schema);
-};
-
-
-})(App.jQuery);
+}
