@@ -286,7 +286,6 @@ App.DatasetSelectFilter = App.SelectFilter.extend({
 
   initialize: function(){
       App.SelectFilter.prototype.initialize.apply(this, arguments);
-      this.default_value = this.cube_url;
   },
 
   fetch_options: function(args){
@@ -294,7 +293,6 @@ App.DatasetSelectFilter = App.SelectFilter.extend({
       var url = split.splice(0, split.length - 2).join("/");
       return $.getJSON(url + "/datacubesForSelect");
   }
-
 
 });
 

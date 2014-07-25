@@ -2,12 +2,6 @@
   "annotations": {
     "filters": [
     {
-      "name": "x-__dataset"
-    },
-    {
-      "name": "y-__dataset"
-    },
-    {
       "name": "x-indicator"
     },
     {

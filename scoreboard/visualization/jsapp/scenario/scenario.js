@@ -332,8 +332,17 @@ App.ScenarioChartView = Backbone.View.extend({
                 var xargs = _.object(xpairs);
                 var yargs = _.object(ypairs);
 
-                requests.push(this.request_datapoints(xargs.__dataset + "/datapoints", xargs));
-                requests.push(this.request_datapoints(yargs.__dataset + "/datapoints", yargs));
+                var get_cube_uri = function(dataset, name){
+                  var fields = App.visualization.filters_box.filters;
+                  var dimension_options = _.findWhere(fields, {name: name}).dimension_options;
+                  return _.findWhere(dimension_options, {notation: dataset}).uri;
+                };
+
+                var xdatacube = get_cube_uri(xargs.__dataset, "x-__dataset");
+                var ydatacube = get_cube_uri(yargs.__dataset, "y-__dataset");
+
+                requests.push(this.request_datapoints(xdatacube + "/datapoints", xargs));
+                requests.push(this.request_datapoints(ydatacube + "/datapoints", yargs));
             } else {
                 var groupby_dimension = this.dimensions_mapping[
                     this.multiple_series];
