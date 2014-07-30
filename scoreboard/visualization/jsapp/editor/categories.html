@@ -1,17 +1,11 @@
-{{# if err_too_few }}
-  <div class="alert alert-error">
-    Choose one more "multiple selection" or "all values" dimensions
-  </div>
-{{/ if }}
-
-{{# if err_too_many }}
-  <div class="alert alert-error">
-    Choose a value in "Multiple series by" or set less "multiple selection" / "all values" dimensions
-  </div>
-{{/ if }}
-
-{{# if category_facet }}
-    <div class="alert alert-success">
-      Categories by {{ category_facet.name }}
-    </div>
-{{/ if }}
+<label>
+  Categories by:
+</label>
+<select name="categories">
+<option value="">--</option>
+{{# series_options }}
+  <option value="{{ name }}"
+    {{# if selected }}selected{{/ if }}
+    >{{ name }}</option>
+{{/ series_options }}
+</select>

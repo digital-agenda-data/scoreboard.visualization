@@ -3,4 +3,6 @@
   <javascript id="++resource++scoreboard.visualization.datacube-indicators.js"
     expression="python:here.restrictedTraverse('@@plone_interface_info').provides('edw.datacube.interfaces.IDataCube') and request.URL0.endswith('indicators')"
     />
+  <javascript id="daviz-edit.js" enabled="False"/>
+  <javascript id="++resource++scoreboard.visualization.edit.js" expression="python:'daviz-edit.html' in request.URL0"/>
 </object>
