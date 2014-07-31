@@ -1,5 +1,4 @@
 <div tal:replace="structure python:view.jsapp_html()" />
-
 <input type="hidden" name="configuration"
        tal:attributes="value python:view.configuration" />
 

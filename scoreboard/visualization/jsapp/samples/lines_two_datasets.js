@@ -241,6 +241,7 @@
       }
     },
     "multiple_series": 2,
+    "multiple_datasets": true,
     "series-legend-label": "long",
     "series-ending-label": "none",
     "series-point-label": "none",

@@ -148,7 +148,7 @@ App.EditorConfiguration = Backbone.Model.extend({
             this.get('facets')
         );
 
-        this.on('change:multidim change:multiple_series', this.rebuild_layout, this);
+        this.on('change:multidim change:multiple_series change:multiple_datasets', this.rebuild_layout, this);
         this.facets.on('change:multidim_common change:type', this.rebuild_layout, this);
         this.layout_collection.on('change', this.save_facets, this);
     },
@@ -157,7 +157,8 @@ App.EditorConfiguration = Backbone.Model.extend({
         this.layout_collection = new App.LayoutCollection(
             this.facets.get_value(
                 this.chart_is_multidim(),
-                this.layout_collection.presets())
+                this.layout_collection.presets(),
+                this.get("multiple_datasets"))
         );
         this.layout_collection.on('change', this.save_facets, this);
     },
@@ -176,7 +177,8 @@ App.EditorConfiguration = Backbone.Model.extend({
     save_facets: function() {
         var value = this.facets.get_value(
             this.chart_is_multidim(),
-            this.layout_collection.presets())
+            this.layout_collection.presets(),
+            this.get("multiple_datasets"));
         this.set('facets', value);
     },
 

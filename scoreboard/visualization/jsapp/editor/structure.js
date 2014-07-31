@@ -193,7 +193,8 @@ App.StructureEditor = Backbone.View.extend({
     save_value: function() {
         var value = this.model.facets.get_value(
                 this.chart_is_multidim(),
-                this.model.layout_collection.presets());
+                this.model.layout_collection.presets(),
+                this.model.get("multiple_datasets"));
         this.model.set('facets', value);
     },
 
