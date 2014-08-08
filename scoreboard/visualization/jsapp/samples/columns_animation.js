@@ -1,11 +1,4 @@
-/*global App, Backbone, _ */
-/*jshint sub:true */
-
-(function($) {
-"use strict";
-
-
-App.scenario6_filters_schema = {
+{
   "animation": true,
   "annotations": {
     "filters": [
@@ -195,13 +188,4 @@ App.scenario6_filters_schema = {
     ]
   },
   "plotlines": {}
-};
-
-
-App.scenario6_initialize = function() {
-    App.create_visualization($('#scenario-box')[0],
-                             App.scenario6_filters_schema);
-};
-
-
-})(App.jQuery);
+}

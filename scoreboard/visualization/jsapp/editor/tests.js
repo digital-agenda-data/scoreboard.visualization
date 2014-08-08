@@ -233,31 +233,18 @@ describe('StructureEditor', function() {
 
     describe('facet verification', function() {
 
-        it('should warn if there is no category facet', function() {
-            var model = new App.EditorConfiguration({
-                facets: [{name: 'dim3', type: 'all-values'}]
-            }, {dimensions: four_dimensions});
-            var view = new App.StructureEditor({model: model});
-            expect(view.facet_roles.err_too_few).to.be.false;
-            view.$el.find('[name="multiple_series"]').val('dim3').change();
-            expect(view.facet_roles.err_too_few).to.be.true;
-        });
-
-        it('should update category facet section', function() {
+        it('should not update category facet section', function() {
             var model = new App.EditorConfiguration({
                 facets: [{name: 'dim3', type: 'select', label:'dimension3'}]
             }, {dimensions: four_dimensions});
             var view = new App.StructureEditor({model: model});
             sinon.spy(view.categoryby, 'render');
-            expect(view.categoryby.model.get('err_too_few')).to.be.true;
             view.$el.find('[data-name="dim3"] [name="type"]').val('all-values').change();
-            expect(view.categoryby.model.get('err_too_few')).to.be.false;
-
             expect(view.$el.find('[name="categories-by"] .alert').text().trim()).to.equal(
-            'Categories by dim3');
+            '');
         });
 
-        it('should update category section when selecting multipleseries', function(){
+        it('should not update category section when selecting multipleseries', function(){
             var model = new App.EditorConfiguration({
                 facets: [{name: 'dim1', type: 'select', label: 'dimension1'},
                          {name: 'dim3', type: 'select'}]
@@ -267,35 +254,10 @@ describe('StructureEditor', function() {
             view.$el.find('[data-name="dim4"] [name="type"]').val('all-values').change();
             view.$el.find('[name="multiple_series"]').val('dim3').change();
             expect(view.model.attributes.multiple_series).to.equal('dim3');
-            expect(view.model.attributes.category_facet).to.equal('dim4');
-            expect(view.categoryby.$el.find('.alert').text().trim()).to.equal(
-            'Categories by dim4');
-        });
-
-        it('should warn if there is more than one category', function() {
-            var model = new App.EditorConfiguration({
-                facets: [
-                    {name: 'dim3', type: 'all-values'},
-                    {name: 'dim4', type: 'all-values'}
-                ],
-                multiple_series: 'dim3'
-            }, {dimensions: four_dimensions});
-            var view = new App.StructureEditor({model: model});
-            expect(view.facet_roles.err_too_many).to.be.false;
-            view.$el.find('[name="multiple_series"]').val('').change();
-            expect(view.facet_roles.err_too_many).to.be.true;
-        });
-
-        it('should mark remaining dimension as category', function() {
-            var model = new App.EditorConfiguration({
-                facets: [
-                    {name: 'dim3', type: 'all-values'},
-                    {name: 'dim4', type: 'all-values'}
-                ],
-                multiple_series: 'dim3'
-            }, {dimensions: four_dimensions});
-            var view = new App.StructureEditor({model: model});
-            expect(view.facet_roles.category_facet['name']).to.equal('dim4');
+            expect(view.model.attributes.category_facet).to.equal(null);
+            view.$el.find('[name="categories"]').val('dim3').change();
+            expect(view.model.attributes.multiple_series).to.equal('dim3');
+            expect(view.model.attributes.category_facet).to.equal('dim3');
         });
 
         it('should write category facet on model', function() {
@@ -304,7 +266,8 @@ describe('StructureEditor', function() {
                     {name: 'dim3', type: 'all-values'},
                     {name: 'dim4', type: 'all-values'}
                 ],
-                multiple_series: 'dim3'
+                multiple_series: 'dim3',
+                category_facet: 'dim4'
             }, {dimensions: four_dimensions});
             var view = new App.StructureEditor({model: model});
             expect(model.get('category_facet')).to.equal('dim4');
@@ -814,7 +777,7 @@ describe('FacetsEditor', function() {
             expect(model.get('facets')[0]['label']).to.equal('Indicator');
         });
     });
-    
+
     describe('facet ignore values', function() {
         it('should update model with values selected', function() {
             var model = new App.EditorConfiguration({

@@ -23,7 +23,7 @@ App.AnnotationsEditor = Backbone.View.extend({
     initialize: function(options) {
         if (!this.model.has('annotations')){
             var filters = [];
-            var defaults = ['indicator', 'breakdown', 'unit-measure']
+            var defaults = ['indicator', 'breakdown', 'unit-measure'];
             _.chain(this.model.get('facets'))
              .filter(function(facet){
                 if(facet['type'] == 'ignore' || facet['dimension'] == 'value') {
@@ -48,12 +48,14 @@ App.AnnotationsEditor = Backbone.View.extend({
         var selected_facets = _(filters).pluck('name');
         var facets = [];
         _(this.model.get('facets')).forEach(function(facet) {
-            if(facet['type'] == 'ignore' || facet['dimension'] == 'value') {
+            if(facet['type'] === 'ignore' ||
+               facet['dimension'] === 'value' ||
+               _.chain(facets).pluck('value').contains(facet['dimension']).value()) {
                 return;
             }
             var item = {
                 label: facet['label'],
-                value: facet['name']
+                value: facet['dimension']
             };
             if(_(selected_facets).contains(facet['name'])) {
                 item['checked'] = true;
@@ -62,8 +64,7 @@ App.AnnotationsEditor = Backbone.View.extend({
         });
         this.$el.html(this.template({
             facets: facets,
-            title: (this.annotations_model.get('title')
-                    || "Definitions and scopes"),
+            title: (this.annotations_model.get('title') || "Definitions and scopes"),
             notes: this.annotations_model.get('notes')
         }));
     },
@@ -71,9 +72,12 @@ App.AnnotationsEditor = Backbone.View.extend({
     on_change_annotation: function(evt) {
         var checked = this.$el.find('[name="annotation"]:checked');
         var value = _(checked).map(function(checkbox) {
-            return {name: $(checkbox).val()};
-        });
-        this.annotations_model.set('filters', value);
+            var facets = _(this.model.get("facets")).where({"dimension": $(checkbox).val()});
+            return facets.map(function(facet){
+                return {name: facet.name};
+            });
+        }, this);
+        this.annotations_model.set('filters', _.flatten(value));
     },
 
     on_change_texts: function() {

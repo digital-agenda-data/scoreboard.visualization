@@ -101,6 +101,7 @@ App.ScenarioChartView = Backbone.View.extend({
         });
         App.trim_dimension_group_args(relevant_args, this.dimension_group_map);
         relevant_args = _({rev: this.data_revision}).extend(relevant_args);
+        delete relevant_args["__dataset"];
         return $.getJSON(url, relevant_args);
     },
 
@@ -311,29 +312,44 @@ App.ScenarioChartView = Backbone.View.extend({
                 multiseries_values = ['x', 'y'];
                 //this.client_filter = null;
 
-                var xpairs = _.filter(_.pairs(args), function(pair) {return pair[0].substr(0,2) != 'y-'}); 
-                var ypairs = _.filter(_.pairs(args), function(pair) {return pair[0].substr(0,2) != 'x-'}); 
+                var xpairs = _.filter(_.pairs(args), function(pair) {return pair[0].substr(0,2) != 'y-'});
+                var ypairs = _.filter(_.pairs(args), function(pair) {return pair[0].substr(0,2) != 'x-'});
 
-                _(xpairs).map(function(pair) { 
-                    if ( pair[0].substr(0,2) == 'x-' ) { 
-                        pair[0] = pair[0].substr(2) 
-                    }; 
+                _(xpairs).map(function(pair) {
+                    if ( pair[0].substr(0,2) == 'x-' ) {
+                        pair[0] = pair[0].substr(2)
+                    };
                     return;
                 });
 
-                _(ypairs).map(function(pair) { 
-                    if ( pair[0].substr(0,2) == 'y-' ) { 
-                        pair[0] = pair[0].substr(2) 
-                    }; 
+                _(ypairs).map(function(pair) {
+                    if ( pair[0].substr(0,2) == 'y-' ) {
+                        pair[0] = pair[0].substr(2)
+                    };
                     return;
                 });
 
                 var xargs = _.object(xpairs);
                 var yargs = _.object(ypairs);
 
-                requests.push(this.request_datapoints(datapoints_url, xargs));
-                requests.push(this.request_datapoints(datapoints_url, yargs));
-            } else { 
+                if ( xargs.__dataset ) {
+                    var get_cube_uri = function(dataset, name){
+                      var fields = App.visualization.filters_box.filters;
+                      var dimension_options = _.findWhere(fields, {name: name}).dimension_options;
+                      return _.findWhere(dimension_options, {notation: dataset}).uri;
+                    };
+
+                    var xdatacube = get_cube_uri(xargs.__dataset, "x-__dataset");
+                    var ydatacube = get_cube_uri(yargs.__dataset, "y-__dataset");
+
+                    requests.push(this.request_datapoints(xdatacube + "/datapoints", xargs));
+                    requests.push(this.request_datapoints(ydatacube + "/datapoints", yargs));
+                } else {
+                    // compatibility with charts that do not user dataset selector
+                    requests.push(this.request_datapoints(datapoints_url, xargs));
+                    requests.push(this.request_datapoints(datapoints_url, yargs));
+                }
+            } else {
                 var groupby_dimension = this.dimensions_mapping[
                     this.multiple_series];
                 multiseries_values = this.model.get(this.multiple_series);
@@ -446,7 +462,7 @@ App.ScenarioChartView = Backbone.View.extend({
                                                        chart_data.meta_data)];
                 }, this)
             );
-            
+
             if ( this.model.get('indicator') && this.model.get('unit-measure') ) {
                 // enable stacking of breakdowns
                 if (this.model.get('unit-measure') == 'pc_' + this.model.get('indicator')) {
@@ -714,7 +730,7 @@ var BaseDialogView = Backbone.View.extend({
     className: '',
     form_action: '',
     template: App.get_template('scenario/modal_comment.html'),
-    
+
     events: {
         'click #btn-submit': 'submit',
         'click #btn-cancel': 'cancel'
@@ -747,7 +763,7 @@ var BaseDialogView = Backbone.View.extend({
         if (self.validate() === false) {
             return false
         }
-        
+
         var text = form.find('#text').attr('value');
         var chart_title = $('#the-chart').find(".highcharts-title").text()
         var origin = App.jQuery('<a>', {
@@ -759,7 +775,7 @@ var BaseDialogView = Backbone.View.extend({
 
         var action = form.attr('action');
         var formData = form.serializeArray();
-        
+
         for (var i=0; i<formData.length; i++) {
             if (formData[i].name === 'text') {
                 formData[i].value = text;
@@ -800,7 +816,7 @@ var BaseDialogView = Backbone.View.extend({
         } else {
             msg_text = 'Your comment has been submitted for approval. In the meantime you can view other comments ';
         }
-        
+
         var msg = App.jQuery('<span>', {
             'text': msg_text
         });
@@ -824,7 +840,7 @@ var BaseDialogView = Backbone.View.extend({
         this.$el.html(this.template()).dialog({width: 600,
                                                height:450,
                                                title: 'Add comment',
-                                               close: function(event, ui) 
+                                               close: function(event, ui)
                                                     {
                                                         self.cancel();
                                                     }
@@ -960,6 +976,8 @@ App.ShareOptionsView = Backbone.View.extend({
 App.main = function() {
     if(App.chart_config.chart_entry_point) {
         // obsolete bootstrapping method
+        // still used for country profile
+        // (see samples country_profile_bar.js, country_profile_table.js)
         eval(App.chart_config.chart_entry_point)();
     }
     else {
