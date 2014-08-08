@@ -43,6 +43,12 @@ var country_data = [
     {code: 'EU28', color: '#0B4EA2', label: "European Union 28"}
 ];
 
+var predefined_colors = [
+    {notation: 'Not_assigned',   color: '#CCCCCC'}
+]
+
+App.PREDEFINED_COLORS = _.object(_(predefined_colors).pluck('notation'),
+                             _(predefined_colors).pluck('color'));
 
 App.COUNTRY_COLOR = _.object(_(country_data).pluck('code'),
                              _(country_data).pluck('color'));
@@ -120,7 +126,7 @@ App.isIE78 = function () {
         var ua = navigator.userAgent;
         var re = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})");
         if (re.exec(ua) != null) {
-            rv = parseFloat(RegExp.$1);
+            var rv = parseFloat(RegExp.$1);
             return rv == 7 || rv == 8;
         }
     }
