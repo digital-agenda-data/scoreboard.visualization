@@ -74,6 +74,15 @@ App.chart_library['columns'] = function(view, options) {
             marginTop = 20;
         }
     }
+    // set predefined colors
+    var colors = [];
+    _(series).each(function(item, index) {
+        if ( App.PREDEFINED_COLORS[item['notation']] ) {
+            colors.push(App.PREDEFINED_COLORS[item['notation']]);
+        } else {
+            colors.push(App.SERIES_COLOR[index]);
+        }
+    });
 
     var chartOptions = {
         chart: {
@@ -87,7 +96,7 @@ App.chart_library['columns'] = function(view, options) {
             height: viewPortHeight,
             width: viewPortWidth
         },
-        colors: App.SERIES_COLOR,
+        colors: colors,
         credits: {
             href: options['credits']['href'],
             text: options['credits']['text'],
