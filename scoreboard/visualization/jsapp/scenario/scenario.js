@@ -417,18 +417,20 @@ App.ScenarioChartView = Backbone.View.extend({
 
                 if ( this.multiple_series == 2 ) {
                     sample_point = datapoints[0];
-                    legend_candidates = _.chain(this.schema.facets)
-                        .pluck('dimension')
-                        .unshift('indicator')
-                        .filter(
-                            function(item){
-                                return (sample_point[item] !== undefined
-                                    && sample_point[item]['label'] !== undefined);
-                            }
-                        ).value();
-                    chart_data['series_names'][['x', 'y'][n]] =
-                        sample_point[legend_candidates[0]]['label'] + ' '
-                        + ['(left side)', '(right side)'][n];
+                    if ( sample_point ) {
+                        legend_candidates = _.chain(this.schema.facets)
+                            .pluck('dimension')
+                            .unshift('indicator')
+                            .filter(
+                                function(item){
+                                    return (sample_point[item] !== undefined
+                                        && sample_point[item]['label'] !== undefined);
+                                }
+                            ).value();
+                        chart_data['series_names'][['x', 'y'][n]] =
+                            sample_point[legend_candidates[0]]['label'] + ' '
+                            + ['(left side)', '(right side)'][n];
+                    }
                 }
 
                 return {
