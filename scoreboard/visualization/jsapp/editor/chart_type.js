@@ -54,6 +54,7 @@ App.ChartTypeEditor = Backbone.View.extend({
             animation: this.model.get('animation'),
             animation_available: chart_type_info['animation_available'],
             multilines: typeof this.model.get('multiple_series') == 'number',
+            multidatasets: this.model.get('multiple_datasets'),
             multilines_available: chart_type_info['multilines_available']
         };
         this.$el.html(this.template(context));
@@ -76,7 +77,16 @@ App.ChartTypeEditor = Backbone.View.extend({
         } else {
             if (typeof this.model.get('multiple_series') == 'number') {
                 this.model.unset('multiple_series');
+                this.model.set('multiple_datasets', false);
             }
+        }
+
+        var multidatasets = this.$el.find('[name="multidatasets"]').is(':checked');
+
+        if(multidatasets){
+            this.model.set('multiple_datasets', true);
+        } else {
+            this.model.set('multiple_datasets', false);
         }
 
         var chart_def = _(this.chart_types).findWhere({value: chart_type});

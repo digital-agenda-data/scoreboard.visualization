@@ -24,3 +24,11 @@
   Compare two indicators per country
 </label>
 {{/ if }}
+
+{{# if multilines }}
+<label>
+  <input type="checkbox" name="multidatasets"
+         {{# if multidatasets }}checked{{/ if }}>
+  Selectable datasets
+</label>
+{{/ if }}

@@ -271,7 +271,7 @@ App.FacetModel = Backbone.Model.extend({
             this.unset('default_value');
         }
     }
-})
+});
 
 
 App.FacetCollection = Backbone.Collection.extend({
@@ -294,13 +294,10 @@ App.FacetCollection = Backbone.Collection.extend({
         var facets_to_keep = {};
         var add_model = _.bind(function(name, defaults) {
             var facet_model = this.findWhere({name: name});
-            if(! facet_model) {
-                var facet_model = this.findWhere({name: 'x-' + name});
+            if(!facet_model) {
+                facet_model = this.findWhere({name: 'x-' + name});
                 if(facet_model) { // hey, it's a multidim facet
                     var label = facet_model.get('label') || defaults['label'];
-                    if(label.substr(0, 4) == '(X) ') {
-                        label = label.substr(4);
-                    }
                     facet_model.set({
                         name: name,
                         multidim_common: false,
@@ -335,16 +332,89 @@ App.FacetCollection = Backbone.Collection.extend({
         this.remove(to_remove);
     },
 
-    get_value: function(chart_multidim, presets) {
+    add_datasets: function(result){
+        var facets = [
+            {
+                "constraints": {},
+                "label": "Dataset",
+                "dimension": "__dataset",
+                "name": "x-__dataset",
+                "position": "upper-left",
+                "sortBy": "inner_order",
+                "sortOrder": "asc",
+                "type": "dataset_select"
+            },
+            {
+                "constraints": {},
+                "dimension": "__dataset",
+                "label": "Dataset",
+                "name": "y-__dataset",
+                "position": "upper-right",
+                "sortBy": "inner_order",
+                "sortOrder": "asc",
+                "type": "dataset_select"
+            }
+        ];
+
+        _.each(_(result).where({
+            multidim_common: false
+        }), function(facet){
+                facet.constraints.__dataset = facet.name[0] + "-__dataset";
+            }, this);
+
+        _.each(_(result).where({
+            multidim_common: true
+        }), function(facet){
+                facet.constraints["x-__dataset"] = "x-__dataset";
+                facet.constraints["y-__dataset"] = "y-__dataset";
+            }, this);
+
+        return facets.concat(result);
+    },
+
+    get_facet_position: function(key, facet, letter, presets){
+        var position = {
+            x: "upper-left",
+            y: "upper-right",
+            z: "lower-right"
+        };
+        if (_(presets).has(key)){
+            return presets[key];
+        } else if (_(position).has(letter)){
+            return position[letter];
+        } else {
+            return facet.position;
+        }
+    },
+
+    get_facet_constraints: function(prefix, type, facets_above, multidim_facets, all_multidim){
+        if (type === 'all-values') {
+            return {};
+        }
+        var constraints = {};
+        _(facets_above).forEach(function(name) {
+            if(multidim_facets[name]) {
+                if (all_multidim) {
+                    _(all_multidim).forEach(function(n) {
+                        var letter = 'xyz'[n];
+                        var prefix = letter + '-';
+                        constraints[prefix + name] = prefix + name;
+                    });
+                } else {
+                    constraints[name] = prefix + name;
+                }
+            } else {
+                constraints[name] = name;
+            }
+        });
+        return constraints;
+    },
+
+    get_value: function(chart_multidim, presets, chart_multidataset) {
         this.sort();
         var result = [];
         var multidim_facets = {};
         var all_multidim = _.range(chart_multidim);
-        var facets_by_axis = {'all': []};
-        _(all_multidim).forEach(function(n) {
-            var letter = 'xyz'[n];
-            facets_by_axis[letter] = [];
-        });
         var facets_above = [];
         this.forEach(function(facet_model) {
             var facet = facet_model.toJSON();
@@ -352,57 +422,24 @@ App.FacetCollection = Backbone.Collection.extend({
             delete facet['multidim_common'];
             if(chart_multidim && !multidim_common) {
                 // multidim chart, facet is not common
-                if(chart_multidim) {
-                    facet['multidim_common'] = false;
-                }
+                facet['multidim_common'] = false;
                 multidim_facets[facet['name']] = true;
                 _(all_multidim).forEach(function(n) {
                     var letter = 'xyz'[n];
                     var prefix = letter + '-';
-                    var constraints = {};
-                    _(facets_above).forEach(function(name) {
-                        if(multidim_facets[name]) {
-                            constraints[name] = prefix + name;
-                        } else {
-                            constraints[name] = name;
-                        }
-                    });
-                    var label = '(' + letter.toUpperCase() + ') '
-                              + facet['label'];
+                    var constraints = this.get_facet_constraints(prefix, facet.type, facets_above, multidim_facets, null);
                     var key = facet.dimension + '/' + prefix + facet['name'];
-                    if (presets && _(presets).has(key)){
-                        facet.position = presets[key]
-                    }
-                    /*facets_by_axis[letter].push(_({
-                        name: prefix + facet['name'],
-                        label: label,
-                        constraints: constraints
-                    }).defaults(facet));
-                    */
+                    facet.position = this.get_facet_position(key, facet, letter, presets);
                     // push in result (to preserve original order of facets)
                     result.push(_({
                         name: prefix + facet['name'],
-                        label: label,
                         constraints: constraints
                     }).defaults(facet));
-                });
+                }, this);
             }
             else {
                 // chart is not multidim or facet is common
-                var constraints = {};
-                _(facets_above).forEach(function(name) {
-                    if(multidim_facets[name]) {
-                        _(all_multidim).forEach(function(n) {
-                            var letter = 'xyz'[n];
-                            var prefix = letter + '-';
-                            constraints[prefix + name] = prefix + name;
-                        });
-                    }
-                    else {
-                        constraints[name] = name;
-                    }
-                });
-                facet['constraints'] = constraints;
+                facet['constraints'] = this.get_facet_constraints('', facet.type, facets_above, multidim_facets, all_multidim);
                 if(!chart_multidim) {
                     delete facet['multidim_common'];
                 } else {
@@ -410,22 +447,13 @@ App.FacetCollection = Backbone.Collection.extend({
                 }
                 // set default position (in layout tab)
                 var key = facet.dimension + '/' + facet.name;
-                if (presets && _(presets).has(key)){
-                    facet.position = presets[key]
-                }
+                this.get_facet_position(key, facet, null, presets);
                 result.push(facet);
-                /*facets_by_axis['all'].push(facet);*/
             }
             if(facet['type'] == 'select') {
                 facets_above.push(facet['name']);
             }
-        });
-        var value = [];
-        _(all_multidim).forEach(function(n) {
-            var letter = 'xyz'[n];
-            value = value.concat(facets_by_axis[letter]);
-        });
-        value = value.concat(facets_by_axis['all']);
+        }, this);
         var value_facet = {
             name: 'value',
             type: 'all-values',
@@ -436,7 +464,12 @@ App.FacetCollection = Backbone.Collection.extend({
         }
         /*value.push(value_facet);*/
         result.push(value_facet);
-        return result;
+        if (chart_multidataset){
+          return this.add_datasets(result);
+        } else {
+            return result;
+        }
+
     }
 
 });
@@ -493,7 +526,9 @@ App.FacetsEditor = Backbone.View.extend({
     save_value: function() {
         var value = this.model.facets.get_value(
                 this.chart_is_multidim(),
-                this.model.layout_collection.presets());
+                this.model.layout_collection.presets(),
+                this.model.get("multiple_datasets")
+        );
         this.model.set('facets', value);
     },
 

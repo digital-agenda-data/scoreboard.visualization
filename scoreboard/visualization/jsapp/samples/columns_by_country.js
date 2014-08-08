@@ -1,11 +1,4 @@
-/*global App, Backbone, _ */
-/*jshint sub:true */
-
-(function($) {
-"use strict";
-
-
-App.scenario1_filters_schema = {
+{
   "animation": false,
   "annotations": {
     "filters": [
@@ -163,13 +156,4 @@ App.scenario1_filters_schema = {
   },
   "series-legend-label": "none",
   "series-point-label": "long"
-};
-
-
-App.scenario1_initialize = function() {
-    App.create_visualization($('#scenario-box')[0],
-                             App.scenario1_filters_schema);
-};
-
-
-})(App.jQuery);
+}

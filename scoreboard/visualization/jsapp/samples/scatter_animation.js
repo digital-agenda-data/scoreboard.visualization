@@ -1,11 +1,4 @@
-/*global App, Backbone, _ */
-/*jshint sub:true */
-
-(function($) {
-"use strict";
-
-
-App.scenario3_scatter_animation_filters_schema = {
+{
     facets: [
         {type: 'select',
          name: 'x-indicator-group',
@@ -131,13 +124,4 @@ App.scenario3_scatter_animation_filters_schema = {
         x_unit_label: {facet: 'x-unit-measure', field: 'short_label'},
         y_unit_label: {facet: 'y-unit-measure', field: 'short_label'}
     }
-};
-
-
-App.scenario3_scatter_animation_initialize = function() {
-    App.create_visualization($('#scenario-box')[0],
-                             App.scenario3_scatter_animation_filters_schema);
-};
-
-
-})(App.jQuery);
+}

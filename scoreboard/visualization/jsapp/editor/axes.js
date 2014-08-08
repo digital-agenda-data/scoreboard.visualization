@@ -409,21 +409,21 @@ App.AxesEditor = Backbone.View.extend({
         };
         this.$el.html(this.template(context));
         _(this.composers_views).each(function(composer_view){
-            this.$el.find('[name="chart-titles"]').append(composer_view.el);
+            this.$el.find('[name="chart-titles"]').append(composer_view.el.innerHTML);
             composer_view.delegateEvents();
             if(composer_view.parts){
                 composer_view.parts.forEach(function(model){
                     var part_view = composer_view.part_views[model.cid];
                     part_view.delegateEvents();
                 }, this);
-            };
+            }
         }, this);
     },
 
     on_change: function() {
-        var val = _.bind(function(sel){return this.$el.find(sel).val()}, this);
+        var val = _.bind(function(sel){return this.$el.find(sel).val();}, this);
         var checked = _.bind(function(sel){
-            return this.$el.find(sel).is(':checked')}, this);
+            return this.$el.find(sel).is(':checked');}, this);
         var plotlines = {
             x: val('[name="axis-horizontal-plotline"]'),
             y: val('[name="axis-vertical-plotline"]')
