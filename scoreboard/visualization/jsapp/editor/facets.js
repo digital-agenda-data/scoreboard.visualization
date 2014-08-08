@@ -387,8 +387,9 @@ App.FacetCollection = Backbone.Collection.extend({
         }
     },
 
-    get_facet_constraints: function(prefix, type, facets_above, multidim_facets, all_multidim){
-        if (type === 'all-values') {
+    get_facet_constraints: function(prefix, type, dimension, facets_above, multidim_facets, all_multidim){
+        if (type === 'all-values' && _.contains(_.values(App.groupers), dimension)) {
+            // no constraints for groupers when they are all-values
             return {};
         }
         var constraints = {};
@@ -427,7 +428,7 @@ App.FacetCollection = Backbone.Collection.extend({
                 _(all_multidim).forEach(function(n) {
                     var letter = 'xyz'[n];
                     var prefix = letter + '-';
-                    var constraints = this.get_facet_constraints(prefix, facet.type, facets_above, multidim_facets, null);
+                    var constraints = this.get_facet_constraints(prefix, facet.type, facet.dimension, facets_above, multidim_facets, null);
                     var key = facet.dimension + '/' + prefix + facet['name'];
                     facet.position = this.get_facet_position(key, facet, letter, presets);
                     // push in result (to preserve original order of facets)
@@ -439,7 +440,7 @@ App.FacetCollection = Backbone.Collection.extend({
             }
             else {
                 // chart is not multidim or facet is common
-                facet['constraints'] = this.get_facet_constraints('', facet.type, facets_above, multidim_facets, all_multidim);
+                facet['constraints'] = this.get_facet_constraints('', facet.type, facet.dimension, facets_above, multidim_facets, all_multidim);
                 if(!chart_multidim) {
                     delete facet['multidim_common'];
                 } else {
