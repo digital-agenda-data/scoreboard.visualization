@@ -391,6 +391,14 @@ App.AllValuesFilter = App.SelectFilter.extend({
 
 });
 
+App.HiddenSelectFilter = App.SelectFilter.extend({
+
+}
+
+App.CompositeFilter = App.AllValuesFilter.extend({
+
+}
+
 var EmbeddedPrototype = {
     update: function(){
         this.loadstate.set(this.name, true);
@@ -462,8 +470,10 @@ App.FiltersBox = Backbone.View.extend({
 
     filter_types: {
         'select': App.SelectFilter,
+        'hidden-select': App.HiddenSelectFilter,
         'dataset_select': App.DatasetSelectFilter,
         'multiple_select': App.MultipleSelectFilter,
+        'composite': App.CompositeFilter,
         'all-values': App.AllValuesFilter
     },
 
