@@ -223,7 +223,7 @@ class WhiteList(BrowserView):
                     url = results[0].getURL()
                     redirect_url = "%s/@@whitelistToXLS?dataset=%s" % (
                         url, dataset)
-                    self.request.response.redirect(redirect_url)
+                    return self.request.response.redirect(redirect_url)
             self.error = "Unable to export whitelist for currently selected dataset"
         return self.index()
 
