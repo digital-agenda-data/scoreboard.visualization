@@ -222,6 +222,12 @@ App.chart_library['columns'] = function(view, options) {
             App.chart_controls.update_data(series);
         };
     }
+    if (!App.chart_data) {
+        App.chart_data = {
+            chart:chart,
+            snapshots_data: series,
+        }
+    }
 };
 
 })();

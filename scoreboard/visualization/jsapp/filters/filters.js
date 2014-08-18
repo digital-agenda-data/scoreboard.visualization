@@ -392,12 +392,113 @@ App.AllValuesFilter = App.SelectFilter.extend({
 });
 
 App.HiddenSelectFilter = App.SelectFilter.extend({
-
-}
+    className: "chart-filter hidden-select"
+});
 
 App.CompositeFilter = App.AllValuesFilter.extend({
+    className: "chart-filter",
+    template: App.get_template('filters/composite.html'),
+    slider_min: 0,
+    slider_max: 10,
+    slider_default: 5,
 
-}
+    events: _({
+        'sliderChanged': 'update_slider_data',
+        'sliderValuesUpdated': 'update_normalized',
+        'sliderNormalizeUpdated': 'update_charts'
+    }).extend(App.SelectFilter.prototype.events),
+
+    render: function() {
+        var that = this;
+        this.$el.html(this.template({
+            'dimension_options': this.dimension_options,
+            'filter_label': this.label,
+            'filter_name': this.name
+        }));
+        var sliders = this.$el.find('.composite-slider');
+        var sliders_values = sliders.data('slidersvalues');
+        if (!sliders_values) {
+            sliders_values = {};
+        }
+
+        _(sliders).each(function(slider, slider_idx){
+            var slider_id = $(slider).prop('id').split('-slider')[0];
+
+            $(slider).slider({
+                value: that.slider_default,
+                min: that.slider_min,
+                max: that.slider_max,
+                range: 'min',
+                animate: true,
+                orientation: 'horizontal',
+                stop: function( event, ui ) {
+                    var data = {
+                        slider_id: slider_id,
+                        slider_value: ui.value
+                    };
+                    that.$el.trigger('sliderChanged', data);
+                }
+            });
+
+            var norm_value = (Math.round(((100 / sliders.length) * 1000)/10)/100).toFixed(1);
+            var span_id = slider_id.split('-slider')[0] + '-normalized';
+            $( '#' + span_id ).html(norm_value + '%');
+            sliders_values[slider_id] = that.slider_default;
+        });
+
+        sliders.data('slidersvalues', sliders_values);
+    },
+
+    update_slider_data: function(event, data) {
+        var sliders = this.$el.find('.composite-slider');
+        var sliders_values = sliders.data('slidersvalues');
+        sliders_values[data.slider_id] = data.slider_value;
+        sliders.data('slidersvalues', sliders_values);
+        this.$el.trigger('sliderValuesUpdated');
+    },
+
+    update_normalized: function() {
+        var total = 0;
+        var sliders = this.$el.find('.composite-slider');
+        var sliders_values = sliders.data('slidersvalues');
+        var sliders_norm = sliders.data('slidersnorm');
+        if (!sliders_norm) {
+            sliders_norm = {};
+        }
+
+        for(var slider in sliders_values) {
+            total += sliders_values[slider]; 
+        }
+
+        _(sliders).each(function(slider, slider_idx){
+            var slider_value = $(slider).slider('option', 'value');
+            var slider_id = $(slider).prop('id');
+            var norm_value = ((slider_value / total) * 100).toFixed(1);
+            var span_id = slider_id.split('-slider')[0] + '-normalized';
+            $( '#' +  span_id).html( norm_value + "%");
+            sliders_norm[slider_id.split('-slider')[0]] = norm_value;
+        });
+        sliders.data('slidersnorm', sliders_norm);
+        this.$el.trigger('sliderNormalizeUpdated');
+    },
+
+    update_charts: function() {
+        var that = this;
+        var chart_data = App.chart_data;
+        var series = chart_data.snapshots_data;
+        var chart = chart_data.chart;
+        var sliders = this.$el.find('.composite-slider');
+        var sliders_norm = sliders.data('slidersnorm');
+        var new_series = JSON.parse(JSON.stringify(series));
+        // FIXME: cleanup
+        _(new_series).each(function(serie){
+            _.each(serie.data, function(point){
+                point.y = point.y * (100 + parseInt(this.sliders_norm[this.name], 10))/100;
+            }, {that:that, sliders_norm: sliders_norm, name: serie.name});
+        });
+        // TODO: redraw the chart
+    }
+});
 
 var EmbeddedPrototype = {
     update: function(){
@@ -470,7 +571,7 @@ App.FiltersBox = Backbone.View.extend({
 
     filter_types: {
         'select': App.SelectFilter,
-        'hidden-select': App.HiddenSelectFilter,
+        'hidden_select': App.HiddenSelectFilter,
         'dataset_select': App.DatasetSelectFilter,
         'multiple_select': App.MultipleSelectFilter,
         'composite': App.CompositeFilter,

@@ -1,0 +1,11 @@
+<label>{{ filter_label }}</label>
+<br>
+<div id="{{ filter_name }}">
+{{# dimension_options }}
+    <p>
+        <label>{{ label }}</label>
+        <span class="normalized-value" id="{{ notation }}-normalized"></span>
+    </p>
+    <div class="composite-slider" id="{{ notation }}-slider"></div>
+{{/ dimension_options }}
+<br />
