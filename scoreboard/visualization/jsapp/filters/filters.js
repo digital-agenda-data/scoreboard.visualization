@@ -405,7 +405,7 @@ App.CompositeFilter = App.AllValuesFilter.extend({
     events: _({
         'sliderChanged': 'update_slider_data',
         'sliderValuesUpdated': 'update_normalized',
-        'sliderNormalizeUpdated': 'update_charts'
+        'sliderNormalizeUpdated': 'update_chart'
     }).extend(App.SelectFilter.prototype.events),
 
     render: function() {
@@ -447,6 +447,17 @@ App.CompositeFilter = App.AllValuesFilter.extend({
         });
 
         sliders.data('slidersvalues', sliders_values);
+        App.visualization.chart_view.on('chart_load', this.handle_chart_loaded, this);
+    },
+
+    handle_chart_loaded: function(data) {
+        if (!this.series) {
+            this.series = JSON.parse(JSON.stringify(data.series));
+        }
+        if (!this.chart) {
+            this.chart = data.chart;
+        }
+        this.$el.trigger('sliderValuesUpdated');
     },
 
     update_slider_data: function(event, data) {
@@ -482,21 +493,32 @@ App.CompositeFilter = App.AllValuesFilter.extend({
         this.$el.trigger('sliderNormalizeUpdated');
     },
 
-    update_charts: function() {
+    update_chart: function() {
         var that = this;
-        var chart_data = App.chart_data;
-        var series = chart_data.snapshots_data;
-        var chart = chart_data.chart;
         var sliders = this.$el.find('.composite-slider');
         var sliders_norm = sliders.data('slidersnorm');
-        var new_series = JSON.parse(JSON.stringify(series));
-        // FIXME: cleanup
-        _(new_series).each(function(serie){
-            _.each(serie.data, function(point){
-                point.y = point.y * (100 + parseInt(this.sliders_norm[this.name], 10))/100;
-            }, {that:that, sliders_norm: sliders_norm, name: serie.name});
+        var context = {};
+
+        _(this.chart.series).each(function(serie, serie_idx){
+            context = {
+                'that': that,
+                'sliders_norm': sliders_norm,
+                'name': serie.name
+            }
+            _.each(serie.data, function(item, item_idx){
+                var point_data = null;
+                var normalized = parseFloat(this.sliders_norm[this.name], 10);
+                var modulus = (100 + normalized)/100;
+                if (normalized === 0) {
+                    modulus = 0;
+                }
+                point_data = that.series[serie_idx].data[item_idx].y * modulus;
+                item.update(point_data,
+                            false,
+                            {duration: 950, easing: 'linear'});
+            }, context);
         });
-        // TODO: redraw the chart
+        this.chart.redraw();
     }
 });
 

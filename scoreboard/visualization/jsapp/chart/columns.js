@@ -94,7 +94,12 @@ App.chart_library['columns'] = function(view, options) {
             marginTop: marginTop,
             marginBottom: 80,
             height: viewPortHeight,
-            width: viewPortWidth
+            width: viewPortWidth,
+            events: {
+                load: function(event) {
+                    view.trigger("chart_load", {'chart': this, 'series': init_series});
+                }
+            }
         },
         colors: colors,
         credits: {
@@ -221,12 +226,6 @@ App.chart_library['columns'] = function(view, options) {
             App.chart_controls.chart = chart;
             App.chart_controls.update_data(series);
         };
-    }
-    if (!App.chart_data) {
-        App.chart_data = {
-            chart:chart,
-            snapshots_data: series,
-        }
     }
 };
 
