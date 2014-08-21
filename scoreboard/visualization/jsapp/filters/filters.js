@@ -428,6 +428,7 @@ App.CompositeFilter = App.AllValuesFilter.extend({
                 value: that.slider_default,
                 min: that.slider_min,
                 max: that.slider_max,
+                step: 1,
                 range: 'min',
                 animate: true,
                 orientation: 'horizontal',
@@ -438,16 +439,24 @@ App.CompositeFilter = App.AllValuesFilter.extend({
                     };
                     that.$el.trigger('sliderChanged', data);
                 }
+            }).each(function() {
+                var opt = $(this).data().uiSlider.options;
+                var vals = opt.max - opt.min;
+                for (var i = 0; i <= vals; i++) {
+                    var el = $('<label class="slider-step">' + i + '</label>')
+                        .css('left',(i/vals*100)+'%');
+                    $(this).append(el);
+                }
+                 
             });
-
-            var norm_value = (Math.round(((100 / sliders.length) * 1000)/10)/100).toFixed(1);
+            var norm_value = (100 / sliders.length).toFixed(1);
             var span_id = slider_id.split('-slider')[0] + '-normalized';
             $( '#' + span_id ).html(norm_value + '%');
             sliders_values[slider_id] = that.slider_default;
         });
 
         sliders.data('slidersvalues', sliders_values);
-        App.visualization.chart_view.on('chart_load', this.handle_chart_loaded, this);
+        this.listenTo(App.visualization.chart_view, 'chart_load', this.handle_chart_loaded);
     },
 
     handle_chart_loaded: function(data) {
@@ -508,11 +517,7 @@ App.CompositeFilter = App.AllValuesFilter.extend({
             _.each(serie.data, function(item, item_idx){
                 var point_data = null;
                 var normalized = parseFloat(this.sliders_norm[this.name], 10);
-                var modulus = (100 + normalized)/100;
-                if (normalized === 0) {
-                    modulus = 0;
-                }
-                point_data = that.series[serie_idx].data[item_idx].y * modulus;
+                point_data = that.series[serie_idx].data[item_idx].y * (normalized / 100);
                 item.update(point_data,
                             false,
                             {duration: 950, easing: 'linear'});

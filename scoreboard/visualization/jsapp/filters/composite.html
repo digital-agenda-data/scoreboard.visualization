@@ -1,11 +1,16 @@
 <label>{{ filter_label }}</label>
+<label class="right-label">Normalized</label>
 <br>
-<div id="{{ filter_name }}">
-{{# dimension_options }}
-    <p>
-        <label>{{ label }}</label>
-        <span class="normalized-value" id="{{ notation }}-normalized"></span>
-    </p>
-    <div class="composite-slider" id="{{ notation }}-slider"></div>
-{{/ dimension_options }}
-<br />
+<div class="composite-sliders">
+    {{# dimension_options }}
+        <div id="{{ filter_name }}" class="composite-slider-widget">
+            <div class="slider-label">
+                <label>{{ label }}</label>
+            </div>
+            <div class="composite-slider" id="{{ notation }}-slider"></div>
+            <div class="normalized-value" id="{{ notation }}-normalized"></div>
+            <div class="visualClear"> </div>
+        </div>
+    {{/ dimension_options }}
+    <br />
+</div>
