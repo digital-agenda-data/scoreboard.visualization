@@ -408,6 +408,20 @@ App.CompositeFilter = App.AllValuesFilter.extend({
         'sliderNormalizeUpdated': 'update_chart'
     }).extend(App.SelectFilter.prototype.events),
 
+    initialize: function(options) {
+        this.composite_values = {};
+        // If we get proper slider settings in the url, save them as an attribute
+        // to this view, but sanitize the model's attributes
+        if (this.model.attributes[options.name] && !_.isArray(this.model.attributes[options.name])) {
+            this.composite_values = JSON.parse(JSON.stringify(this.model.attributes[options.name]));
+            var objectKeys = _.map(this.composite_values, function(value, key) {
+                return key;
+            });
+            this.model.set(options.name, objectKeys);
+        }
+        App.AllValuesFilter.prototype.initialize.apply(this, arguments);
+    },
+
     render: function() {
         var that = this;
         this.$el.html(this.template({
@@ -420,12 +434,12 @@ App.CompositeFilter = App.AllValuesFilter.extend({
         if (!sliders_values) {
             sliders_values = {};
         }
-
+        // Initialize the sliders
         _(sliders).each(function(slider, slider_idx){
             var slider_id = $(slider).prop('id').split('-slider')[0];
 
             $(slider).slider({
-                value: that.slider_default,
+                value: that.composite_values[slider_id],
                 min: that.slider_min,
                 max: that.slider_max,
                 step: 1,
@@ -440,6 +454,7 @@ App.CompositeFilter = App.AllValuesFilter.extend({
                     that.$el.trigger('sliderChanged', data);
                 }
             }).each(function() {
+                // Add the slider's steps labels
                 var opt = $(this).data().uiSlider.options;
                 var vals = opt.max - opt.min;
                 for (var i = 0; i <= vals; i++) {
@@ -452,14 +467,15 @@ App.CompositeFilter = App.AllValuesFilter.extend({
             var norm_value = (100 / sliders.length).toFixed(1);
             var span_id = slider_id.split('-slider')[0] + '-normalized';
             $( '#' + span_id ).html(norm_value + '%');
-            sliders_values[slider_id] = that.slider_default;
+            sliders_values[slider_id] = that.composite_values[slider_id];
         });
 
         sliders.data('slidersvalues', sliders_values);
-        this.listenTo(App.visualization.chart_view, 'chart_load', this.handle_chart_loaded);
+        this.listenToOnce(App.visualization.chart_view, 'chart_load', this.handle_chart_loaded);
     },
 
     handle_chart_loaded: function(data) {
+        // Add the original series and chart as attributes to the view
         if (!this.series) {
             this.series = JSON.parse(JSON.stringify(data.series));
         }
@@ -470,14 +486,17 @@ App.CompositeFilter = App.AllValuesFilter.extend({
     },
 
     update_slider_data: function(event, data) {
+        // Save the current slider's value
         var sliders = this.$el.find('.composite-slider');
         var sliders_values = sliders.data('slidersvalues');
         sliders_values[data.slider_id] = data.slider_value;
         sliders.data('slidersvalues', sliders_values);
+        this.composite_values[data.slider_id] = data.slider_value;
         this.$el.trigger('sliderValuesUpdated');
     },
 
     update_normalized: function() {
+        // Process the normalized values
         var total = 0;
         var sliders = this.$el.find('.composite-slider');
         var sliders_values = sliders.data('slidersvalues');
@@ -503,6 +522,7 @@ App.CompositeFilter = App.AllValuesFilter.extend({
     },
 
     update_chart: function() {
+        // Redraw the chart with the new series
         var that = this;
         var sliders = this.$el.find('.composite-slider');
         var sliders_norm = sliders.data('slidersnorm');
@@ -524,6 +544,34 @@ App.CompositeFilter = App.AllValuesFilter.extend({
             }, context);
         });
         this.chart.redraw();
+        this.update_hash();
+    },
+
+    adjust_value: function() {
+        // Set the initial slider's values
+        var composite_values = {};
+        if (!$.isEmptyObject(this.composite_values)) {
+            var break_values = this.composite_values;
+        }
+        _.each(this.dimension_options, function(val) {
+          break_values ? composite_values[val.notation] = break_values[val.notation] : composite_values[val.notation] = 5;
+        });
+        this.composite_values = composite_values;
+        var adjusted_values = _.chain(this.dimension_options)
+                               .pluck('notation')
+                               .difference(this.ignore_values)
+                               .value();
+        this.model.set(this.name, adjusted_values);
+    },
+
+    update_hash: function() {
+        // Modify the hash in accordance with the slider's settings
+        var attrs = JSON.parse(JSON.stringify(this.model.attributes));
+        attrs[this.name] = this.composite_values;
+        var hashcfg = 'chart=' + JSON.stringify(_.pick(attrs, App.visualization.filters_in_url));
+        App.visualization.navigation.update_hashcfg(hashcfg);
+        App.visualization.share.update_url(App.SCENARIO_URL + '#' + hashcfg);
+        App.update_url_hash(hashcfg);
     }
 });
 
