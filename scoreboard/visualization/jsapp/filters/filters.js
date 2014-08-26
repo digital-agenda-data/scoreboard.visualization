@@ -566,12 +566,14 @@ App.CompositeFilter = App.AllValuesFilter.extend({
 
     update_hash: function() {
         // Modify the hash in accordance with the slider's settings
-        var attrs = JSON.parse(JSON.stringify(this.model.attributes));
-        attrs[this.name] = this.composite_values;
-        var hashcfg = 'chart=' + JSON.stringify(_.pick(attrs, App.visualization.filters_in_url));
-        App.visualization.navigation.update_hashcfg(hashcfg);
-        App.visualization.share.update_url(App.SCENARIO_URL + '#' + hashcfg);
-        App.update_url_hash(hashcfg);
+        if (!App.visualization.$el.hasClass('embedded')) {
+            var attrs = JSON.parse(JSON.stringify(this.model.attributes));
+            attrs[this.name] = this.composite_values;
+            var hashcfg = 'chart=' + JSON.stringify(_.pick(attrs, App.visualization.filters_in_url));
+            App.visualization.navigation.update_hashcfg(hashcfg);
+            App.visualization.share.update_url(App.SCENARIO_URL + '#' + hashcfg);
+            App.update_url_hash(hashcfg);
+        }
     }
 });
 
@@ -707,6 +709,8 @@ App.EmbeddedFiltersBox = App.FiltersBox.extend({
         'select': App.EmbeddedSelectFilter,
         'dataset_select': App.DatasetSelectFilter,
         'multiple_select': App.EmbeddedMultipleSelectFilter,
+        'composite': App.CompositeFilter,
+        'hidden_select': App.EmbeddedSelectFilter,
         'all-values': App.AllValuesFilter
     }
 
