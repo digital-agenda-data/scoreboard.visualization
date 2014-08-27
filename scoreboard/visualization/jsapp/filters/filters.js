@@ -532,7 +532,7 @@ App.CompositeFilter = App.AllValuesFilter.extend({
             context = {
                 'that': that,
                 'sliders_norm': sliders_norm,
-                'name': serie.name
+                'name': serie.options.notation
             }
             _.each(serie.data, function(item, item_idx){
                 var point_data = null;
