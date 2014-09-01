@@ -472,6 +472,7 @@ App.CompositeFilter = App.AllValuesFilter.extend({
 
         sliders.data('slidersvalues', sliders_values);
         this.listenToOnce(App.visualization.chart_view, 'chart_load', this.handle_chart_loaded);
+        this.listenTo(App.visualization.chart_view, 'chart_ready', this.update_metadata);
     },
 
     handle_chart_loaded: function(data) {
@@ -479,8 +480,14 @@ App.CompositeFilter = App.AllValuesFilter.extend({
         if (!this.series) {
             this.series = JSON.parse(JSON.stringify(data.series));
         }
+        if (!this.current_series) {
+            this.current_series = JSON.parse(JSON.stringify(data.series));
+        }
         if (!this.chart) {
             this.chart = data.chart;
+        }
+        if (!this.meta_options) {
+            this.meta_options = data.options;
         }
         this.$el.trigger('sliderValuesUpdated');
     },
@@ -541,10 +548,57 @@ App.CompositeFilter = App.AllValuesFilter.extend({
                 item.update(point_data,
                             false,
                             {duration: 950, easing: 'linear'});
+                that.current_series[serie_idx].data[item_idx].y = point_data;
+
             }, context);
         });
         this.chart.redraw();
         this.update_hash();
+        this.update_metadata();
+    },
+
+    update_metadata: function() {
+        var that = this;
+        var attributes = JSON.parse(JSON.stringify(this.model.attributes));
+        var sliders = this.$el.find('.composite-slider');
+        var sliders_values = sliders.data('slidersvalues');
+        var sliders_norm = sliders.data('slidersnorm');
+        var breakdown_sliders_values = [];
+        var breakdown_normalized_values = [];
+        var breakdown_index;
+
+        // Order the sliders values and normalized values as the order of the 
+        // breakdown list
+        _.each(attributes[this.name], function(item, item_idx) {
+            breakdown_sliders_values.splice(item_idx, 0, sliders_values[item]);
+            breakdown_normalized_values.splice(item_idx, 0, sliders_norm[item] + '%');
+        });
+        var filters_applied = _(attributes).pairs();
+
+        // Get the index of the breakdown
+        _.every(filters_applied, function(item, item_idx) {
+            breakdown_index = item_idx;
+            return item[0] !== that.name;
+        });
+
+        // Add the slider values and normalized values after the breakdown
+        breakdown_sliders_values = [this.name + '-slider-values',
+                                     breakdown_sliders_values];
+        breakdown_normalized_values = [this.name + '-normalized-values',
+                                        breakdown_normalized_values];
+        filters_applied.splice(breakdown_index+=1, 0, breakdown_sliders_values);
+        filters_applied.splice(breakdown_index+=1, 0, breakdown_normalized_values);
+
+        var metadata = {
+            'chart-title': this.meta_options.titles.title,
+            'chart-subtitle': this.meta_options.titles.subtitle,
+            'chart-xAxisTitle': this.meta_options.titles.xAxisTitle,
+            'chart-yAxisTitle': this.meta_options.titles.yAxisTitle,
+            'source-dataset': this.meta_options.credits.text,
+            'chart-url': document.URL,
+            'filters-applied': filters_applied
+        };
+        App.visualization.share.chart_ready(this.current_series, metadata);
     },
 
     adjust_value: function() {

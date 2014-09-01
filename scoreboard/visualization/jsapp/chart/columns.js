@@ -97,7 +97,11 @@ App.chart_library['columns'] = function(view, options) {
             width: viewPortWidth,
             events: {
                 load: function(event) {
-                    view.trigger("chart_load", {'chart': this, 'series': init_series});
+                    view.trigger('chart_load', {
+                        'chart': this,
+                        'series': init_series,
+                        'options': options
+                    });
                 }
             }
         },
