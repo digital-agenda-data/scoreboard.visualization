@@ -60,6 +60,7 @@ App.Visualization = Backbone.View.extend({
                 if (uri.indexOf('"') == -1) {
                     var rgx = /([^\[\]\{\},:]+)/g;
                     uri = uri.replace(rgx, '"$1"');
+                    uri = uri.replace('"null"', 'null');
                 }
                 url_filters = JSON.parse(uri);
             } catch(e) {}
