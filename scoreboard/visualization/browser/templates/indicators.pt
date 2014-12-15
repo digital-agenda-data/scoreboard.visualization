@@ -2,12 +2,14 @@
   i18n:domain="plone">
   <div metal:fill-slot="main"
     tal:define="normalizeString nocall:context/@@plone/normalizeString;">
-    <h1><span id="dataset-title" tal:content="here/getExtended_title"/></h1>
+    <h1 class="documentFirstHeading"><span id="dataset-title" tal:content="here/getExtended_title"/></h1>
 
     <div class="dataset-manage bootstrap">
-      <a class="btn btn-mini" tal:attributes="href string:${here/absolute_url}"><i class="icon-file"></i> Dataset</a>
-      <a class="btn btn-mini btn-primary" tal:attributes="href string:${here/absolute_url}/visualizations"><i class="icon-tasks icon-white"></i> Charts</a>
-      <a class="btn btn-mini" tal:attributes="href string:${here/absolute_url}/../"><i class="icon-align-justify"></i> Datasets</a>
+      <ul class="nav nav-tabs">
+        <li><a tal:attributes="href string:${here/absolute_url}/visualizations"><i class="icon-tasks"></i> Charts</a></li>
+        <li><a tal:attributes="href string:${here/absolute_url}"><i class="icon-file"></i> Dataset</a></li>
+        <li class="active"><a href="#"><i class="icon-tags"></i> Indicators</a></li>
+      </ul>
     </div>
     <br />
 
