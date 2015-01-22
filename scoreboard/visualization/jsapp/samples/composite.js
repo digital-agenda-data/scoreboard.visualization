@@ -101,10 +101,15 @@
     },
     "unit-measure": {
       "facet": "unit-measure"
+    },
+    "breakdown": {
+      "facet": "breakdown"
     }
   },
   "multiple_datasets": false,
   "multiple_series": "breakdown",
+  "series-legend-label": "long",
+  "series-point-label": "none",
   "sort": {
     "by": "category",
     "each_series": false,
