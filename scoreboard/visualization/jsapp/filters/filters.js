@@ -174,7 +174,7 @@ App.SelectFilter = Backbone.View.extend({
             this.$el.removeClass('loading-small');
             this.render();
             this.loadstate.set(this.name, false);
-            if ( _.isEmpty(this.dimension_options) ) {
+            if ( _.isEmpty(this.dimension_options) && this.className.indexOf('all-values') < 0) {
                 App.visualization.chart_view.remove_loading_add_msg('No data.');
             }
         }, this));
@@ -372,7 +372,7 @@ App.MultipleSelectFilter = App.SelectFilter.extend({
 
 App.AllValuesFilter = App.SelectFilter.extend({
 
-    className: "chart-filter",
+    className: "chart-filter all-values",
 
     render: function() {
         this.$el.html("");
