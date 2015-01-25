@@ -163,6 +163,14 @@ App.SelectFilter = Backbone.View.extend({
             if(this.sortOrder === 'reverse'){
                 this.dimension_options = _(this.dimension_options).reverse();
             }
+            if (this.ignore_values) {
+                var ignore_values = this.ignore_values;
+                this.dimension_options = _(this.dimension_options).filter(
+                    function(item){
+                        return !_(ignore_values).contains(item.notation);
+                    }
+                );
+            }
             this.options_labels = {};
             _(this.dimension_options).each(function(opt){
                   if (opt['notation'] != 'any'){

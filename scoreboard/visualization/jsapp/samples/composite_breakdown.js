@@ -31,26 +31,25 @@
     },
     {
       "constraints": {},
+      "default_value": ["dai_broadband"],
+      "ignore_values": ["dai"],
       "dimension": "indicator",
       "label": "Indicator",
       "name": "indicator",
       "sortBy": "inner_order",
       "sortOrder": "asc",
-      "default_value": "dai",
-      "ignore_values": ["dai_broadband", "dai_skills", "dai_dsm", "dai_psi", "dai_rdi", "dai_iuse"],
       "type": "hidden_select"
     },
     {
       "constraints": {
         "indicator": "indicator"
       },
-      "dimension": "breakdown",
-      "label": "Breakdown",
-      "name": "breakdown",
-      "position": "upper-right",
-      "sortBy": "inner_order",
+      "dimension": "breakdown-group",
+      "label": "Breakdown group",
+      "name": "breakdown-group",
+      "sortBy": "order_in_codelist",
       "sortOrder": "asc",
-      "type": "composite"
+      "type": "ignore"
     },
     {
       "constraints": {
@@ -65,6 +64,7 @@
     },
     {
       "constraints": {
+        "indicator": "indicator",
         "unit-measure": "unit-measure"
       },
       "dimension": "time-period",
@@ -76,12 +76,14 @@
     },
     {
       "constraints": {
-        "indicator": "indicator"
+        "indicator": "indicator",
+        "time-period": "time-period",
+        "unit-measure": "unit-measure"
       },
-      "dimension": "breakdown-group",
-      "label": "Breakdown group",
-      "name": "breakdown-group",
-      "sortBy": "order_in_codelist",
+      "dimension": "breakdown",
+      "label": "Breakdown",
+      "name": "breakdown",
+      "sortBy": "inner_order",
       "sortOrder": "asc",
       "type": "all-values"
     },
@@ -126,7 +128,14 @@
   },
   "titles": {
     "subtitle": [],
-    "title": [],
+    "title": [
+      {
+        "facet_name": "indicator",
+        "format": "label",
+        "prefix": null,
+        "suffix": null
+      }
+    ],
     "yAxisTitle": [
       {
         "facet_name": "unit-measure",
@@ -140,8 +149,5 @@
     "flag": true,
     "note": true,
     "unit-measure": true
-  },
-  "custom_properties": {
-     "dai-breakdown-chart": "dai-by-component"
   }
 }

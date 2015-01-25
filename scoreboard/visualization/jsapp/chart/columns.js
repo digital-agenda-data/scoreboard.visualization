@@ -195,6 +195,25 @@ App.chart_library['columns'] = function(view, options) {
         series: init_series
     };
 
+    // check link for composite charts
+    if (this.data.custom_properties !== undefined) {
+      var dai_breakdown_chart = this.data.custom_properties['dai-breakdown-chart'];
+      if ( dai_breakdown_chart) {
+        chartOptions.plotOptions.series = {
+          cursor: 'pointer',
+          point: {
+            events: {
+              click: function () {
+                var pathItems = window.location.pathname.split('/');
+                pathItems[pathItems.length - 1] = dai_breakdown_chart;
+                window.location = pathItems.join('/') + '#chart={"indicator":"'+this.series.options.notation+'"}';
+              }
+            }
+          }
+        }
+      }
+    }
+    
     App.set_default_chart_options(chartOptions);
     App.disable_legend(chartOptions, options);
     App.override_zoom();

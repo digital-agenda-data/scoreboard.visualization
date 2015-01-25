@@ -281,7 +281,8 @@ App.ScenarioChartView = Backbone.View.extend({
             'highlights': highlights,
             'sort': this.schema['sort'],
             'multidim': this.schema['multidim'],
-            'chart_type': this.schema['chart_type']
+            'chart_type': this.schema['chart_type'],
+            'custom_properties': this.schema['custom_properties']
         };
 
         var multiseries_values = null;
