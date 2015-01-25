@@ -196,7 +196,7 @@ App.chart_library['columns'] = function(view, options) {
     };
 
     // check link for composite charts
-    if (this.data.custom_properties !== undefined) {
+    if (typeof this.data.custom_properties != 'undefined') {
       var dai_breakdown_chart = this.data.custom_properties['dai-breakdown-chart'];
       if ( dai_breakdown_chart) {
         chartOptions.plotOptions.series = {

@@ -432,11 +432,16 @@ App.CompositeFilter = App.AllValuesFilter.extend({
 
     render: function() {
         var that = this;
-        this.$el.html(this.template({
+        var template_context = {
             'dimension_options': this.dimension_options,
             'filter_label': this.label,
             'filter_name': this.name
-        }));
+        };
+        if (typeof App.chart_config.custom_properties != 'undefined') {
+          template_context['linked_subchart'] = '../' +
+            App.chart_config.custom_properties['dai-breakdown-chart'];
+        }
+        this.$el.html(this.template(template_context));
         var sliders = this.$el.find('.composite-slider');
         var sliders_values = sliders.data('slidersvalues');
         if (!sliders_values) {
