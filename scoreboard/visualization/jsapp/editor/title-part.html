@@ -1,4 +1,4 @@
-<input type="text" name="title-part-prefix" placeholder="prefix" class="span1" value="{{ prefix }}"/>
+<input type="text" name="title-part-prefix" placeholder="prefix" class="col-md-1 col-sm-1" value="{{ prefix }}"/>
 <select name="title-part">
   <option value="">--</option>
 {{# facets }}
@@ -14,7 +14,7 @@
     >{{ label }}</option>
 {{/ format_options }}
 </select>
-<input type="text" name="title-part-suffix" placeholder="suffix" class="span1" value="{{ suffix }}" />
+<input type="text" name="title-part-suffix" placeholder="suffix" class="col-md-1 col-sm-1" value="{{ suffix }}" />
 <button name="remove-title-part" id="{{ id }}">
   <span class="ui-icon ui-icon-minusthick"></span>
 </button>
