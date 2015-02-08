@@ -213,7 +213,13 @@ App.ScenarioChartView = Backbone.View.extend({
                           out += this.y.toPrecision(3);
                           out += '%';
                         } else {
-                          out += Math.round(this.y*10)/10;
+                          if (this.y < 1) {
+                            out += Math.round(this.y*1000)/1000;
+                          } else if (this.y < 10) {
+                            out += Math.round(this.y*100)/100;
+                          } else {
+                            out += Math.round(this.y*10)/10;
+                          }
                         }
                     }
                     out += ' ';
