@@ -31,8 +31,8 @@
     },
     {
       "constraints": {},
-      "default_value": ["dai_broadband"],
-      "ignore_values": ["dai"],
+      "default_value": ["desi"],
+      "ignore_values": ["desi_sliders"],
       "dimension": "indicator",
       "label": "Indicator",
       "name": "indicator",
@@ -44,16 +44,18 @@
       "constraints": {
         "indicator": "indicator"
       },
+      "default_value": ["desi_totals"],
       "dimension": "breakdown-group",
       "label": "Breakdown group",
       "name": "breakdown-group",
       "sortBy": "order_in_codelist",
       "sortOrder": "asc",
-      "type": "ignore"
+      "type": "select"
     },
     {
       "constraints": {
-        "indicator": "indicator"
+        "indicator": "indicator",
+        "breakdown-group": "breakdown-group"
       },
       "dimension": "unit-measure",
       "label": "Unit of measure",
@@ -65,6 +67,7 @@
     {
       "constraints": {
         "indicator": "indicator",
+        "breakdown-group": "breakdown-group",
         "unit-measure": "unit-measure"
       },
       "dimension": "time-period",
@@ -77,6 +80,7 @@
     {
       "constraints": {
         "indicator": "indicator",
+        "breakdown-group": "breakdown-group",
         "time-period": "time-period",
         "unit-measure": "unit-measure"
       },
@@ -110,6 +114,9 @@
     "breakdown": {
       "facet": "breakdown"
     },
+    "breakdown-group": {
+      "facet": "breakdown-group"
+    },
     "indicator": {
       "facet": "indicator"
     },
@@ -122,18 +129,32 @@
   "series-legend-label": "long",
   "series-point-label": "none",
   "sort": {
-    "by": "category",
+    "by": "value",
     "each_series": false,
-    "order": 1
+    "total_stacked": true,
+    "order": -1
   },
   "titles": {
-    "subtitle": [],
+    "subtitle": [
+      {
+        "facet_name": "time-period",
+        "prefix": null,
+        "suffix": null,
+        "format": "label"
+      }
+    ],
     "title": [
       {
         "facet_name": "indicator",
-        "format": "label",
         "prefix": null,
-        "suffix": null
+        "suffix": null,
+        "format": "label"
+      },
+      {
+        "facet_name": "breakdown-group",
+        "prefix": ", by ",
+        "suffix": null,
+        "format": "label"
       }
     ],
     "yAxisTitle": [

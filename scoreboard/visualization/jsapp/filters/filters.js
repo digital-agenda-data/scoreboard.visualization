@@ -258,6 +258,7 @@ App.SelectFilter = Backbone.View.extend({
             'filter_label': this.label
         };
         if (this.display_in_groups){
+            var groupers = this.model.get(App.groupers[this.dimension]);
             var grouped_data = _(this.dimension_options).groupBy('group_notation');
             var groups = _.zip(_(grouped_data).keys(), _(grouped_data).values());
             var grouper = _.chain(App.visualization.filters_box.filters).
@@ -274,10 +275,14 @@ App.SelectFilter = Backbone.View.extend({
                     var selected = (item['notation'] == selected_value);
                     return _({'selected': selected}).extend(item);
                 });
-                var out = _.object(['group', 'options'],
-                                   [label, options]);
+                var out = _.object(['notation', 'group', 'options'],
+                                   [item[0], label, options]);
                 return out;
-            }).sortBy('group').value();
+            }).sortBy(function(item){
+                // keep same order of groups from grouper
+                return _(groupers).indexOf(item['notation']);
+            })
+            .value();
             this.$el.html(this.group_template(template_data));
         }
         else{
