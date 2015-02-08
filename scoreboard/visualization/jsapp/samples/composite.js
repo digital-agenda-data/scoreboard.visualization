@@ -121,9 +121,10 @@
   "series-legend-label": "long",
   "series-point-label": "none",
   "sort": {
-    "by": "category",
+    "by": "value",
     "each_series": false,
-    "order": 1
+    "total_stacked": true,
+    "order": -1
   },
   "titles": {
     "subtitle": [],

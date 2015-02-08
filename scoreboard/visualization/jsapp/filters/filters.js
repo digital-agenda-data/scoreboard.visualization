@@ -556,21 +556,34 @@ App.CompositeFilter = App.AllValuesFilter.extend({
 
         _(this.chart.series).each(function(serie, serie_idx){
             context = {
-                'that': that,
-                'sliders_norm': sliders_norm,
-                'name': serie.options.notation
+                'that': that
             }
+            var normalized = parseFloat(sliders_norm[serie.options.notation], 10);
             _.each(serie.data, function(item, item_idx){
-                var point_data = null;
-                var normalized = parseFloat(this.sliders_norm[this.name], 10);
-                point_data = that.series[serie_idx].data[item_idx].y * (normalized / 100);
-                item.update(point_data,
-                            false,
-                            {duration: 950, easing: 'linear'});
-                that.current_series[serie_idx].data[item_idx].y = point_data;
+                // find the original point value;
+                // careful, the point order in that.series is not be the same, because of sorting!
+                var orig_point_value = _(that.series[serie_idx].data).findWhere({'code':item.code}).y;
+                //item.update(point_data, false, {duration: 950, easing: 'linear'});
+                that.current_series[serie_idx].data[item_idx].y = orig_point_value * (normalized / 100);
 
             }, context);
         });
+        // re-sort series
+        App.sort_by_total_stacked(this.current_series, App.visualization.options.schema.sort);
+        // now update chart points and label on x-axis
+        var current_series = this.current_series;
+        var resorted_categories = false;
+        _(this.chart.series).each(function(serie, serie_idx){
+            if (!resorted_categories) {
+                resorted_categories = _(current_series[serie_idx].data).pluck('name');
+            }
+            _.each(serie.data, function(item, item_idx){
+                item.update(current_series[serie_idx].data[item_idx],
+                 false, {duration: 950, easing: 'linear'});
+            });
+        });
+        // update categories
+        this.chart.xAxis[0].categories = resorted_categories;
         this.chart.redraw();
         this.update_hash();
         this.update_metadata();
