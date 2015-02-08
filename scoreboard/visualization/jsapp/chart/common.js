@@ -41,6 +41,31 @@ function sort_serie(serie, sort, category_facet){
     return serie;
 };
 
+App.sort_by_total_stacked = function (series, sort){
+  // compute stacked value
+  var total_stacked = {};
+  _(series).each(function(serie) {
+    _(serie.data).each(function(point) {
+        if (!total_stacked[point.code]) {
+          total_stacked[point.code] = { code: point.code, y: 0};
+        }
+        if (point.y ) {
+          total_stacked[point.code].y += point.y;
+        }
+    });
+  });
+  var sorted_codes = _.chain(total_stacked)
+    .sortBy(function(item) { return sort.order * item.y})
+    .pluck('code')
+    .value();
+  // now sort all series
+  _(series).each(function(serie) {
+    serie.data = _(serie.data).sortBy( function(point){
+        return sorted_codes.indexOf(point.code);
+    });
+  });
+}
+
 App.format_series = function (data, sort, multidim, percent, category, highlights, animation){
     var multiplicators = _(percent).map(function(pc){
         return pc?100:1;
@@ -222,24 +247,32 @@ App.format_series = function (data, sort, multidim, percent, category, highlight
                 })
             }
 
-            if (sort && !first_serie){
-                if ( sort.first_serie ) {
-                    sort.first_serie = null;
+            if ( sort && !sort.total_stacked ) {
+                // only sort one by one if sort.total_stacked is not set
+                if (!first_serie){
+                    if ( sort.first_serie ) {
+                        sort.first_serie = null;
+                    }
+                    serie = sort_serie(serie, sort, category);
+                    if(!sort.each_series){
+                        // if each_series is not set, the order of the first serie is kept
+                        first_serie = serie;
+                    }
                 }
-                serie = sort_serie(serie, sort, category);
-                if(!sort.each_series){
-                    first_serie = serie;
-                }
-            }
-            else if (sort){
+                else {
+                    // rest of series, beginning with #2
                     _(sort).extend({'first_serie': first_serie});
                     serie = sort_serie(serie, sort, category);
+                }
             }
-
             return _.object(
                     ['name', 'ending_label', 'notation', 'order', 'color', 'data'],
                     [item['name'], item['ending_label'], item['notation'], item['order'], countrycolor(item['notation']), serie]);
         }).value();
+    }
+    if ( sort && sort.total_stacked ) {
+      // sort again all series, based on the total stacked value
+      App.sort_by_total_stacked(series, sort);
     }
     return series;
 }

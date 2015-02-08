@@ -65,8 +65,10 @@ App.Visualization = Backbone.View.extend({
                 url_filters = JSON.parse(uri);
             } catch(e) {}
             var keep_filters = {};
+            var filter_list = ['select', 'multiple_select', 'dataset_select',
+                               'composite', 'hidden_select'];
             _(filters_schema).forEach(function(item) {
-                if(item['type'] == 'select' || item['type'] == 'multiple_select' || item['type'] == 'dataset_select') {
+                if (_.contains(filter_list, item['type']) > -1) {
                     keep_filters[item['name']] = true;
                 }
                 // ignore ref-area from previous charts when navigating to map chart
