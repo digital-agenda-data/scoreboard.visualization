@@ -127,8 +127,22 @@
     "order": -1
   },
   "titles": {
-    "subtitle": [],
-    "title": [],
+    "subtitle": [
+      {
+        "facet_name": "time-period",
+        "prefix": null,
+        "suffix": null,
+        "format": "label"
+      }
+    ],
+    "title": [
+      {
+        "facet_name": "indicator",
+        "prefix": null,
+        "suffix": null,
+        "format": "label"
+      }
+    ],
     "yAxisTitle": [
       {
         "facet_name": "unit-measure",

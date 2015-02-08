@@ -777,13 +777,15 @@ App.FiltersBox = Backbone.View.extend({
             });
 
             this.filters.push(filter);
-            if(item.position == 'upper-right' || item.type == 'multiple_select'){
+            if (item.type == 'composite') {
+                $(filter.el).appendTo($('.header', this.$el));
+            }else if (item.position == 'upper-right' || item.type == 'multiple_select'){
                 $(filter.el).appendTo($('.upper-right', this.$el));
             }
-            else if(item.position == 'bottom-left'){
+            else if (item.position == 'bottom-left'){
                 $(filter.el).appendTo($('.bottom-left', this.$el));
             }
-            else if(item.position == 'bottom-right'){
+            else if (item.position == 'bottom-right'){
                 $(filter.el).appendTo($('.bottom-right', this.$el));
             }
             else{
