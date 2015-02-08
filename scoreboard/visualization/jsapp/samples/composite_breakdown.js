@@ -32,7 +32,7 @@
     {
       "constraints": {},
       "default_value": ["DESI"],
-      "ignore_values": ["DESI_SLIDERS"],
+      "ignore_values": ["desi_sliders", "DESI_SLIDERS"],
       "dimension": "indicator",
       "label": "Indicator",
       "name": "indicator",
@@ -160,7 +160,7 @@
     "yAxisTitle": [
       {
         "facet_name": "unit-measure",
-        "format": "short_label",
+        "format": "label",
         "prefix": null,
         "suffix": null
       }

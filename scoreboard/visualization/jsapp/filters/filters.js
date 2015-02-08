@@ -495,24 +495,16 @@ App.CompositeFilter = App.AllValuesFilter.extend({
         });
 
         sliders.data('slidersvalues', sliders_values);
-        this.listenToOnce(App.visualization.chart_view, 'chart_load', this.handle_chart_loaded);
+        this.listenTo(App.visualization.chart_view, 'chart_load', this.handle_chart_loaded);
         this.listenTo(App.visualization.chart_view, 'chart_ready', this.update_metadata);
     },
 
     handle_chart_loaded: function(data) {
         // Add the original series and chart as attributes to the view
-        if (!this.series) {
-            this.series = JSON.parse(JSON.stringify(data.series));
-        }
-        if (!this.current_series) {
-            this.current_series = JSON.parse(JSON.stringify(data.series));
-        }
-        if (!this.chart) {
-            this.chart = data.chart;
-        }
-        if (!this.meta_options) {
-            this.meta_options = data.options;
-        }
+        this.series = JSON.parse(JSON.stringify(data.series));
+        this.current_series = JSON.parse(JSON.stringify(data.series));
+        this.chart = data.chart;
+        this.meta_options = data.options;
         this.$el.trigger('sliderValuesUpdated');
     },
 

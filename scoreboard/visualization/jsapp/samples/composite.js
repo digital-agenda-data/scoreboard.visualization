@@ -146,7 +146,7 @@
     "yAxisTitle": [
       {
         "facet_name": "unit-measure",
-        "format": "short_label",
+        "format": "label",
         "prefix": null,
         "suffix": null
       }
