@@ -38,7 +38,7 @@
       "name": "indicator",
       "sortBy": "inner_order",
       "sortOrder": "asc",
-      "type": "hidden_select"
+      "type": "select"
     },
     {
       "constraints": {

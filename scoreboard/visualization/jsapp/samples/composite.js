@@ -36,8 +36,8 @@
       "name": "indicator",
       "sortBy": "inner_order",
       "sortOrder": "asc",
-      "default_value": "dai",
-      "ignore_values": ["dai_broadband", "dai_skills", "dai_dsm", "dai_psi", "dai_rdi", "dai_iuse"],
+      "default_value": "desi_sliders",
+      "ignore_values": ["desi", "desi_1_conn", "desi_1a_comp", "desi_1a1_fpc", "desi_1b_fbb", "desi_1b1_fbbc", "desi_1b2_fbbtu", "desi_1c_mbb", "desi_1c1_mbbtu", "desi_1c2_spec", "desi_1d_speed", "desi_1d1_ngac", "desi_1d2_sfbb", "desi_1e_aff", "desi_1e1_fbbp", "desi_2_hc", "desi_2a_bsu", "desi_2a1_iu", "desi_2a2_abds", "desi_2b_asd", "desi_2b1_ictspec", "desi_2b2_stemg", "desi_3_ui", "desi_3a_cont", "desi_3a1_news", "desi_3a2_mvg", "desi_3a3_vod", "desi_3a4_iptv", "desi_3b_comm", "desi_3b1_vidcall", "desi_3b2_socnet", "desi_3c_trans", "desi_3c1_bank", "desi_3c2_shop", "desi_4_idt", "desi_4a_bd", "desi_4a1_eis", "desi_4a2_rfid", "desi_4a3_socmed", "desi_4a4_einv", "desi_4b_ecomm", "desi_4b1_smeso", "desi_4b2_ecomturn", "desi_4b3_sellcb", "desi_5_dps", "desi_5a_egov", "desi_5a1_egovu", "desi_5a2_prefform", "desi_5a3_osercomp", "desi_5b_ehealth", "desi_5b1_mdataexch", "desi_5b2_epresc"],
       "type": "hidden_select"
     },
     {
@@ -50,6 +50,7 @@
       "position": "upper-right",
       "sortBy": "inner_order",
       "sortOrder": "asc",
+      "default_value": {"DESI_1_CONN":5,"DESI_2_HC":5,"DESI_3_UI":3,"DESI_4_IDT":4,"DESI_5_DPS":3},
       "type": "composite"
     },
     {

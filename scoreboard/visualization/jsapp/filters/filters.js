@@ -420,6 +420,12 @@ App.CompositeFilter = App.AllValuesFilter.extend({
         this.composite_values = {};
         // If we get proper slider settings in the url, save them as an attribute
         // to this view, but sanitize the model's attributes
+        if ( typeof this.model.attributes[options.name] == 'undefined' ) {
+          if (this.options.default_value && !_.isArray(this.options.default_value)) {
+            // copy initial slider values from default value setting
+            this.model.attributes[options.name] = this.options.default_value;
+          }
+        }
         if (this.model.attributes[options.name] && !_.isArray(this.model.attributes[options.name])) {
             this.composite_values = JSON.parse(JSON.stringify(this.model.attributes[options.name]));
             var objectKeys = _.map(this.composite_values, function(value, key) {
