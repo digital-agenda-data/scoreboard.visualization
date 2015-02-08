@@ -93,6 +93,7 @@
         "unit-measure": "unit-measure"
       },
       "dimension": "ref-area",
+      "highlights": ["EU27"],
       "label": "Select the countries",
       "name": "ref-area",
       "sortBy": "order_in_codelist",

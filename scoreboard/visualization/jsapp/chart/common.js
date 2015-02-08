@@ -152,15 +152,29 @@ App.format_series = function (data, sort, multidim, percent, category, highlight
             var color = null;
             if(_(highlights).contains(series_item[category]['notation'])){
                 var code = series_item[category]['notation'];
-                var country_color = App.COUNTRY_COLOR[code];
-                var scale = new chroma.ColorScale({
-                    colors: ['#000000', country_color],
-                    limits: [data.length, 0]
-                });
                 if(!_(highlights_counter).has(code)){
                     highlights_counter[code] = 0;
                 }
-                var color = scale.getColor(highlights_counter[code]).hex();
+                var base_color;
+                if ( data.length > 1 ) {
+                  // for multiple series use the color of the series as base color
+                  base_color = App.SERIES_COLOR[highlights_counter[code]];
+                } else {
+                  // for single series use the color of the country as base color
+                  base_color = App.COUNTRY_COLOR[code];
+                }
+                var scale = new chroma.ColorScale({
+                    colors: ['#000000', base_color],
+                    limits: [data.length, 0]
+                });
+                var color;
+                if ( data.length > 1 ) {
+                  // for multiple series only one highlight
+                  color = scale.getColor(_(highlights_counter).size()).hex();
+                } else {
+                  // different shades of the same base colors
+                  color = scale.getColor(highlights_counter[code]).hex();
+                }
                 if (! animation) {
                     highlights_counter[code] += 1;
                 }
