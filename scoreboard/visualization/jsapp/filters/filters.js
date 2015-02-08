@@ -448,7 +448,7 @@ App.CompositeFilter = App.AllValuesFilter.extend({
             'filter_label': this.label,
             'filter_name': this.name
         };
-        if (typeof App.chart_config.custom_properties != 'undefined') {
+        if (App.chart_config && App.chart_config.custom_properties) {
           template_context['linked_subchart'] = '../' +
             App.chart_config.custom_properties['dai-breakdown-chart'];
         }

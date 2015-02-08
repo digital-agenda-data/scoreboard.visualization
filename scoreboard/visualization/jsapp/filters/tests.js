@@ -339,7 +339,7 @@ describe('modular filters', function() {
             });
             view.ajax.resolve({options: options});
             expect(view.$el.find('.composite-slider-widget').length).to.deep.equal(3);
-            expect(view.$el.find('.slider-label label').text())
+            expect(view.$el.find('.slider-label a').text())
                 .to.deep.equal('Option OneOption TwoOption Three');
             expect(model.get('fil1')).to.deep.equal(["v1", "v2", "v3"]);
         });
