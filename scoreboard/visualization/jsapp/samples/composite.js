@@ -36,8 +36,8 @@
       "name": "indicator",
       "sortBy": "inner_order",
       "sortOrder": "asc",
-      "default_value": "desi_sliders",
-      "ignore_values": ["desi", "desi_1_conn", "desi_1a_comp", "desi_1a1_fpc", "desi_1b_fbb", "desi_1b1_fbbc", "desi_1b2_fbbtu", "desi_1c_mbb", "desi_1c1_mbbtu", "desi_1c2_spec", "desi_1d_speed", "desi_1d1_ngac", "desi_1d2_sfbb", "desi_1e_aff", "desi_1e1_fbbp", "desi_2_hc", "desi_2a_bsu", "desi_2a1_iu", "desi_2a2_abds", "desi_2b_asd", "desi_2b1_ictspec", "desi_2b2_stemg", "desi_3_ui", "desi_3a_cont", "desi_3a1_news", "desi_3a2_mvg", "desi_3a3_vod", "desi_3a4_iptv", "desi_3b_comm", "desi_3b1_vidcall", "desi_3b2_socnet", "desi_3c_trans", "desi_3c1_bank", "desi_3c2_shop", "desi_4_idt", "desi_4a_bd", "desi_4a1_eis", "desi_4a2_rfid", "desi_4a3_socmed", "desi_4a4_einv", "desi_4b_ecomm", "desi_4b1_smeso", "desi_4b2_ecomturn", "desi_4b3_sellcb", "desi_5_dps", "desi_5a_egov", "desi_5a1_egovu", "desi_5a2_prefform", "desi_5a3_osercomp", "desi_5b_ehealth", "desi_5b1_mdataexch", "desi_5b2_epresc"],
+      "default_value": "DESI_SLIDERS",
+      "ignore_values": ["DESI", "DESI_1_CONN", "DESI_1A_COMP", "DESI_1A1_FPC", "DESI_1B_FBB", "DESI_1B1_FBBC", "DESI_1B2_FBBTU", "DESI_1C_MBB", "DESI_1C1_MBBTU", "DESI_1C2_SPEC", "DESI_1D_SPEED", "DESI_1D1_NGAC", "DESI_1D2_SFBB", "DESI_1E_AFF", "DESI_1E1_FBBP", "DESI_2_HC", "DESI_2A_BSU", "DESI_2A1_IU", "DESI_2A2_ABDS", "DESI_2B_ASD", "DESI_2B1_ICTSPEC", "DESI_2B2_STEMG", "DESI_3_UI", "DESI_3A_CONT", "DESI_3A1_NEWS", "DESI_3A2_MVG", "DESI_3A3_VOD", "DESI_3A4_IPTV", "DESI_3B_COMM", "DESI_3B1_VIDCALL", "DESI_3B2_SOCNET", "DESI_3C_TRANS", "DESI_3C1_BANK", "DESI_3C2_SHOP", "DESI_4_IDT", "DESI_4A_BD", "DESI_4A1_EIS", "DESI_4A2_RFID", "DESI_4A3_SOCMED", "DESI_4A4_EINV", "DESI_4A5_CLOUD", "DESI_4B_ECOMM", "DESI_4B1_SMESO", "DESI_4B2_ECOMTURN", "DESI_4B3_SELLCB", "DESI_5_DPS", "DESI_5A_EGOV", "DESI_5A1_EGOVU", "DESI_5A2_PREFFORM", "DESI_5A3_OSERCOMP", "DESI_5A4_OPENDATA", "DESI_5B_EHEALTH", "DESI_5B1_MDATAEXCH", "DESI_5B2_EPRESC"],
       "type": "hidden_select"
     },
     {
