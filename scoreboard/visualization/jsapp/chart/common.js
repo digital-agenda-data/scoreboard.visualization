@@ -71,8 +71,8 @@ App.format_series = function (data, sort, multidim, percent, category, highlight
         return pc?100:1;
     });
     var countrycolor = function(code) {
-        if (_.isNull(App.COUNTRY_COLOR[code])) {
-            return '#1C3FFD';
+        if (_.isNull(App.COUNTRY_COLOR[code]) || _.isUndefined(App.COUNTRY_COLOR[code])) {
+            return null;
         } else {
             return App.COUNTRY_COLOR[code];
         }
@@ -158,14 +158,14 @@ App.format_series = function (data, sort, multidim, percent, category, highlight
                 var base_color;
                 if ( data.length > 1 ) {
                   // for multiple series use the color of the series as base color
-                  base_color = App.SERIES_COLOR[highlights_counter[code]];
+                  base_color = App.SERIES_COLOR[highlights_counter[code]] || '#63b8ff';
                 } else {
                   // for single series use the color of the country as base color
-                  base_color = App.COUNTRY_COLOR[code];
+                  base_color = App.COUNTRY_COLOR[code] || '#63b8ff';
                 }
                 var scale = new chroma.ColorScale({
                     colors: ['#000000', base_color],
-                    limits: [data.length, 0]
+                    limits: [animation?2:(data.length+1), 0]
                 });
                 var color;
                 if ( data.length > 1 ) {
@@ -173,7 +173,7 @@ App.format_series = function (data, sort, multidim, percent, category, highlight
                   color = scale.getColor(_(highlights_counter).size()).hex();
                 } else {
                   // different shades of the same base colors
-                  color = scale.getColor(highlights_counter[code]).hex();
+                  color = scale.getColor(highlights_counter[code]+1).hex();
                 }
                 if (! animation) {
                     highlights_counter[code] += 1;
