@@ -29,7 +29,9 @@ App.SeriesEditor = Backbone.View.extend({
 
     point_label_options: [
         {value: 'none', label: "none"},
-        {value: 'short', label: "Short label"}
+        {value: 'notation', label: "Notation"},
+        {value: 'short', label: "Short label"},
+        {value: 'long', label: "Long label"}
     ],
 
     ending_label_options: [

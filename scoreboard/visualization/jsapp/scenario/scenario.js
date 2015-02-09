@@ -300,6 +300,7 @@ App.ScenarioChartView = Backbone.View.extend({
             'animation': this.schema['animation'] || false,
             'series-legend-label': this.schema['series-legend-label'] || 'none',
             'series-ending-label': this.schema['series-ending-label'] || 'none',
+            'series-point-label': this.schema['series-point-label'] || 'none',
             'multiseries': this.multiple_series,
             'category_facet': this.schema['category_facet'],
             'subtype': this.schema.chart_subtype,

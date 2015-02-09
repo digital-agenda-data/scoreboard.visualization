@@ -139,7 +139,7 @@
   "plotlines": {},
   "series-legend-label": "none",
   "series-ending-label": "long",
-  "series-point-label": "long",
+  "series-point-label": "none",
   "sort": {
     "by": "category",
     "order": -1,

@@ -15,7 +15,8 @@ App.chart_library['columns'] = function(view, options) {
                     options['unit_is_pc'],
                     options['category_facet'],
                     options['highlights'],
-                    options['animation']);
+                    options['animation'],
+                    options['series-point-label']);
     // add N/A labels for missing values
     var dataLabels = {
         enabled: true,

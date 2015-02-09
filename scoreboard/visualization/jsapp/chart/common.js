@@ -66,7 +66,7 @@ App.sort_by_total_stacked = function (series, sort){
   });
 }
 
-App.format_series = function (data, sort, multidim, percent, category, highlights, animation){
+App.format_series = function (data, sort, multidim, percent, category, highlights, animation, series_point_label){
     var multiplicators = _(percent).map(function(pc){
         return pc?100:1;
     });
@@ -117,7 +117,7 @@ App.format_series = function (data, sort, multidim, percent, category, highlight
                         },
                         'formatter': label_formatter
                     }
-                }
+                };
                 _.chain(data).
                   each(function(item){
                       var new_serie = _(output).omit('data');
@@ -143,7 +143,12 @@ App.format_series = function (data, sort, multidim, percent, category, highlight
         var highlights_counter = {};
         var extract_data = function(series_item){
             var value = series_item['value'];
-            var point = _.object([['name', series_item[category]['label']],
+            var dict = {'short': 'short_label', 'long': 'label', 'none': 'label', 'notation': 'notation'};
+            var point_names_from = 'label';
+            if ( series_point_label ) {
+                point_names_from = dict[series_point_label] || 'label';
+            }
+            var point = _.object([['name', series_item[category][point_names_from]],
                                  ['code', series_item[category]['notation']],
                                  ['order', series_item[category]['inner_order']],
                                  ['ending_label', series_item[category]['ending_label']],
