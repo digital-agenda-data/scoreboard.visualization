@@ -143,7 +143,7 @@ App.format_series = function (data, sort, multidim, percent, category, highlight
         var highlights_counter = {};
         var extract_data = function(series_item){
             var value = series_item['value'];
-            var dict = {'short': 'short_label', 'long': 'label', 'none': 'label', 'notation': 'notation'};
+            var dict = {'short': 'short-label', 'long': 'label', 'none': 'label', 'notation': 'notation'};
             var point_names_from = 'label';
             if ( series_point_label ) {
                 point_names_from = dict[series_point_label] || 'label';
