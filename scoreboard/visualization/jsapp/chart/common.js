@@ -148,6 +148,7 @@ App.format_series = function (data, sort, multidim, percent, category, highlight
             if ( series_point_label ) {
                 point_names_from = dict[series_point_label] || 'label';
             }
+            var point_name = series_item[category][point_names_from] || series_item[category]['notation'];
             var point = _.object([['name', series_item[category][point_names_from]],
                                  ['code', series_item[category]['notation']],
                                  ['order', series_item[category]['inner_order']],
@@ -224,9 +225,17 @@ App.format_series = function (data, sort, multidim, percent, category, highlight
               each(function(diff_code){
                   var data = diffs_collection[diff_code][category];
                   var attributes = _.object([[category, data]]);
+                  // append missing points
+                  // code duplicated here in order to re-create object['name']
+                  var dict = {'short': 'short-label', 'long': 'label', 'none': 'label', 'notation': 'notation'};
+                  var point_names_from = 'label';
+                  if ( series_point_label ) {
+                      point_names_from = dict[series_point_label] || 'label';
+                  }
+                  var point_name = data[point_names_from] || data['notation'];
                   _(serie).push(
                       _.object([['code', data['notation']],
-                                ['name', data['label']],
+                                ['name', point_name],
                                 ['ending_label', data['ending_label']],
                                 ['order', data['inner_order']],
                                 ['attributes', attributes],
