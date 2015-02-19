@@ -20,7 +20,7 @@
     </div>
 
     <div class="row">
-      <div class="col-md-12">
+      <div class="col-md-12 white-area rounded-top use-top-padding">
         <p id="dataset-description" tal:content="structure here/getSummary" />
         <p>The following table provides methodological information about the source, the scope and the definition of each indicator. For more details, click on the links in the table or explore the whole database.</p>
         <div id="indicators-toc" class="listing-description"> </div>
@@ -28,7 +28,7 @@
     </div>
 
     <div class="row">
-      <div class="col-md-12">
+      <div class="col-md-12 white-area no-top-bottom use-bottom-padding rounded-bottom">
         <table class="list_indicators">
           <thead>
               <tr>
