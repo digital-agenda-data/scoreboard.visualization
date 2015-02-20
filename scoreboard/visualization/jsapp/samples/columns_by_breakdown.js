@@ -146,7 +146,7 @@
     },
     "multiple_series": "breakdown",
     "series-legend-label": "long",
-    "series-point-label": "none",
+    "series-point-label": "long",
     "sort": {
         "by": "value",
         "each_series": false,

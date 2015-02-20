@@ -174,8 +174,14 @@ App.ScenarioChartView = Backbone.View.extend({
                 // point value(s) and unit-measure
                 if (_.contains(tooltip_attributes, 'value')) {
                     if ( multidim ) {
-                        out += '<br><b>x</b>: ' + Math.round(this.x*10)/10;
-                        if (unit_is_pc[0]) out += '%';
+                        out += '<br><b>x</b>: ';
+                        if (unit_is_pc[0]) {
+                          // keep only three significant digits
+                          out += this.x.toPrecision(3);
+                          out += '%';
+                        } else {
+                          out += Math.round(this.x*10)/10;
+                        }
                         out += ' ';
                         if (_.contains(tooltip_attributes, 'unit-measure') && attrs['unit-measure']) {
                             out += attrs['unit-measure']['x'].label;
@@ -185,14 +191,9 @@ App.ScenarioChartView = Backbone.View.extend({
                     if ( multidim ) {
                         out += '<b>y</b>: ';
                     }
-                    if ( this.point.isNA ) {
-                        out += '<b>' + this.series.name  + '</b><br>';
-                        out += '<b>Data not available</b>'
-                    } else {
-                        out += Math.round(this.y*10)/10;
-                    }
+                    var is_percent = false;
                     if ( multidim ) {
-                        if (unit_is_pc[1]) out += '%';
+                        if (unit_is_pc[1]) is_percent = true;
                     } else {
                         // no multidim, but may be multi-lines chart
                         var series_is_pc = unit_is_pc[0];
@@ -200,7 +201,25 @@ App.ScenarioChartView = Backbone.View.extend({
                             series_is_pc = unit_is_pc[this.series.index];
                         }
                         if (series_is_pc && !this.point.isNA) {
-                            out += '%';
+                            is_percent = true;
+                        }
+                    }
+                    if ( this.point.isNA ) {
+                        out += '<b>' + this.series.name  + '</b><br>';
+                        out += '<b>Data not available</b>'
+                    } else {
+                        // keep only three significant digits
+                        if ( is_percent ) {
+                          out += this.y.toPrecision(3);
+                          out += '%';
+                        } else {
+                          if (this.y < 1) {
+                            out += Math.round(this.y*1000)/1000;
+                          } else if (this.y < 10) {
+                            out += Math.round(this.y*100)/100;
+                          } else {
+                            out += Math.round(this.y*10)/10;
+                          }
                         }
                     }
                     out += ' ';
@@ -212,8 +231,14 @@ App.ScenarioChartView = Backbone.View.extend({
                         }
                     }
                     if ( multidim == 3 ) {
-                        out += '<br><b>z</b>: ' + Math.round(this.point.z*10)/10;
-                        if (unit_is_pc[2]) out += '%';
+                        out += '<br><b>z</b>: ';
+                        if (unit_is_pc[2]) {
+                          // keep only three significant digits
+                          out += this.point.z.toPrecision(3);
+                          out += '%';
+                        } else {
+                          out += Math.round(this.point.z*10)/10;
+                        }
                         out += ' ';
                         if (_.contains(tooltip_attributes, 'unit-measure') && attrs['unit-measure']) {
                             out += attrs['unit-measure']['z'].label;
@@ -275,13 +300,15 @@ App.ScenarioChartView = Backbone.View.extend({
             'animation': this.schema['animation'] || false,
             'series-legend-label': this.schema['series-legend-label'] || 'none',
             'series-ending-label': this.schema['series-ending-label'] || 'none',
+            'series-point-label': this.schema['series-point-label'] || 'none',
             'multiseries': this.multiple_series,
             'category_facet': this.schema['category_facet'],
             'subtype': this.schema.chart_subtype,
             'highlights': highlights,
             'sort': this.schema['sort'],
             'multidim': this.schema['multidim'],
-            'chart_type': this.schema['chart_type']
+            'chart_type': this.schema['chart_type'],
+            'custom_properties': this.schema['custom_properties']
         };
 
         var multiseries_values = null;
@@ -379,6 +406,9 @@ App.ScenarioChartView = Backbone.View.extend({
                     }, this);
                 }
                 var labels_url = '/dimension_options_' + 'xyz'.slice(0, this.schema.multidim);
+                if (!this.schema.multidim) {
+                    labels_url = '/dimension_options';
+                }
                 var labels_request = $.getJSON(this.cube_url + labels_url, labels_args);
                 var dict = {'short': 'short_label', 'long': 'label', 'none': 'notation'};
                 var series_names = 'notation';

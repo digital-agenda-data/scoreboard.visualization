@@ -1,0 +1,16 @@
+<label><strong>Click to drilldown</strong></label>
+<label class="right-label">Normalized</label>
+<br>
+<div class="composite-sliders">
+    {{# dimension_options }}
+        <div id="{{ notation }}" class="composite-slider-widget">
+            <div class="slider-label" style="width:180px">
+                <a href='{{../linked_subchart}}#chart={"indicator":"{{notation}}"}'>{{ label }}</a>
+            </div>
+            <div class="composite-slider" id="{{ notation }}-slider"></div>
+            <div class="normalized-value" id="{{ notation }}-normalized"></div>
+            <div class="visualClear"> </div>
+        </div>
+    {{/ dimension_options }}
+    <br />
+</div>

@@ -41,13 +41,38 @@ function sort_serie(serie, sort, category_facet){
     return serie;
 };
 
-App.format_series = function (data, sort, multidim, percent, category, highlights, animation){
+App.sort_by_total_stacked = function (series, sort){
+  // compute stacked value
+  var total_stacked = {};
+  _(series).each(function(serie) {
+    _(serie.data).each(function(point) {
+        if (!total_stacked[point.code]) {
+          total_stacked[point.code] = { code: point.code, y: 0};
+        }
+        if (point.y ) {
+          total_stacked[point.code].y += point.y;
+        }
+    });
+  });
+  var sorted_codes = _.chain(total_stacked)
+    .sortBy(function(item) { return sort.order * item.y})
+    .pluck('code')
+    .value();
+  // now sort all series
+  _(series).each(function(serie) {
+    serie.data = _(serie.data).sortBy( function(point){
+        return sorted_codes.indexOf(point.code);
+    });
+  });
+}
+
+App.format_series = function (data, sort, multidim, percent, category, highlights, animation, series_point_label){
     var multiplicators = _(percent).map(function(pc){
         return pc?100:1;
     });
     var countrycolor = function(code) {
-        if (_.isNull(App.COUNTRY_COLOR[code])) {
-            return '#1C3FFD';
+        if (_.isNull(App.COUNTRY_COLOR[code]) || _.isUndefined(App.COUNTRY_COLOR[code])) {
+            return null;
         } else {
             return App.COUNTRY_COLOR[code];
         }
@@ -92,7 +117,7 @@ App.format_series = function (data, sort, multidim, percent, category, highlight
                         },
                         'formatter': label_formatter
                     }
-                }
+                };
                 _.chain(data).
                   each(function(item){
                       var new_serie = _(output).omit('data');
@@ -118,7 +143,13 @@ App.format_series = function (data, sort, multidim, percent, category, highlight
         var highlights_counter = {};
         var extract_data = function(series_item){
             var value = series_item['value'];
-            var point = _.object([['name', series_item[category]['label']],
+            var dict = {'short': 'short-label', 'long': 'label', 'none': 'label', 'notation': 'notation'};
+            var point_names_from = 'label';
+            if ( series_point_label ) {
+                point_names_from = dict[series_point_label] || 'label';
+            }
+            var point_name = series_item[category][point_names_from] || series_item[category]['notation'];
+            var point = _.object([['name', series_item[category][point_names_from]],
                                  ['code', series_item[category]['notation']],
                                  ['order', series_item[category]['inner_order']],
                                  ['ending_label', series_item[category]['ending_label']],
@@ -127,15 +158,29 @@ App.format_series = function (data, sort, multidim, percent, category, highlight
             var color = null;
             if(_(highlights).contains(series_item[category]['notation'])){
                 var code = series_item[category]['notation'];
-                var country_color = App.COUNTRY_COLOR[code];
-                var scale = new chroma.ColorScale({
-                    colors: ['#000000', country_color],
-                    limits: [data.length, 0]
-                });
                 if(!_(highlights_counter).has(code)){
                     highlights_counter[code] = 0;
                 }
-                var color = scale.getColor(highlights_counter[code]).hex();
+                var base_color;
+                if ( data.length > 1 ) {
+                  // for multiple series use the color of the series as base color
+                  base_color = App.SERIES_COLOR[highlights_counter[code]] || '#63b8ff';
+                } else {
+                  // for single series use the color of the country as base color
+                  base_color = App.COUNTRY_COLOR[code] || '#63b8ff';
+                }
+                var scale = new chroma.ColorScale({
+                    colors: ['#000000', base_color],
+                    limits: [animation?2:(data.length+1), 0]
+                });
+                var color;
+                if ( data.length > 1 ) {
+                  // for multiple series only one highlight
+                  color = scale.getColor(_(highlights_counter).size()).hex();
+                } else {
+                  // different shades of the same base colors
+                  color = scale.getColor(highlights_counter[code]+1).hex();
+                }
                 if (! animation) {
                     highlights_counter[code] += 1;
                 }
@@ -180,9 +225,17 @@ App.format_series = function (data, sort, multidim, percent, category, highlight
               each(function(diff_code){
                   var data = diffs_collection[diff_code][category];
                   var attributes = _.object([[category, data]]);
+                  // append missing points
+                  // code duplicated here in order to re-create object['name']
+                  var dict = {'short': 'short-label', 'long': 'label', 'none': 'label', 'notation': 'notation'};
+                  var point_names_from = 'label';
+                  if ( series_point_label ) {
+                      point_names_from = dict[series_point_label] || 'label';
+                  }
+                  var point_name = data[point_names_from] || data['notation'];
                   _(serie).push(
                       _.object([['code', data['notation']],
-                                ['name', data['label']],
+                                ['name', point_name],
                                 ['ending_label', data['ending_label']],
                                 ['order', data['inner_order']],
                                 ['attributes', attributes],
@@ -222,24 +275,32 @@ App.format_series = function (data, sort, multidim, percent, category, highlight
                 })
             }
 
-            if (sort && !first_serie){
-                if ( sort.first_serie ) {
-                    sort.first_serie = null;
+            if ( sort && !sort.total_stacked ) {
+                // only sort one by one if sort.total_stacked is not set
+                if (!first_serie){
+                    if ( sort.first_serie ) {
+                        sort.first_serie = null;
+                    }
+                    serie = sort_serie(serie, sort, category);
+                    if(!sort.each_series){
+                        // if each_series is not set, the order of the first serie is kept
+                        first_serie = serie;
+                    }
                 }
-                serie = sort_serie(serie, sort, category);
-                if(!sort.each_series){
-                    first_serie = serie;
-                }
-            }
-            else if (sort){
+                else {
+                    // rest of series, beginning with #2
                     _(sort).extend({'first_serie': first_serie});
                     serie = sort_serie(serie, sort, category);
+                }
             }
-
             return _.object(
                     ['name', 'ending_label', 'notation', 'order', 'color', 'data'],
                     [item['name'], item['ending_label'], item['notation'], item['order'], countrycolor(item['notation']), serie]);
         }).value();
+    }
+    if ( sort && sort.total_stacked ) {
+      // sort again all series, based on the total stacked value
+      App.sort_by_total_stacked(series, sort);
     }
     return series;
 }

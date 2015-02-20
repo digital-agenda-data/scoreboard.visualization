@@ -163,6 +163,14 @@ App.SelectFilter = Backbone.View.extend({
             if(this.sortOrder === 'reverse'){
                 this.dimension_options = _(this.dimension_options).reverse();
             }
+            if (this.ignore_values) {
+                var ignore_values = this.ignore_values;
+                this.dimension_options = _(this.dimension_options).filter(
+                    function(item){
+                        return !_(ignore_values).contains(item.notation);
+                    }
+                );
+            }
             this.options_labels = {};
             _(this.dimension_options).each(function(opt){
                   if (opt['notation'] != 'any'){
@@ -174,7 +182,7 @@ App.SelectFilter = Backbone.View.extend({
             this.$el.removeClass('loading-small');
             this.render();
             this.loadstate.set(this.name, false);
-            if ( _.isEmpty(this.dimension_options) ) {
+            if ( _.isEmpty(this.dimension_options) && this.className.indexOf('all-values') < 0) {
                 App.visualization.chart_view.remove_loading_add_msg('No data.');
             }
         }, this));
@@ -250,10 +258,17 @@ App.SelectFilter = Backbone.View.extend({
             'filter_label': this.label
         };
         if (this.display_in_groups){
+            // the already sorted list of parent.dimension_options
+            var groupers = this.model.get(App.groupers[this.dimension]);
+
+            // group processing of this.dimension_options
             var grouped_data = _(this.dimension_options).groupBy('group_notation');
             var groups = _.zip(_(grouped_data).keys(), _(grouped_data).values());
+
+            // the parent (we need grouper.options_labels for optgroups)
             var grouper = _.chain(App.visualization.filters_box.filters).
               findWhere({name: App.groupers[this.name]}).value();
+
             template_data['groups'] = _.chain(groups).map(function(item){
                 var label = null;
                 if (!grouper) {
@@ -266,10 +281,20 @@ App.SelectFilter = Backbone.View.extend({
                     var selected = (item['notation'] == selected_value);
                     return _({'selected': selected}).extend(item);
                 });
-                var out = _.object(['group', 'options'],
-                                   [label, options]);
+                var out = _.object(['notation', 'group', 'options'],
+                                   [item[0], label, options]);
                 return out;
-            }).sortBy('group').value();
+            }).sortBy(function(item){
+                // keep same order of groups from grouper
+                var index = 0;
+                if ( grouper && grouper.dimension_options ) {
+                  _(grouper.dimension_options).find(function(grouper_item, grouper_index) {
+                    if (item['notation'] == grouper_item['notation']) index = grouper_index;
+                  });
+                }
+                return index;
+            })
+            .value();
             this.$el.html(this.group_template(template_data));
         }
         else{
@@ -372,7 +397,7 @@ App.MultipleSelectFilter = App.SelectFilter.extend({
 
 App.AllValuesFilter = App.SelectFilter.extend({
 
-    className: "chart-filter",
+    className: "chart-filter all-values",
 
     render: function() {
         this.$el.html("");
@@ -389,6 +414,262 @@ App.AllValuesFilter = App.SelectFilter.extend({
         this.model.set(this.name, adjusted_values);
     }
 
+});
+
+App.HiddenSelectFilter = App.SelectFilter.extend({
+    className: "chart-filter hidden-select"
+});
+
+App.CompositeFilter = App.AllValuesFilter.extend({
+    className: "chart-filter",
+    template: App.get_template('filters/composite.html'),
+    slider_min: 0,
+    slider_max: 10,
+    slider_default: 5,
+
+    events: _({
+        'sliderChanged': 'update_slider_data',
+        'sliderValuesUpdated': 'update_normalized',
+        'sliderNormalizeUpdated': 'update_chart'
+    }).extend(App.SelectFilter.prototype.events),
+
+    initialize: function(options) {
+        this.composite_values = {};
+        // If we get proper slider settings in the url, save them as an attribute
+        // to this view, but sanitize the model's attributes
+        if ( typeof this.model.attributes[options.name] == 'undefined' ) {
+          if (this.options.default_value && !_.isArray(this.options.default_value)) {
+            // copy initial slider values from default value setting
+            this.model.attributes[options.name] = this.options.default_value;
+          }
+        }
+        if (this.model.attributes[options.name] && !_.isArray(this.model.attributes[options.name])) {
+            this.composite_values = JSON.parse(JSON.stringify(this.model.attributes[options.name]));
+            var objectKeys = _.map(this.composite_values, function(value, key) {
+                return key;
+            });
+            this.model.set(options.name, objectKeys);
+        }
+        App.AllValuesFilter.prototype.initialize.apply(this, arguments);
+    },
+
+    render: function() {
+        var that = this;
+        var template_context = {
+            'dimension_options': this.dimension_options,
+            'filter_label': this.label,
+            'filter_name': this.name
+        };
+        if (App.chart_config && App.chart_config.custom_properties) {
+          template_context['linked_subchart'] = '../' +
+            App.chart_config.custom_properties['dai-breakdown-chart'];
+        }
+        this.$el.html(this.template(template_context));
+        var sliders = this.$el.find('.composite-slider');
+        var sliders_values = sliders.data('slidersvalues');
+        if (!sliders_values) {
+            sliders_values = {};
+        }
+        // Initialize the sliders
+        _(sliders).each(function(slider, slider_idx){
+            var slider_id = $(slider).prop('id').split('-slider')[0];
+
+            $(slider).slider({
+                value: that.composite_values[slider_id],
+                min: that.slider_min,
+                max: that.slider_max,
+                step: 1,
+                range: 'min',
+                animate: true,
+                orientation: 'horizontal',
+                stop: function( event, ui ) {
+                    var data = {
+                        slider_id: slider_id,
+                        slider_value: ui.value
+                    };
+                    that.$el.trigger('sliderChanged', data);
+                }
+            }).each(function() {
+                // Add the slider's steps labels
+                var opt = $(this).data().uiSlider.options;
+                var vals = opt.max - opt.min;
+                for (var i = 0; i <= vals; i++) {
+                    var el = $('<label class="slider-step">' + i + '</label>')
+                        .css('left',(i/vals*100)+'%');
+                    $(this).append(el);
+                }
+                 
+            });
+            var norm_value = (100 / sliders.length).toFixed(1);
+            var span_id = slider_id.split('-slider')[0] + '-normalized';
+            $( '#' + span_id ).html(norm_value + '%');
+            sliders_values[slider_id] = that.composite_values[slider_id];
+        });
+
+        sliders.data('slidersvalues', sliders_values);
+        this.listenTo(App.visualization.chart_view, 'chart_load', this.handle_chart_loaded);
+        this.listenTo(App.visualization.chart_view, 'chart_ready', this.update_metadata);
+    },
+
+    handle_chart_loaded: function(data) {
+        // Add the original series and chart as attributes to the view
+        this.series = JSON.parse(JSON.stringify(data.series));
+        this.current_series = JSON.parse(JSON.stringify(data.series));
+        this.chart = data.chart;
+        this.meta_options = data.options;
+        this.$el.trigger('sliderValuesUpdated');
+    },
+
+    update_slider_data: function(event, data) {
+        // Save the current slider's value
+        var sliders = this.$el.find('.composite-slider');
+        var sliders_values = sliders.data('slidersvalues');
+        sliders_values[data.slider_id] = data.slider_value;
+        sliders.data('slidersvalues', sliders_values);
+        this.composite_values[data.slider_id] = data.slider_value;
+        this.$el.trigger('sliderValuesUpdated');
+    },
+
+    update_normalized: function() {
+        // Process the normalized values
+        var total = 0;
+        var sliders = this.$el.find('.composite-slider');
+        var sliders_values = sliders.data('slidersvalues');
+        var sliders_norm = sliders.data('slidersnorm');
+        if (!sliders_norm) {
+            sliders_norm = {};
+        }
+
+        for(var slider in sliders_values) {
+            total += sliders_values[slider]; 
+        }
+
+        _(sliders).each(function(slider, slider_idx){
+            var slider_value = $(slider).slider('option', 'value');
+            var slider_id = $(slider).prop('id');
+            var norm_value = ((slider_value / total) * 100).toFixed(1);
+            var span_id = slider_id.split('-slider')[0] + '-normalized';
+            $( '#' +  span_id).html( norm_value + "%");
+            sliders_norm[slider_id.split('-slider')[0]] = norm_value;
+        });
+        sliders.data('slidersnorm', sliders_norm);
+        this.$el.trigger('sliderNormalizeUpdated');
+    },
+
+    update_chart: function() {
+        // Redraw the chart with the new series
+        var that = this;
+        var sliders = this.$el.find('.composite-slider');
+        var sliders_norm = sliders.data('slidersnorm');
+        var context = {};
+
+        _(this.chart.series).each(function(serie, serie_idx){
+            context = {
+                'that': that
+            }
+            var normalized = parseFloat(sliders_norm[serie.options.notation], 10);
+            _.each(serie.data, function(item, item_idx){
+                // find the original point value;
+                // careful, the point order in that.series is not be the same, because of sorting!
+                var orig_point_value = _(that.series[serie_idx].data).findWhere({'code':item.code}).y;
+                //item.update(point_data, false, {duration: 950, easing: 'linear'});
+                that.current_series[serie_idx].data[item_idx].y = orig_point_value * (normalized / 100);
+
+            }, context);
+        });
+        // re-sort series
+        App.sort_by_total_stacked(this.current_series, App.visualization.options.schema.sort);
+        // now update chart points and label on x-axis
+        var current_series = this.current_series;
+        var resorted_categories = false;
+        _(this.chart.series).each(function(serie, serie_idx){
+            if (!resorted_categories) {
+                resorted_categories = _(current_series[serie_idx].data).pluck('name');
+            }
+            _.each(serie.data, function(item, item_idx){
+                item.update(current_series[serie_idx].data[item_idx],
+                 false, {duration: 950, easing: 'linear'});
+            });
+        });
+        // update categories
+        this.chart.xAxis[0].categories = resorted_categories;
+        this.chart.redraw();
+        this.update_hash();
+        this.update_metadata();
+    },
+
+    update_metadata: function() {
+        var that = this;
+        var attributes = JSON.parse(JSON.stringify(this.model.attributes));
+        var sliders = this.$el.find('.composite-slider');
+        var sliders_values = sliders.data('slidersvalues');
+        var sliders_norm = sliders.data('slidersnorm');
+        var breakdown_sliders_values = [];
+        var breakdown_normalized_values = [];
+        var breakdown_index;
+
+        // Order the sliders values and normalized values as the order of the 
+        // breakdown list
+        _.each(attributes[this.name], function(item, item_idx) {
+            breakdown_sliders_values.splice(item_idx, 0, sliders_values[item]);
+            breakdown_normalized_values.splice(item_idx, 0, sliders_norm[item] + '%');
+        });
+        var filters_applied = _(attributes).pairs();
+
+        // Get the index of the breakdown
+        _.every(filters_applied, function(item, item_idx) {
+            breakdown_index = item_idx;
+            return item[0] !== that.name;
+        });
+
+        // Add the slider values and normalized values after the breakdown
+        breakdown_sliders_values = [this.name + '-slider-values',
+                                     breakdown_sliders_values];
+        breakdown_normalized_values = [this.name + '-normalized-values',
+                                        breakdown_normalized_values];
+        filters_applied.splice(breakdown_index+=1, 0, breakdown_sliders_values);
+        filters_applied.splice(breakdown_index+=1, 0, breakdown_normalized_values);
+
+        var metadata = {
+            'chart-title': this.meta_options.titles.title,
+            'chart-subtitle': this.meta_options.titles.subtitle,
+            'chart-xAxisTitle': this.meta_options.titles.xAxisTitle,
+            'chart-yAxisTitle': this.meta_options.titles.yAxisTitle,
+            'source-dataset': this.meta_options.credits.text,
+            'chart-url': document.URL,
+            'filters-applied': filters_applied
+        };
+        App.visualization.share.chart_ready(this.current_series, metadata);
+    },
+
+    adjust_value: function() {
+        // Set the initial slider's values
+        var composite_values = {};
+        if (!$.isEmptyObject(this.composite_values)) {
+            var break_values = this.composite_values;
+        }
+        _.each(this.dimension_options, function(val) {
+          break_values ? composite_values[val.notation] = break_values[val.notation] : composite_values[val.notation] = 5;
+        });
+        this.composite_values = composite_values;
+        var adjusted_values = _.chain(this.dimension_options)
+                               .pluck('notation')
+                               .difference(this.ignore_values)
+                               .value();
+        this.model.set(this.name, adjusted_values);
+    },
+
+    update_hash: function() {
+        // Modify the hash in accordance with the slider's settings
+        if (!App.visualization.$el.hasClass('embedded')) {
+            var attrs = JSON.parse(JSON.stringify(this.model.attributes));
+            attrs[this.name] = this.composite_values;
+            var hashcfg = 'chart=' + JSON.stringify(_.pick(attrs, App.visualization.filters_in_url));
+            App.visualization.navigation.update_hashcfg(hashcfg);
+            App.visualization.share.update_url(App.SCENARIO_URL + '#' + hashcfg);
+            App.update_url_hash(hashcfg);
+        }
+    }
 });
 
 var EmbeddedPrototype = {
@@ -462,8 +743,10 @@ App.FiltersBox = Backbone.View.extend({
 
     filter_types: {
         'select': App.SelectFilter,
+        'hidden_select': App.HiddenSelectFilter,
         'dataset_select': App.DatasetSelectFilter,
         'multiple_select': App.MultipleSelectFilter,
+        'composite': App.CompositeFilter,
         'all-values': App.AllValuesFilter
     },
 
@@ -498,13 +781,15 @@ App.FiltersBox = Backbone.View.extend({
             });
 
             this.filters.push(filter);
-            if(item.position == 'upper-right' || item.type == 'multiple_select'){
+            if (item.type == 'composite') {
+                $(filter.el).appendTo($('.header', this.$el));
+            }else if (item.position == 'upper-right' || item.type == 'multiple_select'){
                 $(filter.el).appendTo($('.upper-right', this.$el));
             }
-            else if(item.position == 'bottom-left'){
+            else if (item.position == 'bottom-left'){
                 $(filter.el).appendTo($('.bottom-left', this.$el));
             }
-            else if(item.position == 'bottom-right'){
+            else if (item.position == 'bottom-right'){
                 $(filter.el).appendTo($('.bottom-right', this.$el));
             }
             else{
@@ -521,6 +806,8 @@ App.EmbeddedFiltersBox = App.FiltersBox.extend({
         'select': App.EmbeddedSelectFilter,
         'dataset_select': App.DatasetSelectFilter,
         'multiple_select': App.EmbeddedMultipleSelectFilter,
+        'composite': App.CompositeFilter,
+        'hidden_select': App.EmbeddedSelectFilter,
         'all-values': App.AllValuesFilter
     }
 

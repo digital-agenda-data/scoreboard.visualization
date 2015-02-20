@@ -15,7 +15,8 @@ App.chart_library['columns'] = function(view, options) {
                     options['unit_is_pc'],
                     options['category_facet'],
                     options['highlights'],
-                    options['animation']);
+                    options['animation'],
+                    options['series-point-label']);
     // add N/A labels for missing values
     var dataLabels = {
         enabled: true,
@@ -94,7 +95,16 @@ App.chart_library['columns'] = function(view, options) {
             marginTop: marginTop,
             marginBottom: 80,
             height: viewPortHeight,
-            width: viewPortWidth
+            width: viewPortWidth,
+            events: {
+                load: function(event) {
+                    view.trigger('chart_load', {
+                        'chart': this,
+                        'series': init_series,
+                        'options': options
+                    });
+                }
+            }
         },
         colors: colors,
         credits: {
@@ -186,6 +196,25 @@ App.chart_library['columns'] = function(view, options) {
         series: init_series
     };
 
+    // check link for composite charts
+    if (typeof this.data.custom_properties != 'undefined') {
+      var dai_breakdown_chart = this.data.custom_properties['dai-breakdown-chart'];
+      if ( dai_breakdown_chart) {
+        chartOptions.plotOptions.series = {
+          cursor: 'pointer',
+          point: {
+            events: {
+              click: function () {
+                var pathItems = window.location.pathname.split('/');
+                pathItems[pathItems.length - 1] = dai_breakdown_chart;
+                window.location = pathItems.join('/') + '#chart={"indicator":"'+this.series.options.notation+'"}';
+              }
+            }
+          }
+        }
+      }
+    }
+    
     App.set_default_chart_options(chartOptions);
     App.disable_legend(chartOptions, options);
     App.override_zoom();

@@ -88,7 +88,13 @@ App.EU27 = {
     HR: "Croatia"
 }
 
-App.SERIES_COLOR = ['#63b8ff', '#E41A1C', '#4DAF4A', '#984EA3', '#FF7F00', '#FFFF33', '#A65628', '#F781BF', '#0d233a'];
+App.SERIES_COLOR = [
+    '#63b8ff', '#E41A1C', '#4DAF4A', '#984EA3', '#FF7F00', '#FFFF33', '#A65628', '#F781BF', '#0d233a',
+    '#AABC66', '#FD8245', '#21FF00', '#FF5400', '#1C3FFD', '#FFC600', '#45BF55', '#0EEAFF', '#6A07B0',
+    '#044C29', '#7FB2F0', '#15A9FA', '#33EED2', '#D40D12', '#ADF0F6', '#662293', '#19BC01', '#9A24ED',
+    '#D50356', '#D59AFE', '#35478C', '#FF40F4', '#F70A9B', '#FF1D23', '#FFFC00', '#1B76FF', '#436B06',
+    '#648E23', '#7DC30F', '#9900AB', '#D000C4', '#D000C4', '#0B4EA2'
+];
 
 App.index_by = function(list, prop) {
     return _.object(_(list).pluck(prop), list);

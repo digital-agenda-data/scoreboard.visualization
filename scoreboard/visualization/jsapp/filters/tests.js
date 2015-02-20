@@ -252,6 +252,116 @@ describe('modular filters', function() {
 
     });
 
+    describe('HiddenSelectFilter', function() {
+
+        var NoAjaxHiddenSelectFilter = App.HiddenSelectFilter.extend({
+            fetch_options: function(args) {
+                var mock_ajax = App.jQuery.Deferred();
+                mock_ajax.abort = function() {
+                    mock_ajax.reject();
+                };
+                return mock_ajax;
+            }
+        });
+        it('should add the hidden-select class', function() {
+            var model = new Backbone.Model();
+            var options = [{'label': "Option One", 'notation': 'one'},
+                           {'label': "Option Two", 'notation': 'two'}];
+            var view = new NoAjaxHiddenSelectFilter({
+                model: model,
+                name: 'this-time-period',
+                dimension: 'time-period',
+                default_value: 'two'
+            });
+            view.ajax.resolve({options: options});
+            expect(view.$el.hasClass('hidden-select')).to.equal(true);
+        });
+    });
+
+    describe('CompositeFilter', function() {
+        this.sandbox = sinon.sandbox.create();
+        this.sandbox.useFakeServer();
+        var server = this.sandbox.server;
+        App.visualization = sinon.mock();
+        
+        var schema = {
+            facets: [
+                {type: 'select',
+                 name: 'indicator-group',
+                 label: 'Indicator group',
+                 dimension: 'indicator-group',
+                 include_wildcard: true,
+                 constraints: {}},
+                {type: 'composite',
+                 name: 'breakdown',
+                 label: 'Breakdown',
+                 dimension: 'breakdown',
+                 position: 'upper-right',
+                 constraints: {}}
+            ]
+        };
+        
+        var scenario_chart = sinon.spy();
+        
+        this.model = new Backbone.Model();
+        this.model.set({'indicator-group': 'any',
+                        'breakdown': 'option'});
+        
+        var chart = new App.ScenarioChartView({
+            model: this.model,
+            schema: schema,
+            scenario_chart: scenario_chart
+        });
+        
+        expect(server.requests[0].url).to.contain('/datapoints?');
+        App.visualization.chart_view = chart;
+
+        var NoAjaxCompositeFilter = App.CompositeFilter.extend({
+            fetch_options: function(args) {
+                var mock_ajax = App.jQuery.Deferred();
+                mock_ajax.abort = function() {
+                    mock_ajax.reject();
+                };
+                return mock_ajax;
+            }
+        });
+
+        it('should display the sliders widgets', function() {
+            var model = new Backbone.Model();
+            var options = [{'label': "Option One", 'notation': 'v1'},
+                           {'label': "Option Two", 'notation': 'v2'},
+                           {'label': "Option Three", 'notation': 'v3'}];
+            var view = new NoAjaxCompositeFilter({
+                model: model,
+                name: 'fil1',
+                dimension: 'dim1',
+                label: 'Composite'
+            });
+            view.ajax.resolve({options: options});
+            expect(view.$el.find('.composite-slider-widget').length).to.deep.equal(3);
+            expect(view.$el.find('.slider-label a').text())
+                .to.deep.equal('Option OneOption TwoOption Three');
+            expect(model.get('fil1')).to.deep.equal(["v1", "v2", "v3"]);
+        });
+
+        it('should store sliders position in slidersvalues data attribute', function() {
+            var model = new Backbone.Model();
+            var options = [{'label': "Option One", 'notation': 'v1'},
+                           {'label': "Option Two", 'notation': 'v2'}];
+            var view = new NoAjaxCompositeFilter({
+                model: model,
+                name: 'fil1',
+                dimension: 'dim1',
+                label: 'Composite'
+            });
+            view.ajax.resolve({options: options});
+            expect(view.$el.find('.composite-slider-widget').length).to.deep.equal(2);
+            var sliders = view.$el.find('.composite-slider');
+            var sliders_values = sliders.data('slidersvalues');
+            expect(JSON.stringify(sliders_values)).to.deep.equal('{"v1":5,"v2":5}');
+        });
+    });
+
     describe('AnyOption', function(){
         "use strict";
 
