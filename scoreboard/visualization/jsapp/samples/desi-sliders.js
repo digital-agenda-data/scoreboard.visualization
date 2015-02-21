@@ -37,7 +37,13 @@
       "sortBy": "inner_order",
       "sortOrder": "asc",
       "default_value": "DESI_SLIDERS",
-      "ignore_values": ["DESI", "DESI_1_CONN", "DESI_1A_COMP", "DESI_1A1_FPC", "DESI_1B_FBB", "DESI_1B1_FBBC", "DESI_1B2_FBBTU", "DESI_1C_MBB", "DESI_1C1_MBBTU", "DESI_1C2_SPEC", "DESI_1D_SPEED", "DESI_1D1_NGAC", "DESI_1D2_SFBB", "DESI_1E_AFF", "DESI_1E1_FBBP", "DESI_2_HC", "DESI_2A_BSU", "DESI_2A1_IU", "DESI_2A2_ABDS", "DESI_2B_ASD", "DESI_2B1_ICTSPEC", "DESI_2B2_STEMG", "DESI_3_UI", "DESI_3A_CONT", "DESI_3A1_NEWS", "DESI_3A2_MVG", "DESI_3A3_VOD", "DESI_3A4_IPTV", "DESI_3B_COMM", "DESI_3B1_VIDCALL", "DESI_3B2_SOCNET", "DESI_3C_TRANS", "DESI_3C1_BANK", "DESI_3C2_SHOP", "DESI_4_IDT", "DESI_4A_BD", "DESI_4A1_EIS", "DESI_4A2_RFID", "DESI_4A3_SOCMED", "DESI_4A4_EINV", "DESI_4A5_CLOUD", "DESI_4B_ECOMM", "DESI_4B1_SMESO", "DESI_4B2_ECOMTURN", "DESI_4B3_SELLCB", "DESI_5_DPS", "DESI_5A_EGOV", "DESI_5A1_EGOVU", "DESI_5A2_PREFFORM", "DESI_5A3_OSERCOMP", "DESI_5A4_OPENDATA", "DESI_5B_EHEALTH", "DESI_5B1_MDATAEXCH", "DESI_5B2_EPRESC"],
+      "ignore_values": ["DESI", "DESI_1_CONN", "DESI_1A_COMP", "DESI_1A1_FPC", "DESI_1A1_FBBC", "DESI_1A2_FBBTU", 
+      "DESI_1B_FBB", "DESI_1B1_MBBTU", "DESI_1B1_FBBC", "DESI_1B2_FBBTU", "DESI_1B2_SPEC", 
+      "DESI_1C_MBB", "DESI_1C1_MBBTU", "DESI_1C1_NGAC", "DESI_1C2_SPEC", "DESI_1C2_SFBB", 
+      "DESI_1D_SPEED", "DESI_1D1_NGAC", "DESI_1D1_FBBP", "DESI_1D2_SFBB", 
+      "DESI_1E_AFF", "DESI_1E1_FBBP", 
+      "DESI_2_HC", "DESI_2A_BSU", "DESI_2A1_IU", "DESI_2A2_ABDS", "DESI_2A2_BDS", 
+      "DESI_2B_ASD", "DESI_2B1_ICTSPEC", "DESI_2B2_STEMG", "DESI_3_UI", "DESI_3A_CONT", "DESI_3A1_NEWS", "DESI_3A2_MVG", "DESI_3A3_VOD", "DESI_3A4_IPTV", "DESI_3B_COMM", "DESI_3B1_VIDCALL", "DESI_3B2_SOCNET", "DESI_3C_TRANS", "DESI_3C1_BANK", "DESI_3C2_SHOP", "DESI_4_IDT", "DESI_4A_BD", "DESI_4A1_EIS", "DESI_4A2_RFID", "DESI_4A3_SOCMED", "DESI_4A4_EINV", "DESI_4A5_CLOUD", "DESI_4B_ECOMM", "DESI_4B1_SMESO", "DESI_4B2_ECOMTURN", "DESI_4B3_SELLCB", "DESI_5_DPS", "DESI_5A_EGOV", "DESI_5A1_EGOVU", "DESI_5A2_PREFFORM", "DESI_5A3_OSERCOMP", "DESI_5A4_OPENDATA", "DESI_5B_EHEALTH", "DESI_5B1_MDATAEXCH", "DESI_5B2_EPRESC"],
       "type": "hidden_select"
     },
     {
@@ -93,7 +99,7 @@
         "unit-measure": "unit-measure"
       },
       "dimension": "ref-area",
-      "highlights": ["EU27"],
+      "highlights": ["EU27", "EU28"],
       "label": "Select the countries",
       "name": "ref-area",
       "sortBy": "order_in_codelist",
@@ -159,6 +165,6 @@
     "unit-measure": true
   },
   "custom_properties": {
-     "dai-breakdown-chart": "dai-by-component"
+     "dai-breakdown-chart": "desi-components"
   }
 }
