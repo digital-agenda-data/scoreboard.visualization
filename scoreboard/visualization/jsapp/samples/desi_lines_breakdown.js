@@ -96,7 +96,7 @@
         "unit-measure": "unit-measure"
       },
       "dimension": "ref-area",
-      "default_value": "EU27",
+      "default_value": "EU28",
       "label": "Country",
       "name": "ref-area",
       "sortBy": "label",
