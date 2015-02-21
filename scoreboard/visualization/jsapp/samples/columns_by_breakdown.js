@@ -100,7 +100,7 @@
         },
         "default_value": ["EU27", "#random"],
         "dimension": "ref-area",
-        "highlights": [],
+        "highlights": ["EU27", "EU28"],
         "label": "Select the countries",
         "name": "ref-area",
         "position": "upper-left",

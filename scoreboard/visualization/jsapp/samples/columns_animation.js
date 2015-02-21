@@ -99,7 +99,7 @@
       ],
       "dimension": "ref-area",
       "highlights": [
-        "EU27"
+        "EU27", "EU28"
       ],
       "label": "Select the countries",
       "name": "ref-area",
