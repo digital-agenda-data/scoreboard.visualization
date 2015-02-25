@@ -95,7 +95,6 @@ App.chart_library['columns'] = function(view, options) {
             marginTop: marginTop,
             marginBottom: 80,
             height: viewPortHeight,
-            width: viewPortWidth,
             events: {
                 load: function(event) {
                     view.trigger('chart_load', {
