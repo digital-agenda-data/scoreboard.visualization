@@ -404,10 +404,42 @@ App.set_default_chart_options = function(chartOptions){
                     exportButton: {
                         text: 'Download image',
                         // Use only the download related menu items from the default context button
-                        menuItems: menuItems
+                        menuItems: menuItems,
+                        theme: {
+                          'stroke-width': 1,
+                          stroke: '#99C1D2',
+                          fill: '#BEE0F0',
+                          r: 3,
+                         states: {
+                             hover: {
+                                 stroke: '#7CA8BB',
+                                 fill: '#94C5DB'
+                             },
+                             select: {
+                                 stroke: '#7CA8BB',
+                                 fill: '#94C5DB'
+                             }
+                          }
+                        }
                     },
                     printButton: {
                         text: 'Print chart',
+                        theme: {
+                          'stroke-width': 1,
+                          stroke: '#398439',
+                          fill: '#449D44',
+                          r: 3,
+                         states: {
+                             hover: {
+                                 stroke: '#0A710A',
+                                 fill: '#2A862A'
+                             },
+                             select: {
+                                 stroke: '#0A710A',
+                                 fill: '#2A862A'
+                             }
+                          }
+                        },
                         onclick: function () {
                             this.print();
                         }
