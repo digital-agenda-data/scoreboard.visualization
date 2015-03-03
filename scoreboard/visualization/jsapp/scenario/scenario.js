@@ -951,9 +951,13 @@ App.ShareOptionsView = Backbone.View.extend({
 
     highcharts_download: function(ev){
         ev.stopPropagation();
+        var chartdiv = $(".highcharts-container");
+        if (chartdiv && App.chart.options && App.chart.options.exporting) {
+            App.chart.options.exporting.sourceWidth = 1200;
+            App.chart.options.exporting.sourceHeight = 1200*chartdiv.height()/chartdiv.width();
+        }
         App.jQuery('input[name="svg"]', this.svg_form).attr('value', App.chart.getSVG());
         this.svg_form.submit();
-        //App.chart.exportChart();
     },
 
     get_forum_url: function() {
