@@ -925,10 +925,12 @@ App.ShareOptionsView = Backbone.View.extend({
     },
 
     highcharts_print: function(ev){
+        ev.stopPropagation();
         App.chart.print();
     },
 
     highcharts_download: function(ev){
+        ev.stopPropagation();
         App.chart.exportChart();
     },
 
