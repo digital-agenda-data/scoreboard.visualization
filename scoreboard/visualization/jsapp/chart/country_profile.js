@@ -298,7 +298,7 @@ App.chart_library['country_profile'] = function(view, options) {
             App.disable_legend(chartOptions, options);
         }
 
-        var chart = new Highcharts.Chart(chartOptions);
+        App.chart = new Highcharts.Chart(chartOptions);
 
     // Custom table
     }else{

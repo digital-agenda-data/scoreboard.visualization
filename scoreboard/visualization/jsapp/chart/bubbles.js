@@ -168,7 +168,7 @@ App.chart_library['bubbles'] = function(view, options) {
         App.disable_legend(chartOptions, options);
     }
 
-    var chart = new Highcharts.Chart(chartOptions);
+    App.chart = new Highcharts.Chart(chartOptions);
 
     var metadata = {
         'chart-title': options.titles.title,
@@ -182,7 +182,7 @@ App.chart_library['bubbles'] = function(view, options) {
     view.trigger('chart_ready', series, metadata, options['chart_type']);
 
     if (options['plotlines']){
-        App.add_plotLines(chart, series[0], options['plotlines']);
+        App.add_plotLines(App.chart, series[0], options['plotlines']);
     }
 
 

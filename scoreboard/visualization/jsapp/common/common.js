@@ -139,4 +139,6 @@ App.isIE78 = function () {
     return false;
 }
 
+var chart = null;
+
 })(App.jQuery);

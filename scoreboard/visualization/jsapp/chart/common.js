@@ -380,7 +380,6 @@ App.override_zoom = function() {
 }
 
 App.set_default_chart_options = function(chartOptions){
-    var menuItems = _.rest(Highcharts.getOptions().exporting.buttons.contextButton.menuItems, 2);
     _(chartOptions).extend({
         navigation: {
             buttonOptions: {
@@ -394,6 +393,8 @@ App.set_default_chart_options = function(chartOptions){
             }
         }
     });
+/* print and download buttons moved to share panel
+    var menuItems = _.rest(Highcharts.getOptions().exporting.buttons.contextButton.menuItems, 2);
     if ( ! App.visualization.embedded ) {
         _(chartOptions).extend({
             exporting: {
@@ -448,6 +449,7 @@ App.set_default_chart_options = function(chartOptions){
             }
         });
     }
+*/
 }
 
 

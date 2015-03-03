@@ -217,7 +217,7 @@ App.chart_library['columns'] = function(view, options) {
     App.set_default_chart_options(chartOptions);
     App.disable_legend(chartOptions, options);
     App.override_zoom();
-    var chart = new Highcharts.Chart(chartOptions);
+    App.chart = new Highcharts.Chart(chartOptions);
     var metadata = {
         'chart-title': options.titles.title,
         'chart-subtitle': options.titles.subtitle,
@@ -230,14 +230,14 @@ App.chart_library['columns'] = function(view, options) {
     view.trigger('chart_ready', series, metadata);
 
     if (options['plotlines']){
-        App.add_plotLines(chart, init_series, options['plotlines']);
+        App.add_plotLines(App.chart, init_series, options['plotlines']);
     }
 
     if (options['animation']){
         if(!App.chart_controls){
             App.chart_controls = new App.GraphControlsView({
                 model: new Backbone.Model(),
-                chart: chart,
+                chart: App.chart,
                 snapshots_data: series,
                 interval: window.interval_set,
                 plotlines: options['plotlines'],
@@ -246,7 +246,7 @@ App.chart_library['columns'] = function(view, options) {
             });
             $('#the-filters .footer').append(App.chart_controls.$el);
         }else{
-            App.chart_controls.chart = chart;
+            App.chart_controls.chart = App.chart;
             App.chart_controls.update_data(series);
         };
     }

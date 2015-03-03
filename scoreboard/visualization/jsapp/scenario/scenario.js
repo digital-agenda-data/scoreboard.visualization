@@ -890,6 +890,8 @@ var BaseDialogView = Backbone.View.extend({
 App.ShareOptionsView = Backbone.View.extend({
 
     events: {
+        'click #highcharts_print': 'highcharts_print',
+        'click #highcharts_download': 'highcharts_download',
         'click #csv': 'request_csv',
         'click #excel': 'request_excel',
         'click #embed': 'request_embed',
@@ -920,6 +922,14 @@ App.ShareOptionsView = Backbone.View.extend({
         ev.stopPropagation();
         window.location.replace(window.location.pathname + "/embedded" + window.location.hash);
         return false;
+    },
+
+    highcharts_print: function(ev){
+        App.chart.print();
+    },
+
+    highcharts_download: function(ev){
+        App.chart.exportChart();
     },
 
     get_forum_url: function() {
