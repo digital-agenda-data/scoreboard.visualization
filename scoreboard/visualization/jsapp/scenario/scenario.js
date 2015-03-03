@@ -909,6 +909,26 @@ App.ShareOptionsView = Backbone.View.extend({
             'target': '_top',
             'method': 'POST'
         });
+        this.svg_form = App.jQuery('<form>', {
+            'action': App.URL + '/svg2png',
+            'target': '_top',
+            'method': 'POST'
+        });
+        App.jQuery(this.svg_form).append(
+            App.jQuery('<input>', {
+                'name': 'svg',
+                'type': 'hidden'
+            }
+        ));
+        var tokens = window.location.pathname.split("/");
+        var filename = tokens[tokens.length-1];
+        App.jQuery(this.svg_form).append(
+            App.jQuery('<input>', {
+                'name': 'filename',
+                'type': 'hidden',
+                'value': filename + '.png'
+            }
+        ));
         this.render();
     },
 
@@ -931,7 +951,9 @@ App.ShareOptionsView = Backbone.View.extend({
 
     highcharts_download: function(ev){
         ev.stopPropagation();
-        App.chart.exportChart();
+        App.jQuery('input[name="svg"]', this.svg_form).attr('value', App.chart.getSVG());
+        this.svg_form.submit();
+        //App.chart.exportChart();
     },
 
     get_forum_url: function() {

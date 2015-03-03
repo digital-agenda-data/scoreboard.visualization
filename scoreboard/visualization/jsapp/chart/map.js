@@ -111,16 +111,6 @@ App.chart_library['map'] = function(view, options) {
         is_embedded = true;
     }
 
-    // add a form to request a png download if not embbeded
-    if(!is_embedded || (is_embedded && viewPortWidth > 500))
-        $(container).append(
-            $('<form method="POST" action="' + App.URL + '/svg2png"></form>').append(
-                $("<input/>").attr("type", "hidden").attr("name", "svg")
-            ).append(
-                $("<input/>").attr("type", "submit").attr("value", "Download").addClass('mapExportPngButton')
-            )
-        );
-
     var series = App.format_series(
                     options['series'],
                     options['sort'],
@@ -214,9 +204,23 @@ App.chart_library['map'] = function(view, options) {
                 'title': title
             });
         }
-        // load svg html into the form for png download
+        // mock App.chart with methods for print and png download
         // use toSVG function provided by raphael.export.js (IE 8 compatibility)
-        $("input[name='svg']").val(map.paper.toSVG());
+        var svg = map.paper.toSVG();
+        App.chart = {};
+        App.chart.print = function() {
+            var width = parseFloat($(map_div).attr("width"));
+            var height = parseFloat($(map_div).attr("height"));
+            var printWindow = window.open('', 'PrintMap',
+            'width=' + width + ',height=' + height);
+            printWindow.document.writeln($(map_div).html());
+            printWindow.document.close();
+            printWindow.print();
+            printWindow.close();
+        };
+        App.chart.getSVG = function() {
+            return svg;
+        }
     });
 
     var metadata = {
