@@ -8,8 +8,8 @@
 </p>
 {{/unless}}
 
-<table style="border:1px solid grey; width:100%; font-size: {{{ font_size }}}px; font-family: 'Segoe UI', Verdana, Arial, sans-serif;">
-  <thead style="background-color: #E1F0F7">
+<table style="font-size: {{{ font_size }}}px; font-family: 'Segoe UI', Verdana, Arial, sans-serif;">
+  <thead>
     <tr>
       <th rowspan="2" style="width: 50%">Indicator (including breakdown and unit)</th>
       <th colspan="4" > {{ ref-area }} value</th>
@@ -32,19 +32,19 @@
   <tbody>
   {{#each table}}
     <tr style="text-align: center">
-      <td style="background-color: #E1F0F7; text-align: left;">{{{ this.title }}}</td>
+      <td style="text-align: left;">{{{ this.title }}}</td>
       <td>{{ this.year3 }}</td>
       <td>{{ this.year2 }}</td>
       <td>{{ this.year1 }}</td>
-      <td style="background-color:#E1F0F7">{{ this.year }}</td>
+      <td>{{ this.year }}</td>
       <td>{{ this.eu }}</td>
       {{# if this.hasRank }}
-      <td style="background-color:#E1F0F7">{{ this.rank }}</td>
+      <td>{{ this.rank }}</td>
       {{/ if }}
     </tr>
   {{/each}}
   </tbody>
-  <tfoot style="background-color: #E1F0F7">
+  <tfoot>
     <tr style="text-align: right">
       <td {{# if has-rank }} colspan="7" {{ else }} colspan="6" {{/ if }}>
         <a title=" {{ credits.text }}" href=" {{ credits.href }}">
