@@ -4,27 +4,23 @@
 
 <fieldset>
   <legend>Markers</legend>
-  <label>
-    Horizontal Median Line
-    <select class="col-md-2 col-sm-2" name="axis-horizontal-plotline">
-    {{# horizontal_plotline_options }}
-    <option value="{{ value }}"
-      {{# if selected }}selected{{/ if }}
-      >{{ label }}</option>
-    {{/ horizontal_plotline_options }}
-    </select>
-  </label>
+  <label class="col-md-3 col-sm-6">Horizontal Median Line</label>
+  <select class="col-md-2 col-sm-2 no-float" name="axis-horizontal-plotline">
+  {{# horizontal_plotline_options }}
+  <option value="{{ value }}"
+    {{# if selected }}selected{{/ if }}
+    >{{ label }}</option>
+  {{/ horizontal_plotline_options }}
+  </select>
   <br />
-  <label>
-    Vertical Median Line
-    <select class="col-md-2 col-sm-2" name="axis-vertical-plotline">
-    {{# vertical_plotline_options }}
-    <option value="{{ value }}"
-      {{# if selected }}selected{{/ if }}
-      >{{ label }}</option>
-    {{/ vertical_plotline_options }}
-    </select>
-  </label>
+  <label class="col-md-3 col-sm-6">Vertical Median Line</label>
+  <select class="col-md-2 col-sm-2 no-float" name="axis-vertical-plotline">
+  {{# vertical_plotline_options }}
+  <option value="{{ value }}"
+    {{# if selected }}selected{{/ if }}
+    >{{ label }}</option>
+  {{/ vertical_plotline_options }}
+  </select>
 </fieldset>
 
 
