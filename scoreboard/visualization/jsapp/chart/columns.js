@@ -171,6 +171,9 @@ App.chart_library['columns'] = function(view, options) {
             layout: 'vertical',
             align: 'left',
             verticalAlign: 'top',
+            title: {
+                text: 'Legend'
+            },
             x: viewPortWidth - legendWidth - 15,
             y: App.visualization.embedded ? 35 : 70,
             borderWidth: 0,

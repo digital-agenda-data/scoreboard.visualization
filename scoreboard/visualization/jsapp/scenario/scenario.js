@@ -940,7 +940,7 @@ App.ShareOptionsView = Backbone.View.extend({
 
     request_embed: function(ev){
         ev.stopPropagation();
-        window.location.replace(window.location.pathname + "/embedded" + window.location.hash);
+        window.location.href = window.location.pathname + "/embedded" + window.location.hash;
         return false;
     },
 
