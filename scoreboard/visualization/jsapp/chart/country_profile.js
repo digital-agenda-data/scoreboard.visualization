@@ -181,6 +181,10 @@ App.chart_library['country_profile'] = function(view, options) {
                     x: -10,
                     verticalAlign: 'bottom',
                     y: 0
+                },
+                style: {
+                    fontSize: '12px',
+                    color: '#222222'
                 }
             },
             title: {

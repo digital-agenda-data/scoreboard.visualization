@@ -140,7 +140,7 @@ App.format_series = function (data, sort, multidim, percent, category, highlight
         }).value();
     }else{
         var first_serie = false;
-        var highlights_counter = {};
+        var series_counter = {};
         var extract_data = function(series_item){
             var value = series_item['value'];
             var dict = {'short': 'short-label', 'long': 'label', 'none': 'label', 'notation': 'notation'};
@@ -158,32 +158,22 @@ App.format_series = function (data, sort, multidim, percent, category, highlight
             var color = null;
             if(_(highlights).contains(series_item[category]['notation'])){
                 var code = series_item[category]['notation'];
-                if(!_(highlights_counter).has(code)){
-                    highlights_counter[code] = 0;
-                }
                 var base_color;
-                if ( data.length > 1 ) {
+                if ( data.length > 1 && !animation ) {
                   // for multiple series use the color of the series as base color
-                  base_color = App.SERIES_COLOR[highlights_counter[code]] || '#63b8ff';
+                  if(!_(series_counter).has(code)){
+                    series_counter[code] = 0;
+                  }
+                  base_color = App.SERIES_COLOR[series_counter[code]++] || '#63b8ff';
                 } else {
                   // for single series use the color of the country as base color
                   base_color = App.COUNTRY_COLOR[code] || '#63b8ff';
                 }
                 var scale = new chroma.ColorScale({
                     colors: ['#000000', base_color],
-                    limits: [animation?2:(data.length+1), 0]
+                    limits: [3, 0]
                 });
-                var color;
-                if ( data.length > 1 ) {
-                  // for multiple series only one highlight
-                  color = scale.getColor(_(highlights_counter).size()).hex();
-                } else {
-                  // different shades of the same base colors
-                  color = scale.getColor(highlights_counter[code]+1).hex();
-                }
-                if (! animation) {
-                    highlights_counter[code] += 1;
-                }
+                var color = scale.getColor(1).hex();
             }
             _(point).extend({ 'color': color });
             return point;

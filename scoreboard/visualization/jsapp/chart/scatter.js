@@ -53,6 +53,10 @@ App.chart_library['scatter'] = function(view, options) {
                 x: -10,
                 verticalAlign: 'bottom',
                 y: -5
+            },
+            style: {
+                fontSize: '12px',
+                color: '#222222'
             }
         },
         title: {
