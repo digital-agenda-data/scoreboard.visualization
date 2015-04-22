@@ -115,6 +115,10 @@ App.chart_library['columns'] = function(view, options) {
                 x: -10,
                 verticalAlign: 'bottom',
                 y: -2
+            },
+            style: {
+                fontSize: '12px',
+                color: '#222222'
             }
         },
         title: {
