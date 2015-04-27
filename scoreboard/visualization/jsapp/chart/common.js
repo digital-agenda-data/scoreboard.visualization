@@ -428,10 +428,11 @@ App.title_formatter = function(parts, meta_data){
             part.text = part.facet_name + "(" + part.format + ")";
         }
         else if (_(meta_data).has(part.facet_name)){
-            part.text = meta_data[part.facet_name][part.format];
-        }
-        else {
-            part.text = '';
+            // todo: configurable list of notations for totals
+            if ( meta_data[part.facet_name]['notation'] &&
+                 !_.contains(App.notation_totals, meta_data[part.facet_name]['notation'])) {
+              part.text = meta_data[part.facet_name][part.format];
+            }
         }
         return part;
     });
@@ -446,6 +447,10 @@ App.title_formatter = function(parts, meta_data){
         }
         var suffix = item.suffix || '';
         var part = (item.text != 'Total')?item.text:null;
+        var part = null;
+        if (item.text != 'Total') {
+          part = item.text;
+        }
         if ( item.asArray ) {
             titleAsArray.push(part);
         } else {
