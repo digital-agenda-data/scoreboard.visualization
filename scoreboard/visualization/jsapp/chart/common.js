@@ -424,6 +424,7 @@ App.title_formatter = function(parts, meta_data){
         if(!part.prefix){
             part = _(part).omit('prefix');
         }
+        part.text = '';
         if (!meta_data){
             part.text = part.facet_name + "(" + part.format + ")";
         }
