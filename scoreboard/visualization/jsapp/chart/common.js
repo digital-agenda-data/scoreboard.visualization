@@ -424,14 +424,15 @@ App.title_formatter = function(parts, meta_data){
         if(!part.prefix){
             part = _(part).omit('prefix');
         }
-        part.text = '';
+        //part.text = '';
         if (!meta_data){
             part.text = part.facet_name + "(" + part.format + ")";
-        }
-        else if (_(meta_data).has(part.facet_name)){
+        } else if (_(meta_data).has(part.facet_name)) {
             // todo: configurable list of notations for totals
-            if ( meta_data[part.facet_name]['notation'] &&
-                 !_.contains(App.notation_totals, meta_data[part.facet_name]['notation'])) {
+            if ( !meta_data[part.facet_name]['notation'] ||
+                 _.contains(App.notation_totals, meta_data[part.facet_name]['notation'])) {
+              part.text = null;
+            } else {
               part.text = meta_data[part.facet_name][part.format];
             }
         }
@@ -442,22 +443,17 @@ App.title_formatter = function(parts, meta_data){
     var titleAsArray = [];
 
     _(parts).each(function(item, idx){
-        var prefix = item.prefix || '';
-        if (idx > 0 && !parts[idx-1].suffix && !prefix){
-            prefix = ' ';
-        }
-        var suffix = item.suffix || '';
-        var part = (item.text != 'Total')?item.text:null;
-        var part = null;
-        if (item.text != 'Total') {
-          part = item.text;
-        }
-        if ( item.asArray ) {
-            titleAsArray.push(part);
-        } else {
-            if (part){
-                title += (prefix + part + suffix);
+        if (item.text) {
+          if ( item.asArray ) {
+            titleAsArray.push(item.text);
+          } else {
+            var prefix = item.prefix || '';
+            if (idx > 0 && !parts[idx-1].suffix && !prefix){
+                prefix = ' ';
             }
+            var suffix = item.suffix || '';
+            title += (prefix + item.text + suffix);
+          }
         }
     });
 
