@@ -28,7 +28,7 @@ App.chart_library['columns'] = function(view, options) {
     };
     _(series).each(function(serie) {
         _(serie.data).map(function(point){
-            if ( point.y == null ) {
+            if ( point.y == null || isNaN(point.y) ) {
                 point.isNA = true;
                 point.dataLabels = dataLabels;
                 point.y = 0;
