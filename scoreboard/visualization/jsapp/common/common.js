@@ -114,6 +114,7 @@ App.round = function(value, precision) {
     }
 };
 
+App.TIME_PERIOD_DIMENSIONS = ["time-period", "TIME_PERIOD", "refPeriod"]
 
 // https://gist.github.com/insin/3619992
 Backbone.Collection.prototype.move = function(model, toIndex) {

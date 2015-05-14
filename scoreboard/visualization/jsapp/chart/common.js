@@ -15,13 +15,13 @@ function sort_serie(serie, sort, category_facet){
         else{
             if (sort.by == 'value'){
                 var value = item['y'];
-                if (isNaN(value)){
+                if (isNaN(value) || value == null){
                     value = 0;
                 }
                 return sort.order * value;
             }
             if (sort.by == 'category'){
-                if (category_facet == 'time-period'){
+                if (_.contains(App.TIME_PERIOD_DIMENSIONS, category_facet)){
                     return item['x'];
                 } else {
                     return item['name'];
@@ -233,7 +233,7 @@ App.format_series = function (data, sort, multidim, percent, category, highlight
                                 ['y', null]])
                   );
               });
-            if (category == 'time-period' || category == 'refPeriod'){
+            if (_.contains(App.TIME_PERIOD_DIMENSIONS, category)){
                 var date_pattern = /^([0-9]{4})(?:-(?:([0-9]{2})|(?:Q([0-9]){1})|(?:H([0-9]){1})))*$/;
                 _(serie).each(function(item){
                     var matches = date_pattern.exec(item['code']);

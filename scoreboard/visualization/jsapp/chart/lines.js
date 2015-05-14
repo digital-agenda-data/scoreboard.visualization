@@ -19,8 +19,10 @@ App.chart_library['lines'] = function(view, options) {
 	_.map(series, function(elem) {
         var lastElem;
         _(elem.data).each(function(item){
-            if (item.y != undefined) {
+            if (item.y != undefined && !isNaN(item.y) && item.y != null) {
                 lastElem = item;
+            } else {
+               item.y = null;
             }
         });
         if (lastElem) {
