@@ -56,7 +56,7 @@ App.SelectFilter = Backbone.View.extend({
             this.loadstate.on('change:' + other_name, this.update, this);
         }, this);
         this.grouper = App.groupers[this.name];
-        if (this.grouper && !_.chain(options.dimensions).pluck('notation').contains(this.grouper).value()) {
+        if (this.grouper && !_.chain(this.options.filters_schema).pluck('name').contains(this.grouper).value()) {
             // grouper not in filter model
             this.grouper = null;
         }
@@ -779,6 +779,7 @@ App.FiltersBox = Backbone.View.extend({
                 ignore_values: item['ignore_values'],
                 default_all: default_all,
                 dimension: item['dimension'],
+                filters_schema: options['filters_schema'],
                 dimensions: options['dimensions'],
                 include_wildcard: item['include_wildcard'],
                 constraints: item['constraints']
