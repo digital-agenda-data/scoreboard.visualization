@@ -424,6 +424,10 @@ App.HiddenSelectFilter = App.SelectFilter.extend({
     className: "chart-filter hidden-select"
 });
 
+App.WhitelistSelectFilter = App.AllValuesFilter.extend({
+    //className: "chart-filter hidden-select",
+});
+
 App.CompositeFilter = App.AllValuesFilter.extend({
     className: "chart-filter",
     template: App.get_template('filters/composite.html'),
@@ -751,7 +755,8 @@ App.FiltersBox = Backbone.View.extend({
         'dataset_select': App.DatasetSelectFilter,
         'multiple_select': App.MultipleSelectFilter,
         'composite': App.CompositeFilter,
-        'all-values': App.AllValuesFilter
+        'all-values': App.AllValuesFilter,
+        'whitelist': App.WhitelistSelectFilter
     },
 
     initialize: function(options) {
@@ -813,6 +818,7 @@ App.EmbeddedFiltersBox = App.FiltersBox.extend({
         'multiple_select': App.EmbeddedMultipleSelectFilter,
         'composite': App.CompositeFilter,
         'hidden_select': App.EmbeddedSelectFilter,
+        'whitelist': App.AllValuesFilter,
         'all-values': App.AllValuesFilter
     }
 

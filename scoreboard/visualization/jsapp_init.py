@@ -17,6 +17,7 @@ js_bundles = [
             'chart/lines.js',
             'chart/scatter.js',
             'chart/bubbles.js',
+            'chart/polar.js',
             'chart/map.js',
             'scenario/scenario.js',
             'samples/country_profile_bar.js',

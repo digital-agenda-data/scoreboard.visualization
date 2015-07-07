@@ -21,7 +21,11 @@ App.StructureEditorField = Backbone.View.extend({
         {value: 'select', label: "single selection"},
         {value: 'multiple_select', label: "multiple selection"},
         {value: 'all-values', label: "all values"},
+        {value: 'whitelist', label: "whitelist filter"},
+        {value: 'composite', label: "composite (sliders)"},
+        {value: 'hidden_select', label: "predefined (single, hidden)"},
         {value: 'ignore', label: "ignore"}
+        // dataset_select not included
     ],
 
     initialize: function(options) {

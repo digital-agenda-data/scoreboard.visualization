@@ -100,6 +100,10 @@ App.ScenarioChartView = Backbone.View.extend({
             }
         });
         App.trim_dimension_group_args(relevant_args, this.dimension_group_map);
+        // remove whitelist filters from args
+        relevant_args = _(relevant_args).omit(
+            _.chain(this.options.filters_schema).where({'type':'whitelist'}).pluck('dimension').value()
+        );
         relevant_args = _({rev: this.data_revision}).extend(relevant_args);
         delete relevant_args["__dataset"];
         return $.getJSON(url, relevant_args);
@@ -147,7 +151,7 @@ App.ScenarioChartView = Backbone.View.extend({
         }
         _(units).each(function(unit){
             var evaluation = false
-            if (unit && unit.length > 3 && unit.substring(0,3).toLowerCase() == 'pc_' ){
+            if (unit && typeof unit == "string" && unit.length > 3 && unit.substring(0,3).toLowerCase() == 'pc_' ){
                 evaluation = true;
             }
             unit_is_pc.push(evaluation);
@@ -169,8 +173,10 @@ App.ScenarioChartView = Backbone.View.extend({
         var multiple_series = this.multiple_series;
         var chart_data = {
             'tooltip_formatter': function() {
+                // TODO: move this function
                 var attrs = this.point.attributes;
                 var out = '<b>' + attrs[category_facet.name].label + '</b>';
+                //out += JSON.stringify(attrs);
                 // point value(s) and unit-measure
                 if (_.contains(tooltip_attributes, 'value')) {
                     if ( multidim ) {
@@ -295,7 +301,8 @@ App.ScenarioChartView = Backbone.View.extend({
                 return this.value;
             },
             'series_names': {},
-            'series_ending_labels': {}, 'unit_is_pc': unit_is_pc,
+            'series_ending_labels': {},
+            'unit_is_pc': unit_is_pc,
             'plotlines': this.schema['plotlines'] || false,
             'animation': this.schema['animation'] || false,
             'series-legend-label': this.schema['series-legend-label'] || 'none',
@@ -326,6 +333,11 @@ App.ScenarioChartView = Backbone.View.extend({
             args = _.omit(args, 'indicator');
             data_method = '/datapoints_cp';
         }
+        //else if(this.schema['chart_type'] === 'polar'){
+            // TODO: proper implementation of whitelist filtering in js
+            //args.subtype = 'bar';
+            //data_method = '/datapoints_cp';
+        //}
         else {
             data_method = '/datapoints';
         }
@@ -440,9 +452,22 @@ App.ScenarioChartView = Backbone.View.extend({
         _(this.get_meta_data(chart_data)).forEach(function(req) {
             requests.push(req);
         });
-        this.requests_in_flight = requests;
 
+        this.whitelist_dimensions = _.chain(this.options.filters_schema).where({'type':'whitelist'}).pluck('dimension').value();
+        // check if we need whitelist
         var that = this;
+        if (this.whitelist_dimensions.length > 0) {
+            var whitelist_request = $.getJSON(this.cube_url + '/whitelist.json');
+            whitelist_request.done(function(data) {
+                var result = _(data).map(function(obj) {
+                    return _(obj).pick(that.whitelist_dimensions);
+                });
+                that.whitelist_data = result;
+            });
+            requests.push(whitelist_request);
+        }
+
+        this.requests_in_flight = requests;
 
         var ajax_calls = $.when.apply($, requests);
         ajax_calls.done(_.bind(function() {
@@ -453,14 +478,46 @@ App.ScenarioChartView = Backbone.View.extend({
                 var sample_point, legend_candidates,
                     resp = responses[n],
                     datapoints = resp[0]['datapoints'];
-                if(this.client_filter && (this.schema['chart_type'] !== 'country_profile') && this.multiple_series != 2 ) {
+                if(this.client_filter && this.multiple_series != 2 &&
+                    (this.schema['chart_type'] !== 'country_profile' && this.schema['chart_type'] !== 'polar')  ) {
+                    // filter values based on the multiple select input
                     var dimension = this.dimensions_mapping[this.client_filter];
                     datapoints = _(datapoints).filter(function(item) {
                         return _(client_filter_options).contains(
                             item[dimension]['notation']);
                     }, this);
                 }
-
+                // filter based on whitelist
+                if (this.whitelist_data) {
+                    datapoints = _(datapoints).filter(function(item) {
+                        var item_extract = {};
+                        _(this.whitelist_dimensions).each(function(dimension) {
+                            item_extract[dimension] = item[dimension]['notation'];
+                        });
+                        return _(this.whitelist_data).where(item_extract).length > 0;
+                    }, this);
+                    if (_(this.options.filters_schema).where({'dimension':'time-period', 'type':'select'}).length > 0) {
+                        // filter only latest values for time-period
+                        var keys = _.keys(this.whitelist_data[0]);
+                        keys.push('time-period');
+                        // cannot use _.uniq because we need to keep the most recent value
+                        var filtered_datapoints = {};
+                        _(datapoints).each(function(item) {
+                            var key = _.chain(item).pick(keys).pluck('notation').value();
+                            // extract only year (assume the format is: YYYY, YYYY-MM, YYYY-MM-DD etc)
+                            key[keys.length-1] = key[keys.length-1].split('-')[0];
+                            if (filtered_datapoints[key]) {
+                              // there is already another datapoint for the same time-period
+                              // keep only most recent, assume date format is comparable
+                              if (item['time-period']['notation'] > filtered_datapoints[key]['time-period']['notation']) {
+                                  filtered_datapoints[key] = item;
+                              }
+                            }
+                            filtered_datapoints[key] = item;
+                        }, this);
+                        datapoints = _.values(filtered_datapoints);
+                    }
+                }
                 if ( this.multiple_series == 2 ) {
                     sample_point = datapoints[0];
                     if ( sample_point ) {
@@ -717,7 +774,8 @@ App.AnnotationsView = Backbone.View.extend({
         }, this);
         var ajax_calls = $.when.apply($, requests);
         ajax_calls.done(_.bind(function() {
-            if(data != []) {
+            // handler for metadata (annotations) requests
+            if(data && data.length > 0) {
                 var blocks_order = _(annotations.filters).pluck('name');
                 var blocks = _.chain(data).sortBy(function(item){
                     return _(blocks_order).indexOf(item['filter_name']);
