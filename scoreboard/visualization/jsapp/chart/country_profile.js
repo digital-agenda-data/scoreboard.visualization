@@ -28,16 +28,11 @@ App.chart_library['country_profile'] = function(view, options) {
         }catch(err){
             return '-';
         }
-        var unit_is_pc = false;
-        if(unit && unit.toLowerCase().indexOf('pc_') !== -1){
-            unit_is_pc = true;
-        }
-
         if(value > 100){
             value = value.toFixed(0);
             return add_commas(value);
         }else{
-            if (unit_is_pc){
+            if (App.unit_is_percent(unit)){
                 return (value * 100).toFixed(0);
             }
             return value.toFixed(2);
@@ -52,9 +47,11 @@ App.chart_library['country_profile'] = function(view, options) {
                         options['series'],
                         options['sort'],
                         options['multidim'],
-                        [false],
                         options['category_facet'],
-                        options['highlights']);
+                        options['highlights'],
+                        false, // animation
+                        null, // series_point_label
+                        true);
 
         var stack_series = [
             {
@@ -280,7 +277,7 @@ App.chart_library['country_profile'] = function(view, options) {
                     var unit = this.point.attributes['unit-measure']['notation'];
                     var title = this.point.attributes['unit-measure']['short-label'];
                     var res = 'Original indicator value: ' + x_formatter(this.point.original, unit);
-                    if(unit && unit.toLowerCase().indexOf('pc_') === -1){
+                    if ( !App.unit_is_percent(unit)) {
                         res += ' ';
                     }
                     if(title){

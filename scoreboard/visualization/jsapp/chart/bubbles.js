@@ -14,7 +14,6 @@ App.chart_library['bubbles'] = function(view, options) {
                     options['series'],
                     options['sort'],
                     options['multidim'],
-                    options['unit_is_pc'],
                     options['category_facet'],
                     options['highlights']);
 
@@ -95,8 +94,6 @@ App.chart_library['bubbles'] = function(view, options) {
             endOnTick: false,
             showLastLabel: true,
             labels: {
-                formatter: _.partial(App.tick_labels_formatter,
-                                     options.unit_is_pc[0]),
                 style: {
                     color: '#000000'
                 }
@@ -118,8 +115,6 @@ App.chart_library['bubbles'] = function(view, options) {
                 margin: 30
             },
             labels: {
-                formatter: _.partial(App.tick_labels_formatter,
-                                     options.unit_is_pc[1]),
                 style: {
                     color: '#000000'
                 }

@@ -12,7 +12,6 @@ App.chart_library['columns'] = function(view, options) {
                     options['series'],
                     options['sort'],
                     options['multidim'],
-                    options['unit_is_pc'],
                     options['category_facet'],
                     options['highlights'],
                     options['animation'],

@@ -125,7 +125,6 @@ App.chart_library['map'] = function(view, options) {
                     options['series'],
                     options['sort'],
                     options['multidim'],
-                    options['unit_is_pc'],
                     options['category_facet'],
                     options['highlights']);
 
@@ -181,15 +180,10 @@ App.chart_library['map'] = function(view, options) {
             }
         });
 
-        //horizontal
-        /*
-        draw_legend(map.paper, colorscale, 10, 420, 0, max_value,
-                {text: unit, is_pc: options.unit_is_pc[0]});
-        */
         //vertical
         if(!is_embedded || (is_embedded && viewPortWidth>500))
             draw_legend(map.paper, colorscale, 10, viewPortHeight/2 - n_boxes/2 * legendHeight + 2* legendHeight, 0, max_value,
-                    {text: (unit == null?'':unit.short_label), is_pc: options.unit_is_pc[0]},
+                    {text: (unit == null?'':unit.short_label), is_pc: (unit == null?false:App.unit_is_percent(unit.notation))},
                     'vertical',
                     legendWidth, legendHeight, n_boxes);
 

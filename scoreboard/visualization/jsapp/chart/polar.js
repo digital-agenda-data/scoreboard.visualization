@@ -13,7 +13,6 @@ App.chart_library['polar'] = function(view, options) {
                     options['series'],
                     options['sort'],
                     options['multidim'],
-                    options['unit_is_pc'],
                     options['category_facet'],
                     options['highlights']);
 	_.map(series, function(elem) {

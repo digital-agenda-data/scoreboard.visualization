@@ -131,31 +131,9 @@ App.ScenarioChartView = Backbone.View.extend({
             return;
         }
         this.$el.html("");
-        var unit_is_pc = [];
-        if(this.schema['multidim'] == 3){
+        if (this.schema['multidim'] > 1){
             args['join_by'] = this.schema.category_facet;
-            var units = [this.model.get('x-unit-measure') || '',
-                         this.model.get('y-unit-measure') || '',
-                         this.model.get('z-unit-measure') || '']
         }
-        else if(this.schema['multidim'] == 2){
-            args['join_by'] = this.schema.category_facet;
-            var units = [this.model.get('x-unit-measure') || '',
-                         this.model.get('y-unit-measure') || '']
-        }
-        else if(this.schema['multiple_series'] == 2){
-            var units = [this.model.get('x-unit-measure') || '',
-                         this.model.get('y-unit-measure') || '']
-        } else {
-            var units = [this.model.get('unit-measure') || ''];
-        }
-        _(units).each(function(unit){
-            var evaluation = false
-            if (unit && typeof unit == "string" && unit.length > 3 && unit.substring(0,3).toLowerCase() == 'pc_' ){
-                evaluation = true;
-            }
-            unit_is_pc.push(evaluation);
-        });
         // category_facet, value and unit-measure always in tooltip
         var tooltip_attributes = ['value', 'unit-measure'];;
         if ( this.schema['tooltips'] ) {
@@ -181,7 +159,7 @@ App.ScenarioChartView = Backbone.View.extend({
                 if (_.contains(tooltip_attributes, 'value')) {
                     if ( multidim ) {
                         out += '<br><b>x</b>: ';
-                        if (unit_is_pc[0]) {
+                        if (attrs['unit-measure'] && App.unit_is_percent(attrs['unit-measure']['x']['notation'])) {
                           // keep only three significant digits
                           out += this.x.toPrecision(3);
                           out += '%';
@@ -198,23 +176,19 @@ App.ScenarioChartView = Backbone.View.extend({
                         out += '<b>y</b>: ';
                     }
                     var is_percent = false;
-                    if ( multidim ) {
-                        if (unit_is_pc[1]) is_percent = true;
-                    } else {
-                        // no multidim, but may be multi-lines chart
-                        var series_is_pc = unit_is_pc[0];
-                        if (typeof unit_is_pc[this.series.index] != 'undefined') {
-                            series_is_pc = unit_is_pc[this.series.index];
-                        }
-                        if (series_is_pc && !this.point.isNA) {
-                            is_percent = true;
-                        }
-                    }
                     if ( this.point.isNA ) {
                         out += '<b>' + this.series.name  + '</b><br>';
                         out += '<b>Data not available</b>'
                     } else {
                         // keep only three significant digits
+                        var is_percent = false;
+                        if (attrs['unit-measure']) {
+                            if (multidim) {
+                                is_percent = App.unit_is_percent(attrs['unit-measure']['y']['notation']);
+                            } else {
+                                is_percent = App.unit_is_percent(attrs['unit-measure']['notation']);
+                            }
+                        }
                         if ( is_percent ) {
                           out += this.y.toPrecision(3);
                           out += '%';
@@ -238,7 +212,7 @@ App.ScenarioChartView = Backbone.View.extend({
                     }
                     if ( multidim == 3 ) {
                         out += '<br><b>z</b>: ';
-                        if (unit_is_pc[2]) {
+                        if (attrs['unit-measure'] && App.unit_is_percent(attrs['unit-measure']['z']['notation'])) {
                           // keep only three significant digits
                           out += this.point.z.toPrecision(3);
                           out += '%';
@@ -302,7 +276,6 @@ App.ScenarioChartView = Backbone.View.extend({
             },
             'series_names': {},
             'series_ending_labels': {},
-            'unit_is_pc': unit_is_pc,
             'plotlines': this.schema['plotlines'] || false,
             'animation': this.schema['animation'] || false,
             'series-legend-label': this.schema['series-legend-label'] || 'none',

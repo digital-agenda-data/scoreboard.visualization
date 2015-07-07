@@ -114,6 +114,13 @@ App.round = function(value, precision) {
     }
 };
 
+App.unit_is_percent = function(unit) {
+    return unit && typeof unit == "string" && unit.length > 3 && unit.substring(0,3).toLowerCase() == 'pc_';
+}
+App.multiplicator = function(unit) {
+    return App.unit_is_percent(unit)?100:1;
+}
+
 App.TIME_PERIOD_DIMENSIONS = ["time-period", "TIME_PERIOD", "refPeriod"]
 
 // https://gist.github.com/insin/3619992
