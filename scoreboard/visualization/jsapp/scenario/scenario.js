@@ -433,8 +433,15 @@ App.ScenarioChartView = Backbone.View.extend({
             var whitelist_request = $.getJSON(this.cube_url + '/whitelist.json');
             whitelist_request.done(function(data) {
                 var result = _(data).map(function(obj) {
-                    return _(obj).pick(that.whitelist_dimensions);
-                });
+                    // pick only whitelisted properties and convert to lowercase
+                    var newobj = {}
+                    _(that.whitelist_dimensions).each(function(dimension){
+                        if (obj[dimension]) {
+                          newobj[dimension] = obj[dimension].toLowerCase();
+                        }
+                    });
+                    return newobj;
+                })
                 that.whitelist_data = result;
             });
             requests.push(whitelist_request);
@@ -465,7 +472,8 @@ App.ScenarioChartView = Backbone.View.extend({
                     datapoints = _(datapoints).filter(function(item) {
                         var item_extract = {};
                         _(this.whitelist_dimensions).each(function(dimension) {
-                            item_extract[dimension] = item[dimension]['notation'];
+                            // extract only the whitelisted properties (in lowercase)
+                            item_extract[dimension] = item[dimension]['notation'].toLowerCase();
                         });
                         return _(this.whitelist_data).where(item_extract).length > 0;
                     }, this);
