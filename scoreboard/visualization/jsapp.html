@@ -52,6 +52,9 @@
   App.jQuery = window.jQuery;
   window.jQuery.noConflict(true);
   App.plone_jQuery = window.jQuery;
+  (function($$) {
+    $$(document).tooltip();
+  })(App.jQuery);
 
 </script>
 

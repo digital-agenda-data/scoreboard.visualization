@@ -4,7 +4,7 @@
   "series-legend-label": "long",
   "series-point-label": "long",
   "category_facet": "indicator",
-  "multiple_series": null,
+  "multiple_series": "ref-area",
   "facets": [
     {
       "type": "select",
@@ -18,32 +18,31 @@
      },
     {
       "type": "select",
-      "name": "ref-area",
-      "label": "Country",
-      "dimension": "ref-area",
-      "default_value": "#random",
-      "sortBy": "label",
-      "sortOrder": "asc",
-      "constraints": {
-        "indicator-group": "indicator-group"
-      }
-    },
-    {
-      "type": "select",
       "name": "time-period",
       "label": "Period",
       "dimension": "time-period",
       "sortBy": "label",
       "sortOrder": "reverse",
       "constraints": {
+        "indicator-group": "indicator-group"
+      }
+    },
+    {
+      "type": "multiple_select",
+      "name": "ref-area",
+      "label": "Country",
+      "dimension": "ref-area",
+      "default_value": ["#random","EU27"],
+      "sortBy": "label",
+      "sortOrder": "asc",
+      "constraints": {
         "indicator-group": "indicator-group",
-        "ref-area": "ref-area"
+        "time-period": "time-period"
       }
     },
     {
       "constraints": {
         "indicator-group": "indicator-group",
-        "ref-area": "ref-area",
         "time-period": "time-period"
       },
       "dimension": "indicator",
@@ -76,7 +75,7 @@
   },
   "text": [
     {"value": "The bars present the relative position of a country on all the key indicators of a thematic group, compared on a common scale with the lowest, average and highest European countries values.",
-     "position": "upper-right"
+     "position": "lower-right"
     }
   ],
   "titles": {

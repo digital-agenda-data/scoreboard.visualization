@@ -215,7 +215,7 @@ App.SelectFilter = Backbone.View.extend({
         else if(this.multidim == 2) {
             view_name = 'dimension_options_xy';
         }
-        else if(this.chart_type === 'country_profile'){
+        else if(this.chart_type === 'country_profile' || this.chart_type === 'country_profile_polar'){
             args.subtype = this.chart_subtype;
             view_name = 'dimension_options_cp';
         }

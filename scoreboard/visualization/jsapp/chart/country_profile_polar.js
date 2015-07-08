@@ -19,11 +19,30 @@ App.chart_library['country_profile_polar'] = function(view, options) {
                     null, // series_point_label
                     true // ignore percentage unit (do not multiply by 100)
                  );
-	_.map(series, function(elem) {
+	// filter items without value (some added automatically in common.js (diffs_collection)
+    _(series).each(function(serie) {
+        serie.data = _(serie.data).filter(function(item) {
+            return item.y != undefined && !isNaN(item.y) && item.y != null;
+        });
+    });
+    // change point names, by default category facet (indicator) is used
+    var category_keys = {};
+    var category_keys_invert = {};
+    var counter = 1;
+    _.map(series, function(elem) {
         _(elem.data).each(function(item){
-            if (item.y == undefined || isNaN(item.y)) {
-               item.y = null;
+            var key = [
+                item.attributes.indicator.notation,
+                item.attributes.breakdown.notation,
+                item.attributes['unit-measure'].notation]
+            if (!category_keys[key]) {
+                category_keys_invert[counter] = [
+                    '<b>Indicator</b>: ' + item.attributes.indicator.label,
+                    '<b>Breakdown</b>: ' + item.attributes.breakdown.label,
+                    '<b>Unit</b>: ' + item.attributes['unit-measure'].label];
+                category_keys[key] = counter++;
             }
+            item.name = category_keys[key];
         });
     });
 
@@ -66,7 +85,6 @@ App.chart_library['country_profile_polar'] = function(view, options) {
             height: viewPortHeight,
             width: viewPortWidth,
         },
-        colors: App.SERIES_COLOR,
         credits: {
             href: options['credits']['href'],
             text: options['credits']['text'],
@@ -114,8 +132,13 @@ App.chart_library['country_profile_polar'] = function(view, options) {
             labels: {
                 style: {
                     color: '#000000',
+                },
+                useHTML: true,
+                formatter: function() {
+                    var title = category_keys_invert[this.value].join('<br>');
+                    return '<div title="' + title + '">...</div>'
                 }
-             }
+             },
         },
         yAxis: {
             lineWidth: 0,
@@ -136,7 +159,13 @@ App.chart_library['country_profile_polar'] = function(view, options) {
         },
         tooltip: {
             useHTML: true,
-            formatter: cp_polar_tooltip_formatter
+            formatter: cp_polar_tooltip_formatter,
+            snap: 0
+        },
+        plotOptions: {
+            series: {
+                stickyTracking: false
+            }
         },
         legend: {
             layout: 'vertical',
@@ -173,8 +202,8 @@ App.chart_library['country_profile_polar'] = function(view, options) {
         'chart-url': document.URL,
         'filters-applied': _(this.model.attributes).pairs()
     };
-    view.trigger('chart_ready', series, metadata);
-
+    view.trigger('chart_ready', series, metadata,
+        options['chart_type'] + '_' + options.subtype);
 };
 
 })();
