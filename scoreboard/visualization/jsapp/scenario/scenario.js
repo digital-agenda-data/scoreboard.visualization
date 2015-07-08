@@ -306,11 +306,11 @@ App.ScenarioChartView = Backbone.View.extend({
             args = _.omit(args, 'indicator');
             data_method = '/datapoints_cp';
         }
-        //else if(this.schema['chart_type'] === 'polar'){
+        else if(this.schema['chart_type'] === 'country_profile_polar'){
             // TODO: proper implementation of whitelist filtering in js
-            //args.subtype = 'bar';
-            //data_method = '/datapoints_cp';
-        //}
+            args.subtype = 'bar';
+            data_method = '/datapoints_cp';
+        }
         else {
             data_method = '/datapoints';
         }
