@@ -53,6 +53,7 @@ App.chart_library['country_profile_polar'] = function(view, options) {
                 category_keys[key] = counter++;
             }
             item.name = category_keys[key];
+            item.title = category_names[category_keys[key]];
         });
     });
 
@@ -141,7 +142,7 @@ App.chart_library['country_profile_polar'] = function(view, options) {
             tickColor: '#191919',
             labels: {
                 style: {
-                    color: '#000000',
+                    color: '#000000'
                 },
                 useHTML: true,
                 formatter: function() {

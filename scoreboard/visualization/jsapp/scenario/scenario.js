@@ -773,6 +773,14 @@ App.AnnotationsView = Backbone.View.extend({
         var ajax_calls = $.when.apply($, requests);
         ajax_calls.done(_.bind(function() {
             // handler for metadata (annotations) requests
+            this.$el.empty();
+            var chart_description = this.description.html();
+            var section_title = this.schema['annotations'] &&
+              this.schema['annotations']['title'] ||
+              'Definition and scopes:';
+            if ( this.schema.annotations && this.schema.annotations.notes ) {
+                chart_description = this.schema.annotations.notes;
+            }
             if(data && data.length > 0) {
                 var blocks_order = _(annotations.filters).pluck('name');
                 var blocks = _.chain(data).sortBy(function(item){
@@ -786,25 +794,15 @@ App.AnnotationsView = Backbone.View.extend({
                         "filter_label": facet.label
                     });
                 }, this).value();
-                var chart_description = this.description.html();
-                if ( this.schema.annotations && this.schema.annotations.notes ) {
-                    chart_description = this.schema.annotations.notes;
-                }
-                var section_title = this.schema['annotations'] &&
-                  this.schema['annotations']['title'] ||
-                  'Definition and scopes:';
-                var context = {
-                     "description": chart_description,
-                     "section_title": section_title,
-                     "indicators_details_url": this.cube_url + '/indicators',
-                     "blocks": blocks
-                };
-                this.trigger('metadata_ready', context);
-                this.$el.html(this.template(context));
             }
-            else {
-                this.$el.empty();
-            }
+            var context = {
+                 "description": chart_description,
+                 "section_title": section_title,
+                 "indicators_details_url": this.cube_url + '/indicators',
+                 "blocks": blocks
+            };
+            this.trigger('metadata_ready', context);
+            this.$el.html(this.template(context));
         }, this));
     }
 
