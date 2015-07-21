@@ -202,7 +202,7 @@ App.chart_library['country_profile_polar'] = function(view, options) {
     App.set_default_chart_options(chartOptions);
     App.disable_legend(chartOptions, options);
     App.override_zoom();
-    var chart = new Highcharts.Chart(chartOptions);
+    App.chart = new Highcharts.Chart(chartOptions);
 
     var metadata = {
         'chart-title': options.titles.title,
