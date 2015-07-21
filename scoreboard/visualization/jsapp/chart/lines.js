@@ -13,14 +13,15 @@ App.chart_library['lines'] = function(view, options) {
                     options['series'],
                     options['sort'],
                     options['multidim'],
-                    options['unit_is_pc'],
                     options['category_facet'],
                     options['highlights']);
 	_.map(series, function(elem) {
         var lastElem;
         _(elem.data).each(function(item){
-            if (item.y != undefined) {
+            if (item.y != undefined && !isNaN(item.y) && item.y != null) {
                 lastElem = item;
+            } else {
+               item.y = null;
             }
         });
         if (lastElem) {
@@ -59,7 +60,6 @@ App.chart_library['lines'] = function(view, options) {
 
     var yAxis = {
         min:0,
-        //max: options['unit_is_pc'][0]?100:null,
         minRange: 1,
         startOnTick: false,
         minPadding: 0.1,
@@ -94,7 +94,6 @@ App.chart_library['lines'] = function(view, options) {
         var yAxis = [yAxis];
         yAxis.push({
             min:0,
-            //max: options['unit_is_pc'][1]?100:null,
             max: max_value,
             opposite: true,
             title: {

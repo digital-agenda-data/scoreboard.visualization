@@ -15,13 +15,13 @@ function sort_serie(serie, sort, category_facet){
         else{
             if (sort.by == 'value'){
                 var value = item['y'];
-                if (isNaN(value)){
+                if (isNaN(value) || value == null){
                     value = 0;
                 }
                 return sort.order * value;
             }
             if (sort.by == 'category'){
-                if (category_facet == 'time-period'){
+                if (_.contains(App.TIME_PERIOD_DIMENSIONS, category_facet)){
                     return item['x'];
                 } else {
                     return item['name'];
@@ -66,10 +66,8 @@ App.sort_by_total_stacked = function (series, sort){
   });
 }
 
-App.format_series = function (data, sort, multidim, percent, category, highlights, animation, series_point_label){
-    var multiplicators = _(percent).map(function(pc){
-        return pc?100:1;
-    });
+App.format_series = function (data, sort, multidim, category, highlights, animation, series_point_label, ignore_percents){
+    // ignore_percents is only used by the country profile => multidim = 0
     var countrycolor = function(code) {
         if (_.isNull(App.COUNTRY_COLOR[code]) || _.isUndefined(App.COUNTRY_COLOR[code])) {
             return null;
@@ -90,11 +88,11 @@ App.format_series = function (data, sort, multidim, percent, category, highlight
                 var data = [{
                     'name': notation,
                     'attributes': _(datapoint).omit('value'),
-                    'x': datapoint['value']['x'] * multiplicators[0],
-                    'y': datapoint['value']['y'] * multiplicators[1]
+                    'x': datapoint['value']['x'] * App.multiplicator(datapoint['unit-measure']['x']['notation']),
+                    'y': datapoint['value']['y'] * App.multiplicator(datapoint['unit-measure']['y']['notation'])
                 }]
                 if (multidim == 3){
-                    data[0]['z'] = datapoint['value']['z'] * multiplicators[2]
+                    data[0]['z'] = datapoint['value']['z'] * App.multiplicator(datapoint['unit-measure']['z']['notation'])
                 }
                 var output = {
                     'name': datapoint[category]['label'],
@@ -139,6 +137,7 @@ App.format_series = function (data, sort, multidim, percent, category, highlight
             return _(serie).sortBy('name');
         }).value();
     }else{
+        // not multidim
         var first_serie = false;
         var series_counter = {};
         var extract_data = function(series_item){
@@ -181,20 +180,16 @@ App.format_series = function (data, sort, multidim, percent, category, highlight
 
         var diffs_collection = {}
         var series = _.chain(data).map(function(item, key){
-            // multiply with 100 for percentages
-            _(item['data']).map(function(item) {
-                var value = item['value'];
-                if ( typeof(value) == "string" ) {
-                    value = parseFloat(value);
-                }
-                if ( multiplicators[key] ) {
-                    // multiple_series=2 (multilines)
-                    item['value'] = value * multiplicators[key];
-                } else {
-                    // same unit of measure for all series
-                    item['value'] = value * multiplicators[0];
-                }
-            });
+            // multiply with 100 for percentages unless ignore_percents is true
+            if (!ignore_percents) {
+                _(item['data']).map(function(item) {
+                    var value = item['value'];
+                    if ( typeof(value) == "string" ) {
+                        value = parseFloat(value);
+                    }
+                    item['value'] = value * App.multiplicator(item['unit-measure']['notation']);
+                });
+            }
             var data = _(item['data']).map(extract_data);
             _.chain(data).
               each(function(item){
@@ -233,7 +228,7 @@ App.format_series = function (data, sort, multidim, percent, category, highlight
                                 ['y', null]])
                   );
               });
-            if (category == 'time-period' || category == 'refPeriod'){
+            if (_.contains(App.TIME_PERIOD_DIMENSIONS, category)){
                 var date_pattern = /^([0-9]{4})(?:-(?:([0-9]{2})|(?:Q([0-9]){1})|(?:H([0-9]){1})))*$/;
                 _(serie).each(function(item){
                     var matches = date_pattern.exec(item['code']);
@@ -442,30 +437,22 @@ App.set_default_chart_options = function(chartOptions){
 */
 }
 
-
-App.tick_labels_formatter = function(max100) {
-    if (this.value < 0){
-        return null;
-    }
-    if (max100 && this.value > 100){
-        return null;
-    }
-    return this.value;
-}
-
 App.title_formatter = function(parts, meta_data){
     parts = _(parts).map(function(part){
         if(!part.prefix){
             part = _(part).omit('prefix');
         }
+        //part.text = '';
         if (!meta_data){
             part.text = part.facet_name + "(" + part.format + ")";
-        }
-        else if (_(meta_data).has(part.facet_name)){
-            part.text = meta_data[part.facet_name][part.format];
-        }
-        else {
-            part.text = '';
+        } else if (_(meta_data).has(part.facet_name)) {
+            // todo: configurable list of notations for totals
+            if ( !meta_data[part.facet_name]['notation'] ||
+                 _.contains(App.notation_totals, meta_data[part.facet_name]['notation'])) {
+              part.text = null;
+            } else {
+              part.text = meta_data[part.facet_name][part.format];
+            }
         }
         return part;
     });
@@ -474,18 +461,17 @@ App.title_formatter = function(parts, meta_data){
     var titleAsArray = [];
 
     _(parts).each(function(item, idx){
-        var prefix = item.prefix || '';
-        if (idx > 0 && !parts[idx-1].suffix && !prefix){
-            prefix = ' ';
-        }
-        var suffix = item.suffix || '';
-        var part = (item.text != 'Total')?item.text:null;
-        if ( item.asArray ) {
-            titleAsArray.push(part);
-        } else {
-            if (part){
-                title += (prefix + part + suffix);
+        if (item.text) {
+          if ( item.asArray ) {
+            titleAsArray.push(item.text);
+          } else {
+            var prefix = item.prefix || '';
+            if (idx > 0 && !parts[idx-1].suffix && !prefix){
+                prefix = ' ';
             }
+            var suffix = item.suffix || '';
+            title += (prefix + item.text + suffix);
+          }
         }
     });
 

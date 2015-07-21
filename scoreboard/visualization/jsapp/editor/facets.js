@@ -29,7 +29,7 @@ App.FacetEditorField = Backbone.View.extend({
         var args = {};
         args['dimension'] = this.model.get('dimension');
         args['rev'] = App.DATA_REVISION;
-        var view_name = 'dimension_options';
+        var view_name = 'dimension_codelist';
         return $.getJSON(App.URL + '/' + view_name, args);
     },
 
@@ -61,7 +61,7 @@ App.FacetEditorField = Backbone.View.extend({
 
         ajax.done(_.bind(function(data){
             options = [];
-            _(data.options).each(function(item){
+            _(data).each(function(item){
                 options.push({
                     label: item['label'],
                     value: item['notation']

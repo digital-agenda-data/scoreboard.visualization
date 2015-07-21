@@ -55,10 +55,14 @@ App.SelectFilter = Backbone.View.extend({
             this.model.on('change:' + other_name, this.update, this);
             this.loadstate.on('change:' + other_name, this.update, this);
         }, this);
-        var grouper = App.groupers[this.name];
-        if ( grouper && !_(_.toArray(this.constraints)).contains(grouper)){
-            this.model.on('change:' + grouper, this.update, this);
-            this.loadstate.on('change:' + grouper, this.update, this);
+        this.grouper = App.groupers[this.name];
+        if (this.grouper && !_.chain(this.options.filters_schema).pluck('name').contains(this.grouper).value()) {
+            // grouper not in filter model
+            this.grouper = null;
+        }
+        if ( this.grouper && !_(_.toArray(this.constraints)).contains(this.grouper)){
+            this.model.on('change:' + this.grouper, this.update, this);
+            this.loadstate.on('change:' + this.grouper, this.update, this);
         }
         this.update();
     },
@@ -113,15 +117,15 @@ App.SelectFilter = Backbone.View.extend({
                 incomplete = true;
             }
             args[other_dimension] = other_option;
-            if(other_option == 'any' && App.groupers[this.dimension] == other_dimension){
+            if(other_option == 'any' && this.grouper == other_dimension){
                 this.display_in_groups = true;
             }
         }, this);
         // if grouper not found in constraints at all, display in groups
-        if ( App.groupers[this.name] && !_(_.toArray(this.constraints)).contains(App.groupers[this.name])) {
+        if ( this.grouper && !_(_.toArray(this.constraints)).contains(this.grouper)) {
             this.display_in_groups = true;
-            var grouper_option = this.model.get(App.groupers[this.name]);
-            var grouper_loading = this.loadstate.get(App.groupers[this.name]);
+            var grouper_option = this.model.get(this.grouper);
+            var grouper_loading = this.loadstate.get(this.grouper);
             if(grouper_loading || ! grouper_option) {
                 incomplete = true;
             }
@@ -211,7 +215,7 @@ App.SelectFilter = Backbone.View.extend({
         else if(this.multidim == 2) {
             view_name = 'dimension_options_xy';
         }
-        else if(this.chart_type === 'country_profile'){
+        else if(this.chart_type === 'country_profile' || this.chart_type === 'country_profile_polar'){
             args.subtype = this.chart_subtype;
             view_name = 'dimension_options_cp';
         }
@@ -259,7 +263,7 @@ App.SelectFilter = Backbone.View.extend({
         };
         if (this.display_in_groups){
             // the already sorted list of parent.dimension_options
-            var groupers = this.model.get(App.groupers[this.dimension]);
+            var groupers = this.model.get(this.grouper);
 
             // group processing of this.dimension_options
             var grouped_data = _(this.dimension_options).groupBy('group_notation');
@@ -267,7 +271,7 @@ App.SelectFilter = Backbone.View.extend({
 
             // the parent (we need grouper.options_labels for optgroups)
             var grouper = _.chain(App.visualization.filters_box.filters).
-              findWhere({name: App.groupers[this.name]}).value();
+              findWhere({name: this.grouper}).value();
 
             template_data['groups'] = _.chain(groups).map(function(item){
                 var label = null;
@@ -418,6 +422,10 @@ App.AllValuesFilter = App.SelectFilter.extend({
 
 App.HiddenSelectFilter = App.SelectFilter.extend({
     className: "chart-filter hidden-select"
+});
+
+App.WhitelistSelectFilter = App.AllValuesFilter.extend({
+    //className: "chart-filter hidden-select",
 });
 
 App.CompositeFilter = App.AllValuesFilter.extend({
@@ -684,7 +692,7 @@ var EmbeddedPrototype = {
                 incomplete = true;
             }
             args[other_dimension] = other_option;
-            if(other_option == 'any' && App.groupers[this.dimension] == other_dimension){
+            if(other_option == 'any' && this.grouper == other_dimension){
                 this.display_in_groups = true;
             }
             else{
@@ -692,7 +700,7 @@ var EmbeddedPrototype = {
             }
         }, this);
         // if grouper not found in constraints at all, display in groups
-        if ( App.groupers[this.name] && !_(_.toArray(this.constraints)).contains(App.groupers[this.name])) {
+        if ( this.grouper && !_(_.toArray(this.constraints)).contains(this.grouper)) {
             this.display_in_groups = true;
         }
         App.trim_dimension_group_args(args, this.dimension_group_map);
@@ -747,7 +755,8 @@ App.FiltersBox = Backbone.View.extend({
         'dataset_select': App.DatasetSelectFilter,
         'multiple_select': App.MultipleSelectFilter,
         'composite': App.CompositeFilter,
-        'all-values': App.AllValuesFilter
+        'all-values': App.AllValuesFilter,
+        'whitelist': App.WhitelistSelectFilter
     },
 
     initialize: function(options) {
@@ -775,6 +784,7 @@ App.FiltersBox = Backbone.View.extend({
                 ignore_values: item['ignore_values'],
                 default_all: default_all,
                 dimension: item['dimension'],
+                filters_schema: options['filters_schema'],
                 dimensions: options['dimensions'],
                 include_wildcard: item['include_wildcard'],
                 constraints: item['constraints']
@@ -808,6 +818,7 @@ App.EmbeddedFiltersBox = App.FiltersBox.extend({
         'multiple_select': App.EmbeddedMultipleSelectFilter,
         'composite': App.CompositeFilter,
         'hidden_select': App.EmbeddedSelectFilter,
+        'whitelist': App.AllValuesFilter,
         'all-values': App.AllValuesFilter
     }
 

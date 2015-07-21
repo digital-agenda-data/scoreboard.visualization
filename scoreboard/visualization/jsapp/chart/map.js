@@ -16,7 +16,7 @@ function get_value_for_code(code, series){
                      return item['code'] == code;
                  }).value();
     if(data){
-        return data['y'];
+        return isNaN(data['y'])?null:data['y'];
     }
 }
 
@@ -115,10 +115,19 @@ App.chart_library['map'] = function(view, options) {
                     options['series'],
                     options['sort'],
                     options['multidim'],
-                    options['unit_is_pc'],
                     options['category_facet'],
                     options['highlights']);
 
+    _(series).each(function(serie) {
+        _(serie.data).map(function(point){
+            if ( point.y == null || isNaN(point.y) ) {
+                point.isNA = true;
+                point.y = null;
+            } else {
+                point.isNA = false;
+            }
+        });
+    });
     var max_value = _.chain(series).pluck('data').
                       first().pluck('y').max().value();
     var colorscale = new chroma.ColorScale({
@@ -144,7 +153,7 @@ App.chart_library['map'] = function(view, options) {
                             ? name = "Macedonia, FYR"
                             : feature['name']);
                 var value_text = (value
-                                  ? App.round(value, 3) + ' ' + unit.short_label
+                                  ? App.round(value, 3) + ' ' + (unit == null?'':unit.short_label)
                                   : 'n/a');
                 return [name, value_text];
             }
@@ -152,7 +161,7 @@ App.chart_library['map'] = function(view, options) {
         map.getLayer('countries').style({
             fill: function(feature) {
                 var value = get_value_for_code(feature.code, series);
-                if(_.isUndefined(value)) {
+                if(_.isUndefined(value) || value == null || isNaN(value)) {
                     return '#ccc';
                 }
                 else {
@@ -161,15 +170,10 @@ App.chart_library['map'] = function(view, options) {
             }
         });
 
-        //horizontal
-        /*
-        draw_legend(map.paper, colorscale, 10, 420, 0, max_value,
-                {text: unit, is_pc: options.unit_is_pc[0]});
-        */
         //vertical
         if(!is_embedded || (is_embedded && viewPortWidth>500))
             draw_legend(map.paper, colorscale, 10, viewPortHeight/2 - n_boxes/2 * legendHeight + 2* legendHeight, 0, max_value,
-                    {text: unit.short_label, is_pc: options.unit_is_pc[0]},
+                    {text: (unit == null?'':unit.short_label), is_pc: (unit == null?false:App.unit_is_percent(unit.notation))},
                     'vertical',
                     legendWidth, legendHeight, n_boxes);
 

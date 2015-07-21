@@ -114,6 +114,14 @@ App.round = function(value, precision) {
     }
 };
 
+App.unit_is_percent = function(unit) {
+    return unit && typeof unit == "string" && unit.length > 3 && unit.substring(0,3).toLowerCase() == 'pc_';
+}
+App.multiplicator = function(unit) {
+    return App.unit_is_percent(unit)?100:1;
+}
+
+App.TIME_PERIOD_DIMENSIONS = ["time-period", "TIME_PERIOD", "refPeriod"]
 
 // https://gist.github.com/insin/3619992
 Backbone.Collection.prototype.move = function(model, toIndex) {
@@ -140,5 +148,7 @@ App.isIE78 = function () {
 }
 
 var chart = null;
+
+App.notation_totals = ["1M_websites", "HH_total", "IND_TOTAL", "RURAL_POP", "TOTAL", "TOTAL_FBB", "TOTAL_MBB", "TOTAL_MOB", "TOTAL_POP","TOTAL_POPHH", "TOTAL_TEL", "ent_all_xfin", "orgclass_total", "tot_ict_products", "total_offers8plus", "all_eGov_le"];
 
 })(App.jQuery);

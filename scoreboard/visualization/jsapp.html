@@ -52,6 +52,9 @@
   App.jQuery = window.jQuery;
   window.jQuery.noConflict(true);
   App.plone_jQuery = window.jQuery;
+  (function($$) {
+    $$(document).tooltip();
+  })(App.jQuery);
 
 </script>
 
@@ -66,6 +69,8 @@
   <script src="{{ JSAPP }}/chart/lines.js"></script>
   <script src="{{ JSAPP }}/chart/scatter.js"></script>
   <script src="{{ JSAPP }}/chart/bubbles.js"></script>
+  <script src="{{ JSAPP }}/chart/polar.js"></script>
+  <script src="{{ JSAPP }}/chart/country_profile_polar.js"></script>
   <script src="{{ JSAPP }}/chart/map.js"></script>
   <script src="{{ JSAPP }}/scenario/scenario.js"></script>
   <script src="{{ JSAPP }}/scenario/visualization.js"></script>

@@ -14,7 +14,6 @@ App.chart_library['scatter'] = function(view, options) {
                     options['series'],
                     options['sort'],
                     options['multidim'],
-                    options['unit_is_pc'],
                     options['category_facet'],
                     options['highlights']);
 
@@ -84,8 +83,6 @@ App.chart_library['scatter'] = function(view, options) {
             },
             showLastLabel: true,
             labels: {
-                formatter: _.partial(App.tick_labels_formatter,
-                                     options.unit_is_pc[0]),
                 style: {
                     color: '#000000'
                 }
@@ -105,8 +102,6 @@ App.chart_library['scatter'] = function(view, options) {
                 margin: 35
             },
             labels: {
-                formatter: _.partial(App.tick_labels_formatter,
-                                     options.unit_is_pc[1]),
                 style: {
                     color: '#000000'
                 }

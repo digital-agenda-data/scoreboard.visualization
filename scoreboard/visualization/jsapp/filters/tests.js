@@ -531,6 +531,7 @@ describe('modular filters', function() {
             expect(group_template.args[0][0]['groups']).to.deep.equal(
                 [{
                     group: 'lbl',
+                    notation: 'group',
                     options: [{
                         group_notation: 'group',
                         label: 'Option One',
