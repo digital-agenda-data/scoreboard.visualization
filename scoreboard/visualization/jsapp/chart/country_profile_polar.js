@@ -146,7 +146,7 @@ App.chart_library['country_profile_polar'] = function(view, options) {
                 },
                 useHTML: true,
                 formatter: function() {
-                    var title = category_keys_invert[this.value].join('<br>');
+                    var title = (category_keys_invert[this.value]||['']).join('<br>');
                     return '<div title="' + title + '">'+category_names[this.value]+'</div>'
                 }
              },
