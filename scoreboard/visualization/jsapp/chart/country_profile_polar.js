@@ -28,18 +28,28 @@ App.chart_library['country_profile_polar'] = function(view, options) {
     // change point names, by default category facet (indicator) is used
     var category_keys = {};
     var category_keys_invert = {};
+    var category_names = {};
     var counter = 1;
     _.map(series, function(elem) {
         _(elem.data).each(function(item){
             var key = [
-                item.attributes.indicator.notation,
-                item.attributes.breakdown.notation,
-                item.attributes['unit-measure'].notation]
+                item.attributes['indicator'].notation.toLowerCase(),
+                item.attributes['breakdown'].notation.toLowerCase(),
+                item.attributes['unit-measure'].notation.toLowerCase()
+            ];
             if (!category_keys[key]) {
+                // category_keys_invert is indexed by x-value
                 category_keys_invert[counter] = [
                     '<b>Indicator</b>: ' + item.attributes.indicator.label,
                     '<b>Breakdown</b>: ' + item.attributes.breakdown.label,
                     '<b>Unit</b>: ' + item.attributes['unit-measure'].label];
+                // find the preferred label for this category
+                var whitelist_item = _.where(App.whitelist, {'indicator':key[0], 'breakdown':key[1], 'unit-measure':key[2]});
+                if (whitelist_item[0] && whitelist_item[0]['name']) {
+                    category_names[counter] = whitelist_item[0].name;
+                } else {
+                    category_names[counter] = item.attributes.indicator['short-label'] || item.attributes.indicator.label;
+                }
                 category_keys[key] = counter++;
             }
             item.name = category_keys[key];
@@ -136,7 +146,7 @@ App.chart_library['country_profile_polar'] = function(view, options) {
                 useHTML: true,
                 formatter: function() {
                     var title = category_keys_invert[this.value].join('<br>');
-                    return '<div title="' + title + '">...</div>'
+                    return '<div title="' + title + '">'+category_names[this.value]+'</div>'
                 }
              },
         },

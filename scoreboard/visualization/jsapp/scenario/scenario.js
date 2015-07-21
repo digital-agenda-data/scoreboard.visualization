@@ -307,7 +307,6 @@ App.ScenarioChartView = Backbone.View.extend({
             data_method = '/datapoints_cp';
         }
         else if(this.schema['chart_type'] === 'country_profile_polar'){
-            // TODO: proper implementation of whitelist filtering in js
             args.subtype = 'bar';
             data_method = '/datapoints_cp';
         }
@@ -443,6 +442,24 @@ App.ScenarioChartView = Backbone.View.extend({
                     return newobj;
                 })
                 that.whitelist_data = result;
+            });
+            requests.push(whitelist_request);
+        }
+        if (this.schema['chart_type'] === 'country_profile_polar') {
+            // only store the whitelist in App.whitelist
+            var whitelist_request = $.getJSON(this.cube_url + '/whitelist.json');
+            whitelist_request.done(function(data) {
+                App.whitelist = _(data).map(function(obj) {
+                  var newobj = {};
+                  _(_(obj).pairs()).each(function (item) {
+                    if (item[0] == 'name') {
+                      newobj['name'] = item[1];
+                    } else {
+                      newobj[item[0]] = item[1].toLowerCase();
+                    }
+                  });
+                  return newobj;
+                });
             });
             requests.push(whitelist_request);
         }

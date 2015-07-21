@@ -30,7 +30,7 @@
     {
       "type": "multiple_select",
       "name": "ref-area",
-      "label": "Country",
+      "label": "Countries",
       "dimension": "ref-area",
       "default_value": ["#random","EU27"],
       "sortBy": "label",
