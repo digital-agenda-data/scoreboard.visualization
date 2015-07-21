@@ -179,14 +179,14 @@ App.chart_library['country_profile_polar'] = function(view, options) {
             }
         },
         legend: {
-            layout: 'vertical',
-            align: 'left',
-            verticalAlign: 'top',
+            layout: 'horizontal',
+            align: 'center',
+            verticalAlign: 'bottom',
             // useHTML: true,
             // disabled because IE9 raises SCRIPT5007: Unable to get property 'childNodes'
             // when changing the indicator
-            x: viewPortWidth - legendWidth - 15,
-            y: 100,
+            x: 0,
+            y: -10,
             borderWidth: 0,
             backgroundColor: '#FFF',
             itemMarginBottom: 5,
