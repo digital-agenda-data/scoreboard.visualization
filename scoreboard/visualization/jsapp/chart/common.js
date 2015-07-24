@@ -413,7 +413,7 @@ App.title_formatter = function(parts, meta_data){
             part.text = part.facet_name + "(" + part.format + ")";
         } else if (_(meta_data).has(part.facet_name)) {
             // todo: configurable list of notations for totals
-            if ( !meta_data[part.facet_name]['notation'] ||
+            if ( meta_data[part.facet_name]['notation'] &&
                  _.contains(App.notation_totals, meta_data[part.facet_name]['notation'])) {
               part.text = null;
             } else {
