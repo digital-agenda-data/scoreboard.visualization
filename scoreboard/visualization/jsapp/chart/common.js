@@ -346,7 +346,8 @@ App.add_plotLines = function(chart, series, chart_type){
 }
 
 App.disable_legend = function(chartOptions, options){
-    if (options && (!options['series-legend-label'] || options['series-legend-label'] == 'none')){
+    if (options && (!options['series-legend-label'] || options['series-legend-label'] == 'none' ||
+        chartOptions && chartOptions.series.length < 2)){
         var disabled_legend = {
             legend: {enabled: false}
         };

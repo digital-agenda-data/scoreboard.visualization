@@ -151,4 +151,38 @@ var chart = null;
 
 App.notation_totals = ["1M_websites", "HH_total", "IND_TOTAL", "RURAL_POP", "TOTAL", "TOTAL_FBB", "TOTAL_MBB", "TOTAL_MOB", "TOTAL_POP","TOTAL_POPHH", "TOTAL_TEL", "ent_all_xfin", "orgclass_total", "tot_ict_products", "total_offers8plus", "all_eGov_le"];
 
+App.width_xs = function() {
+  return App.jQuery(window).width() <= 480;
+}
+
+App.width_s = function() {
+  return App.jQuery(window).width() <= 768;
+}
+
+App.width_m = function() {
+  return App.jQuery(window).width() <= 1024;
+}
+
+App.is_touch_device = function() {
+  return "ontouchstart" in window || navigator.msMaxTouchPoints;
+}
+
+App.font_family = "Lucida Sans Unicode, Candara, Calibri, Futura, Helvetica";
+
+
+// Plugin to add support for credits.target in Highcharts.
+Highcharts.wrap(Highcharts.Chart.prototype, 'showCredits', function (proceed, credits) {
+    proceed.call(this, credits);
+    if (credits.enabled && this.credits) {
+        this.credits.element.onclick = function () {
+            // dynamically create an anchor element and click it
+            // use the settings defined in highcharts (credits.target)
+            var link = document.createElement('a');
+            link.href = credits.href;
+            link.target = credits.target||'_blank';
+            link.click();
+        }
+    }
+});
+
 })(App.jQuery);

@@ -944,6 +944,8 @@ var BaseDialogView = Backbone.View.extend({
 App.ShareOptionsView = Backbone.View.extend({
 
     events: {
+        'click #highcharts_zoom_in': 'highcharts_zoom_in',
+        'click #highcharts_zoom_reset': 'highcharts_zoom_reset',
         'click #highcharts_print': 'highcharts_print',
         'click #highcharts_download': 'highcharts_download',
         'click #csv': 'request_csv',
@@ -964,6 +966,7 @@ App.ShareOptionsView = Backbone.View.extend({
             'method': 'POST'
         });
         this.svg_form = App.jQuery('<form>', {
+            'id': 'svg2pngform',
             'action': App.URL + '/svg2png',
             'target': '_top',
             'method': 'POST'
@@ -992,6 +995,18 @@ App.ShareOptionsView = Backbone.View.extend({
         this.$el.find('form').submit();
     },
 
+    request_excel: function(ev){
+        ev.preventDefault();
+        App.jQuery('input[name="format"]', this.form).remove();
+        App.jQuery(this.$el.find('form')).append(
+            App.jQuery('<input>', {
+                'name': 'format',
+                'value': 'xls',
+                'type': 'hidden'
+            }
+        )).submit();
+    },
+
     request_embed: function(ev){
         ev.stopPropagation();
         window.location.href = window.location.pathname + "/embedded" + window.location.hash;
@@ -1003,6 +1018,18 @@ App.ShareOptionsView = Backbone.View.extend({
         App.chart.print();
     },
 
+    highcharts_zoom_in: function(ev){
+        ev.stopPropagation();
+        App.chart.xAxis[0].setExtremes(0, Math.ceil(App.chart.xAxis[0].getExtremes().max/2));
+        App.jQuery('html, body').animate({ scrollTop: App.jQuery("#the-chart").offset().top }, 1);
+    },
+    
+    highcharts_zoom_reset: function(ev){
+        ev.stopPropagation();
+        App.chart.xAxis[0].setExtremes(null, null);
+        App.jQuery('html, body').animate({ scrollTop: App.jQuery("#the-chart").offset().top }, 1);
+    },
+    
     highcharts_download: function(ev){
         ev.stopPropagation();
         var chartdiv = $(".highcharts-container");
@@ -1011,7 +1038,9 @@ App.ShareOptionsView = Backbone.View.extend({
             App.chart.options.exporting.sourceHeight = 1200*chartdiv.height()/chartdiv.width();
         }
         App.jQuery('input[name="svg"]', this.svg_form).attr('value', App.chart.getSVG());
-        this.svg_form.submit();
+        // appendTo body to make it work in Internet Explorer
+        this.svg_form.appendTo('body').submit().remove();
+        //this.svg_form.submit();
     },
 
     get_forum_url: function() {
@@ -1034,18 +1063,6 @@ App.ShareOptionsView = Backbone.View.extend({
         var modal_form = new BaseDialogView({form_action: form_action});
         modal_form.render();
         return false;
-    },
-
-    request_excel: function(ev){
-        ev.preventDefault();
-        App.jQuery('input[name="format"]', this.form).remove();
-        App.jQuery(this.$el.find('form')).append(
-            App.jQuery('<input>', {
-                'name': 'format',
-                'value': 'xls',
-                'type': 'hidden'
-            }
-        )).submit();
     },
 
     metadata_ready: function(annotations){

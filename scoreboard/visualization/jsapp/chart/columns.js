@@ -54,7 +54,7 @@ App.chart_library['columns'] = function(view, options) {
     }
 
 
-    var has_legend = options['series-legend-label'] && options['series-legend-label'] != 'none';
+    //var has_legend = options['series-legend-label'] && options['series-legend-label'] != 'none';
     var viewPortWidth = _.min([$(window).width(), 1130]) - 30;
     var legendWidth = _.min([viewPortWidth * 0.3, 170]);
     var viewPortHeight = _.min([$(window).height()-100, 450]);
@@ -88,12 +88,15 @@ App.chart_library['columns'] = function(view, options) {
         chart: {
             renderTo: container,
             defaultSeriesType: 'column',
-            zoomType: 'y',
-            marginLeft: 55,
-            marginRight: 10 + (has_legend?legendWidth:0),
-            marginTop: marginTop,
-            marginBottom: 80,
-            height: viewPortHeight,
+            //zoomType: null,
+            panning: true,
+            pinchType: 'x',
+            // zoomType: 'x',
+            //marginLeft: 55,
+            //marginRight: 10 + (has_legend?legendWidth:0),
+            //marginTop: marginTop,
+            //marginBottom: 80,
+            height: Math.min($(window).height(), 600),
             events: {
                 load: function(event) {
                     view.trigger('chart_load', {
@@ -108,6 +111,7 @@ App.chart_library['columns'] = function(view, options) {
         credits: {
             href: options['credits']['href'],
             text: options['credits']['text'],
+            target: '_blank',
             position: {
                 align: 'right',
                 x: -10,
@@ -115,20 +119,21 @@ App.chart_library['columns'] = function(view, options) {
                 y: -2
             },
             style: {
+                fontFamily: App.font_family,
                 fontSize: '12px',
                 color: '#222222'
             }
         },
         title: {
             text: options.titles.title,
-            align: "center",
-            x: viewPortWidth/2-25,
-            width: viewPortWidth - 60,
-            y: App.visualization.embedded ? 5 : 35,
+            //align: "center",
+            //x: viewPortWidth/2-25,
+            //width: viewPortWidth - 60,
+            //y: App.visualization.embedded ? 5 : 10,
             style: {
                 color: '#000000',
-                fontFamily: 'Verdana',
-                fontWeight: 'bold',
+                fontFamily: App.font_family,
+                //fontWeight: 'bold',
                 fontSize: titleFontSize + 'px'
             }
         },
@@ -136,13 +141,14 @@ App.chart_library['columns'] = function(view, options) {
             text: options.titles.subtitle,
             style: {
                 color: '#000000',
-                fontWeight: 'bold',
-                fontFamily: 'Verdana',
+                //fontWeight: 'bold',
+                fontFamily: App.font_family,
                 fontSize: (titleFontSize-1) + 'px'
             },
-            align: 'left',
-            x: 45,
-            y: marginTop-15
+            //align: 'center',
+            //verticalAlign: 'top',
+            //x: 45,
+            //y: App.visualization.embedded ? 5 : 10,
         },
         xAxis: {
             type: 'category',
@@ -163,33 +169,46 @@ App.chart_library['columns'] = function(view, options) {
             max: max_value,
             title: {
                 text: options.titles.yAxisTitle,
+                //useHTML: true,
+                //offset:100,
+                align: 'middle',
                 style: {
                     color: '#000000',
-                    fontWeight: 'bold',
-                    fontSize: (titleFontSize-2) + 'px'
+                    //fontWeight: 'bold',
+                    fontFamily: App.font_family,
+                    fontSize: (titleFontSize-3) + 'px'
+                    // TODO: wrapping does not work whiteSpace: 'normal'
                 }
             }
         },
         legend: {
+            animation: false,
             layout: 'vertical',
-            align: 'left',
-            verticalAlign: 'top',
+            align: App.width_s()?'center':'right',
+            verticalAlign: App.width_s()?'bottom':'top',
+            y: 10,
             title: {
-                text: 'Legend'
+                text: 'Legend',
+                style: {
+                    fontWeight: 'normal',
+                    fontFamily: App.font_family
+                }
             },
-            x: viewPortWidth - legendWidth - 15,
-            y: App.visualization.embedded ? 35 : 70,
+            //x: viewPortWidth - legendWidth - 15,
+            //y: App.visualization.embedded ? 35 : 70,
             borderWidth: 0,
-            backgroundColor: '#FFF',
-            width: 170,
-            itemMarginBottom: 5,
+            //backgroundColor: '#FFF',
+            //width: 170,
+            //itemMarginBottom: 5,
             itemStyle: {
-                fontFamily: 'Verdana',
                 fontSize: '11px',
-                width: legendWidth - 30
+                fontWeight: 'normal',
+                fontFamily: App.font_family,
+                width: App.width_s()?null:150
             }
         },
         tooltip: {
+            animation: false,
             formatter: options['tooltip_formatter'],
             useHTML: true
         },
@@ -201,10 +220,36 @@ App.chart_library['columns'] = function(view, options) {
         series: init_series
     };
 
+    if ( App.is_touch_device() ) {
+        // enable center on click
+        chartOptions.plotOptions.series = {
+          point: {
+            events: {
+              click: function (event) {
+                 var xt = App.chart.xAxis[0].getExtremes();
+                 var max = event.point.index + Math.round(xt.max-xt.min-1)/2;
+                 // keep number of visible points
+                 var min = max-xt.max+xt.min;
+                 if (max > xt.dataMax) {
+                     // shift left
+                     min = min - max + xt.dataMax;
+                     max = xt.dataMax;
+                 }
+                 if ( min < xt.dataMin ) {
+                     // shift right
+                     max = max + xt.dataMin - min;
+                     min = xt.dataMin;
+                 }
+                 App.chart.xAxis[0].setExtremes(min, max);
+              }
+            }
+          }
+        }
+    }
     // check link for composite charts
     if (typeof this.data.custom_properties != 'undefined') {
       var dai_breakdown_chart = this.data.custom_properties['dai-breakdown-chart'];
-      if ( dai_breakdown_chart) {
+      if ( dai_breakdown_chart && !App.visualization.embedded && !App.is_touch_device()) {
         chartOptions.plotOptions.series = {
           cursor: 'pointer',
           point: {
