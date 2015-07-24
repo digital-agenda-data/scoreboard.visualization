@@ -109,7 +109,7 @@ App.chart_library['columns'] = function(view, options) {
         },
         colors: colors,
         credits: {
-            href: options['credits']['href'],
+            href: App.is_touch_device()?null:options['credits']['href'],
             text: options['credits']['text'],
             target: '_blank',
             position: {
@@ -214,7 +214,12 @@ App.chart_library['columns'] = function(view, options) {
         },
         plotOptions: {
             column: {
-                stacking: (options['stacked']?'normal':null)
+                stacking: (options['stacked']?'normal':null),
+                events: {
+                    legendItemClick: function() {
+                        if (App.is_touch_device()) return false;
+                    }
+                }
             }
         },
         series: init_series
