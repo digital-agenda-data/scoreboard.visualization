@@ -1018,19 +1018,24 @@ App.ShareOptionsView = Backbone.View.extend({
         App.chart.print();
     },
 
+    highcharts_enable_zoom: function(zoom_type) {
+        if (!App.chart.options.chart.zoomType) {
+            App.chart.options.chart.zoomType = zoom_type;
+            App.chart = new Highcharts.Chart(App.chart.options);
+            App.jQuery('#highcharts_zoom_in').hide();
+            App.jQuery('#highcharts_zoom_reset').show();
+            App.jQuery('#highcharts_zoom_in').html(old);
+        }
+    },
+
     highcharts_zoom_in: function(ev){
         // custom button only visible in touchscreen devices
         ev.stopPropagation();
         if (App.chart.options.chart.type == 'column') {
-            if (!App.chart.options.chart.zoomType) {
-                // enable zoom and recreate chart
-                App.chart.options.chart.zoomType = 'x';
-                App.chart = new Highcharts.Chart(App.chart.options);
-            }
+            this.highcharts_enable_zoom('x');
             App.chart.xAxis[0].setExtremes(App.chart.xAxis[0].getExtremes().dataMin, Math.ceil(App.chart.xAxis[0].getExtremes().max/2));
         } else if (App.chart.options.chart.type == 'spline') {
-            App.chart.options.chart.zoomType = 'xy';
-            App.chart = new Highcharts.Chart(App.chart.options);
+            this.highcharts_enable_zoom('xy');
         }
         App.jQuery('html, body').animate({ scrollTop: App.jQuery("#the-chart").offset().top }, 1);
     },
@@ -1041,6 +1046,8 @@ App.ShareOptionsView = Backbone.View.extend({
             // disable zoom and recreate chart
             App.chart.options.chart.zoomType = null;
             App.chart = new Highcharts.Chart(App.chart.options);
+            App.jQuery('#highcharts_zoom_in').show();
+            App.jQuery('#highcharts_zoom_reset').hide();
         }
         App.chart.zoomOut();
         //App.chart.xAxis[0].setExtremes(null, null);
