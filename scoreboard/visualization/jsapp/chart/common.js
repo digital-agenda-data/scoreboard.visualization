@@ -108,10 +108,11 @@ App.format_series = function (data, sort, multidim, category, highlights, animat
                     },
                     'dataLabels': {
                         'enabled': true,
-                        'x': 16,
-                        'y': 4,
                         'style': {
-                            'font-weight': 'normal'
+                            color: '#000000',
+                            fontWeight: 'normal',
+                            fontSize: '10px',
+                            fontFamily: App.font_family
                         },
                         'formatter': label_formatter
                     }
