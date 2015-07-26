@@ -39,10 +39,19 @@ App.chart_library['country_profile'] = function(view, options) {
         }
     };
 
-
-    // Highchart
     var series;
-    if(options.subtype === 'bar'){
+    if(options.subtype === 'table'){
+        // simple HTML table
+        series = options['series'];
+        App.country_profile = new App.CountryProfileView({
+            el: '#' + $(container).attr('id'),
+            model: new Backbone.Model(),
+            data: series[0].data,
+            meta_data: options.meta_data,
+            credits: options.credits,
+            x_formatter: x_formatter
+        });
+    } else {
         series = App.format_series(
                         options['series'],
                         options['sort'],
@@ -58,24 +67,22 @@ App.chart_library['country_profile'] = function(view, options) {
                 name: 'Under EU average',
                 color: '#7dc30f',
                 dataLabels: {
-                    color: '#000000',
                     enabled: true,
                     align: 'right',
                     crop: false,
                     inside: false,
                     overflow: 'none',
                     x: 50,
+                    style: {
+                        color: '#000000',
+                        fontFamily: 'Verdana',
+                        fontSize: '12px'
+                    },
                     formatter: function(){
-                        if(this.point.y >= 0){
-                            var unit = this.point.attributes['unit-measure']['notation'];
-                            var res = x_formatter(this.point.original, unit);
-                            if(unit && unit.toLowerCase().indexOf('pc_') !== -1){
-                                res += '%';
-                            }
-                            return res;
-                        }else{
-                            return '';
-                        }
+                      if(this.point.y >= 0) {
+                        var unit = this.point.attributes['unit-measure']['notation'];
+                        return x_formatter(this.point.original, unit) + (App.unit_is_percent(unit)?'%':'');
+                      }
                     }
                 },
                 data: []
@@ -91,38 +98,39 @@ App.chart_library['country_profile'] = function(view, options) {
                     crop: false,
                     overflow: 'none',
                     x: 50,
+                    style: {
+                        color: '#000000',
+                        fontFamily: 'Verdana',
+                        fontSize: '12px'
+                    },
                     formatter: function(){
-                        if(this.point.y){
-                            var unit = this.point.attributes['unit-measure']['notation'];
-                            var res = x_formatter(this.point.original, unit);
-                            if(unit && unit.toLowerCase().indexOf('pc_') !== -1){
-                                res += '%';
-                            }
-                            return res;
-                        }else{
-                            return '';
-                        }
+                      if (this.point.y > 0) {
+                        var unit = this.point.attributes['unit-measure']['notation'];
+                        return x_formatter(this.point.original, unit) + (App.unit_is_percent(unit)?'%':'');
+                      }
                     }
                 },
                 data: []
             }
         ];
-
         // Update series with new values
         _(series[0].data).forEach(function(item){
             item.eu = item.attributes.eu;
             //item.rank = item.attributes.rank;
             item.original = item.attributes.original;
 
-            item.name = '<strong>' + item.attributes.indicator['short-label'] + '</strong>';
-            if(item.attributes.breakdown['short-label']){
-                item.name += ' - ' + item.attributes.breakdown['short-label'];
-            }
-            if(item.attributes['unit-measure']['short-label']){
-                item.name += ' (in ' + item.attributes['unit-measure']['short-label'] + ')';
-            }
+            var parts = [{prefix: '', facet_name:'indicator', format:'short-label', suffix: ''},
+                {prefix: ' - ', facet_name:'breakdown', format:'short-label'},
+                {prefix: ' (in ', facet_name:'unit-measure', format:'short-label', suffix: ')'}];
+            var meta_data = {
+                'indicator': item.attributes['indicator'],
+                'breakdown': item.attributes['breakdown'],
+                'unit-measure': item.attributes['unit-measure']
+            };
+            item.name = App.title_formatter(parts, meta_data);
 
-            // Fill stack
+            // Create two stacked series (Above EU average / Below EU average)
+            // Always one of them has y=0
             var fake;
             if(item.original > item.eu){
                 stack_series[1].data.push(item);
@@ -138,141 +146,120 @@ App.chart_library['country_profile'] = function(view, options) {
         });
 
         var viewPortWidth = _.min([$(window).width(), 1130]) - 30;
-        var labelsWidth = _.min([viewPortWidth * 0.45, 300]);
+        var labelsWidth = _.min([viewPortWidth * 0.6, 300]);
         if ( App.isIE78() && !App.visualization.embedded ) {
             labelsWidth = 600;
         }
-        var viewPortHeight = _.min([$(window).height()-200, 200 + series[0].data.length * 40]);
-        if ( App.visualization.embedded ) {
-            viewPortHeight = _.max([viewPortHeight, 200 + series[0].data.length * 30]);
-        }
+        //var viewPortHeight = _.min([$(window).height()-250, 250 + series[0].data.length * 45]);
+        var viewPortHeight = 250 + series[0].data.length * 45;
 
         var titleFontSize = 16;
         if ( viewPortHeight < 450 ) titleFontSize = 14;
         if ( viewPortHeight < 350 ) titleFontSize = 12;
         if ( viewPortWidth < 600 ) titleFontSize = titleFontSize-1;
-        var marginTop = 100;
-        if ( App.visualization.embedded ) {
-            if ( options.titles.title ) {
-                marginTop = 50 + 30 * Math.floor(options.titles.title.length / 100);
-            } else {
-                marginTop = 50;
-            }
-        }
+
         var chartOptions = {
             chart: {
                 renderTo: container,
                 defaultSeriesType: 'bar',
-                marginTop: marginTop,
-                marginBottom: 50,
                 marginLeft: labelsWidth,
-                marginRight: 60,
-                height: viewPortHeight,
-                width: viewPortWidth
+                marginRight: 50,
+                height: viewPortHeight
             },
             credits: {
-                href: options['credits']['href'],
+                href: App.is_touch_device()?null:options['credits']['href'],
                 text: options['credits']['text'],
+                target: '_blank',
                 position: {
                     align: 'right',
-                    x: -10,
+                    x: -5,
                     verticalAlign: 'bottom',
-                    y: 0
+                    y: -2
                 },
                 style: {
+                    fontFamily: App.font_family,
                     fontSize: '12px',
                     color: '#222222'
                 }
             },
             title: {
                 text: options.titles.title,
-                align: 'center',
-                x: viewPortWidth/2-25,
-                width: viewPortWidth - 50,
-                y: App.visualization.embedded ? 5 : 35,
                 style: {
                     color: '#000000',
-                    fontFamily: 'Verdana',
-                    fontWeight: 'bold',
-                    fontSize: (titleFontSize-1) + 'px'
+                    fontFamily: App.font_family,
+                    fontSize: titleFontSize + 'px'
                 }
             },
             subtitle: {
-                align: 'left',
-                x: 25,
-                y: App.visualization.embedded ? 40 : 70,
                 text: options.titles.subtitle,
                 style: {
-                    fontFamily: 'Tahoma',
-                    fontWeight: 'bold',
-                    fontSize: titleFontSize + 'px'
+                    color: '#000000',
+                    fontFamily: App.font_family,
+                    fontSize: (titleFontSize-1) + 'px',
                 }
             },
             xAxis: {
                 type: 'category',
                 labels: {
-                    rotation: 0,
-                    align: 'right',
-                    x: -10,
                     style: {
                         color: '#000000',
-                        fontFamily: 'Tahoma',
-                        fontSize: '10px',
-                        width: labelsWidth-30
+                        fontFamily: App.font_family,
+                        fontSize: '11px'
                     }
                  }
             },
             yAxis: [{
                 min: 0,
-                tickInterval: 1,
-                labels: {
-                    formatter: function() {
-                        return ['lowest EU country', 'EU average', 'highest EU country'][this.value];
-                    },
-                    style: {
-                        fontFamily: 'Tahoma',
-                        fontSize: '10px'
-                    }
-                },
-                title: {
-                    text: options.titles.yAxisTitle,
-                    style: {
-                        color: '#000000',
-                        fontWeight: 'bold'
-                    }
-                }
-            },
-            {
-                title: {text: null},
-                min: 0,
-                plotBands: [{
-                    color: 'red',
-                    width: 2,
-                    value: 1,
-                    zIndex: 5
-                }],
+                title: {text: ''},
                 tickPositions: [0, 1, 2],
                 labels: {
                     formatter: function() {
                         return ['lowest EU country', 'EU average', 'highest EU country'][this.value];
                     },
                     style: {
-                        fontFamily: 'Tahoma',
+                        fontFamily: App.font_family,
                         fontSize: '10px'
                     }
                 },
-                opposite:true
+              },
+              {
+                opposite:true,
+                plotBands: [{ color: 'red', width: 2, value: 1, zIndex: 6 }],
+                min: 0,
+                title: {text: ''},
+                tickPositions: [0, 1, 2],
+                labels: {
+                    formatter: function() {
+                        return ['lowest EU country', 'EU average', 'highest EU country'][this.value];
+                    },
+                    style: {
+                        fontFamily: App.font_family,
+                        fontSize: '10px'
+                    }
+                },
             }],
             legend: {
                 enabled: true,
+                animation: false,
                 layout: 'horizontal',
                 align: 'center',
                 verticalAlign: 'bottom',
-                x: labelsWidth/2-35,
-                y: 0,
-                borderWidth: 0
+                title: {
+                    text: 'Legend',
+                    style: {
+                        fontWeight: 'normal',
+                        fontFamily: App.font_family
+                    }
+                },
+                itemStyle: {
+                    fontSize: '11px',
+                    fontWeight: 'normal',
+                    fontFamily: App.font_family,
+                    width: App.width_s()?viewPortWidth-20:150
+                }
             },
             tooltip: {
+                animation: false,
                 formatter: function(){
                     var unit = this.point.attributes['unit-measure']['notation'];
                     var title = this.point.attributes['unit-measure']['short-label'];
@@ -287,32 +274,17 @@ App.chart_library['country_profile'] = function(view, options) {
                 }
             },
             plotOptions: {
-                series: {
-                    stacking: 'normal'
-                }
+                series: { stacking: 'normal' },
+                bar: { pointWidth: 25 }
             },
             series: stack_series
         };
 
         App.set_default_chart_options(chartOptions);
-        if (!options['legend']){
-            App.disable_legend(chartOptions, options);
-        }
-
         App.chart = new Highcharts.Chart(chartOptions);
-
-    // Custom table
-    }else{
-        series = options['series'];
-        App.country_profile = new App.CountryProfileView({
-            el: '#' + $(container).attr('id'),
-            model: new Backbone.Model(),
-            data: series[0].data,
-            meta_data: options.meta_data,
-            credits: options.credits,
-            x_formatter: x_formatter
-        });
     }
+    // hide zoom button on mobile devices
+    App.jQuery('#highcharts_zoom_in').hide();
     var metadata = {
         'chart-title': options.titles.title,
         'chart-subtitle': options.titles.subtitle,
