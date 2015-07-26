@@ -1,10 +1,12 @@
 <ul>
+{{# if zoomEnabled }}
   <li class="zoom">
-    <a id="highcharts_zoom_in" class="btn btn-sm btn-comments"><span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span> Zoom in</a>
+    <a id="highcharts_zoom_in" class="btn btn-sm btn-comments"><span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span> Enable zoom</a>
   </li>
   <li class="zoom">
-    <a id="highcharts_zoom_reset" class="btn btn-sm btn-comments"><span class="glyphicon glyphicon-zoom-out" aria-hidden="true"></span> Reset zoom</a>
+    <a id="highcharts_zoom_reset" class="btn btn-sm btn-comments"><span class="glyphicon glyphicon-zoom-out" aria-hidden="true"></span> Disable zoom</a>
   </li>
+{{/ if }}
   <li class="print">
     <a id="highcharts_print" class="btn btn-sm btn-print"><span class="glyphicon glyphicon-print" aria-hidden="true"></span> Print chart</a>
   </li>

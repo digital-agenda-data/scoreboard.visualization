@@ -1019,14 +1019,32 @@ App.ShareOptionsView = Backbone.View.extend({
     },
 
     highcharts_zoom_in: function(ev){
+        // custom button only visible in touchscreen devices
         ev.stopPropagation();
-        App.chart.xAxis[0].setExtremes(0, Math.ceil(App.chart.xAxis[0].getExtremes().max/2));
+        if (App.chart.options.chart.type == 'column') {
+            if (!App.chart.options.chart.zoomType) {
+                // enable zoom and recreate chart
+                App.chart.options.chart.zoomType = 'x';
+                App.chart = new Highcharts.Chart(App.chart.options);
+            }
+            App.chart.xAxis[0].setExtremes(App.chart.xAxis[0].getExtremes().dataMin, Math.ceil(App.chart.xAxis[0].getExtremes().max/2));
+        } else if (App.chart.options.chart.type == 'spline') {
+            App.chart.options.chart.zoomType = 'xy';
+            App.chart = new Highcharts.Chart(App.chart.options);
+        }
         App.jQuery('html, body').animate({ scrollTop: App.jQuery("#the-chart").offset().top }, 1);
     },
     
     highcharts_zoom_reset: function(ev){
         ev.stopPropagation();
-        App.chart.xAxis[0].setExtremes(null, null);
+        if (App.chart.options.chart.zoomType) {
+            // disable zoom and recreate chart
+            App.chart.options.chart.zoomType = null;
+            App.chart = new Highcharts.Chart(App.chart.options);
+        }
+        App.chart.zoomOut();
+        //App.chart.xAxis[0].setExtremes(null, null);
+        //App.chart.yAxis[0].setExtremes(null, null);
         App.jQuery('html, body').animate({ scrollTop: App.jQuery("#the-chart").offset().top }, 1);
     },
     
@@ -1096,9 +1114,11 @@ App.ShareOptionsView = Backbone.View.extend({
     },
 
     render: function() {
-        this.$el.html(this.template({'related': this.related.html()}));
+        this.$el.html(this.template({
+            'related': this.related.html(),
+            'zoomEnabled': App.is_touch_device()
+        }));
         App.jQuery(this.form).appendTo(this.$el);
-        //window.addthis.button('#scoreboard-addthis', {}, {url: this.url});
         if ( window.addthis) {
             window.addthis.toolbox('.addthis_toolbox', {}, {url: this.url});
         }

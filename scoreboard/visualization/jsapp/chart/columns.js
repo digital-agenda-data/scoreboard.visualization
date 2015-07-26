@@ -77,7 +77,8 @@ App.chart_library['columns'] = function(view, options) {
     var chartOptions = {
         chart: {
             renderTo: container,
-            defaultSeriesType: 'column',
+            type: 'column',
+            zoomType: App.is_touch_device()?null:'x',
             panning: true,
             pinchType: 'x',
             height: Math.min($(window).height(), 600),
@@ -98,14 +99,15 @@ App.chart_library['columns'] = function(view, options) {
             target: '_blank',
             position: {
                 align: 'right',
-                x: -10,
+                x: -5,
                 verticalAlign: 'bottom',
                 y: -2
             },
             style: {
                 fontFamily: App.font_family,
                 fontSize: '12px',
-                color: '#222222'
+                color: '#222222',
+                //width: $(window).width()-10
             }
         },
         title: {
@@ -170,7 +172,7 @@ App.chart_library['columns'] = function(view, options) {
                 fontSize: '11px',
                 fontWeight: 'normal',
                 fontFamily: App.font_family,
-                width: App.width_s()?null:150
+                width: App.width_s()?viewPortWidth-20:150
             }
         },
         tooltip: {
@@ -191,6 +193,7 @@ App.chart_library['columns'] = function(view, options) {
         series: init_series
     };
 
+    /*
     if ( App.is_touch_device() ) {
         // enable center on click
         chartOptions.plotOptions.series = {
@@ -217,6 +220,7 @@ App.chart_library['columns'] = function(view, options) {
           }
         }
     }
+    */
     // check link for composite charts
     if (typeof this.data.custom_properties != 'undefined') {
       var dai_breakdown_chart = this.data.custom_properties['dai-breakdown-chart'];
