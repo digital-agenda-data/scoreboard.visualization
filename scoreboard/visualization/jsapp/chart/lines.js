@@ -124,6 +124,7 @@ App.chart_library['lines'] = function(view, options) {
         credits: {
             href: App.is_touch_device()?null:options['credits']['href'],
             text: options['credits']['text'],
+            target: '_blank',
             position: {
                 align: 'right',
                 x: -5,
@@ -178,6 +179,7 @@ App.chart_library['lines'] = function(view, options) {
         },
         yAxis: yAxis,
         tooltip: {
+            animation: false,
             useHTML: true,
             formatter: options['tooltip_formatter'],
             snap: 0
