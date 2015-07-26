@@ -54,9 +54,7 @@ App.chart_library['columns'] = function(view, options) {
     }
 
 
-    //var has_legend = options['series-legend-label'] && options['series-legend-label'] != 'none';
     var viewPortWidth = _.min([$(window).width(), 1130]) - 30;
-    var legendWidth = _.min([viewPortWidth * 0.3, 170]);
     var viewPortHeight = _.min([$(window).height()-100, 450]);
     if ( App.visualization.embedded ) {
         viewPortHeight = _.min([$(window).height(), 470]) - 20;
@@ -66,14 +64,6 @@ App.chart_library['columns'] = function(view, options) {
     if ( viewPortHeight < 450 ) titleFontSize = 14;
     if ( viewPortHeight < 350 ) titleFontSize = 12;
     if ( viewPortWidth < 600 ) titleFontSize = titleFontSize-1;
-    var marginTop = 100;
-    if ( App.visualization.embedded ) {
-        if ( options.titles.title ) {
-            marginTop = 10 + 20 * Math.ceil(options.titles.title.length / 60);
-        } else {
-            marginTop = 20;
-        }
-    }
     // set predefined colors
     var colors = [];
     _(series).each(function(item, index) {
@@ -88,14 +78,8 @@ App.chart_library['columns'] = function(view, options) {
         chart: {
             renderTo: container,
             defaultSeriesType: 'column',
-            //zoomType: null,
             panning: true,
             pinchType: 'x',
-            // zoomType: 'x',
-            //marginLeft: 55,
-            //marginRight: 10 + (has_legend?legendWidth:0),
-            //marginTop: marginTop,
-            //marginBottom: 80,
             height: Math.min($(window).height(), 600),
             events: {
                 load: function(event) {
@@ -126,14 +110,9 @@ App.chart_library['columns'] = function(view, options) {
         },
         title: {
             text: options.titles.title,
-            //align: "center",
-            //x: viewPortWidth/2-25,
-            //width: viewPortWidth - 60,
-            //y: App.visualization.embedded ? 5 : 10,
             style: {
                 color: '#000000',
                 fontFamily: App.font_family,
-                //fontWeight: 'bold',
                 fontSize: titleFontSize + 'px'
             }
         },
@@ -141,14 +120,9 @@ App.chart_library['columns'] = function(view, options) {
             text: options.titles.subtitle,
             style: {
                 color: '#000000',
-                //fontWeight: 'bold',
                 fontFamily: App.font_family,
                 fontSize: (titleFontSize-1) + 'px'
             },
-            //align: 'center',
-            //verticalAlign: 'top',
-            //x: 45,
-            //y: App.visualization.embedded ? 5 : 10,
         },
         xAxis: {
             type: 'category',
@@ -169,12 +143,9 @@ App.chart_library['columns'] = function(view, options) {
             max: max_value,
             title: {
                 text: options.titles.yAxisTitle,
-                //useHTML: true,
-                //offset:100,
                 align: 'middle',
                 style: {
                     color: '#000000',
-                    //fontWeight: 'bold',
                     fontFamily: App.font_family,
                     fontSize: (titleFontSize-3) + 'px'
                     // TODO: wrapping does not work whiteSpace: 'normal'
@@ -194,12 +165,7 @@ App.chart_library['columns'] = function(view, options) {
                     fontFamily: App.font_family
                 }
             },
-            //x: viewPortWidth - legendWidth - 15,
-            //y: App.visualization.embedded ? 35 : 70,
             borderWidth: 0,
-            //backgroundColor: '#FFF',
-            //width: 170,
-            //itemMarginBottom: 5,
             itemStyle: {
                 fontSize: '11px',
                 fontWeight: 'normal',
