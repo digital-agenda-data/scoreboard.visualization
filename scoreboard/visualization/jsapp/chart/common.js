@@ -366,6 +366,7 @@ App.override_zoom = function() {
 }
 
 App.set_default_chart_options = function(chartOptions){
+    Highcharts.setOptions({ chart: { style: { fontFamily: App.font_family }}});
     _(chartOptions).extend({
         navigation: {
             buttonOptions: {
