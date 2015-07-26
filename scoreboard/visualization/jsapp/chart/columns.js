@@ -106,7 +106,7 @@ App.chart_library['columns'] = function(view, options) {
             style: {
                 fontFamily: App.font_family,
                 fontSize: '12px',
-                color: '#222222',
+                color: '#222222'
                 //width: $(window).width()-10
             }
         },
