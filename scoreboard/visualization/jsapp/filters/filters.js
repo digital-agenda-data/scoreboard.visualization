@@ -130,12 +130,19 @@ App.SelectFilter = Backbone.View.extend({
                 incomplete = true;
             }
         }
+        this.$el.html("");
         if(incomplete) {
-            this.$el.html("");
+            if (this.className.indexOf('all-values') < 0) {
+              this.$el.html("<label>"+this.label+"</label><span>Waiting...</span>");
+            }
             return;
+        } else {
+            if (this.className.indexOf('all-values') < 0) {
+              this.$el.html("<label>"+this.label+"</label><span>Loading...</span>");
+            }
         }
         this.$el.removeClass('on-hold');
-        this.$el.html("");
+        // load options
         App.trim_dimension_group_args(args, this.dimension_group_map);
         this.ajax = this.fetch_options(args);
         this.ajax.done(_.bind(function(data) {
