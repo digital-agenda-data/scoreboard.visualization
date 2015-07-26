@@ -53,6 +53,7 @@ App.chart_library['lines'] = function(view, options) {
     if ( viewPortHeight < 450 ) titleFontSize = 14;
     if ( viewPortHeight < 350 ) titleFontSize = 12;
     if ( viewPortWidth < 600 ) titleFontSize = titleFontSize-1;
+    if ( viewPortWidth < 450 ) titleFontSize = titleFontSize-2;
 
     var yAxis = {
         min:0,
