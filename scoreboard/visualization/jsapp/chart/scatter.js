@@ -132,8 +132,8 @@ App.chart_library['scatter'] = function(view, options) {
                 fontWeight: 'normal'
             },
             itemWidth: legendItemWidth-20,
-            x: -5,
-            y: marginRight-legendItemWidth,
+            x: 0,
+            y: marginTop,
             borderWidth: 1
         },
         plotOptions: {

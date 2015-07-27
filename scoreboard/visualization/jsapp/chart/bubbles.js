@@ -31,26 +31,36 @@ App.chart_library['bubbles'] = function(view, options) {
         item['dataLabels']['y'] = 0;
     });
 
-    var viewPortWidth = _.min([$(window).width(), 780]) - 30;
+    var legendItemWidth = 120;
+    var marginRight = (App.visualization.embedded || App.width_s())?10:(30+legendItemWidth);
+    var marginLeft = App.visualization.embedded?80:100;
+    var marginTop = 70;
+    var marginBottom = App.visualization.embedded?60:100;
+    var viewPortSize = _.min([700,
+        ($(window).width()-marginRight-marginLeft-20),  // 20 to avoid a scrollbar
+        ($(window).height()-marginTop-marginBottom)
+    ]);
+
     var chartOptions = {
         chart: {
             type: 'bubble',
             renderTo: container,
-            zoomType: 'xy',
-            marginLeft: App.visualization.embedded?80:100,
-            marginRight: App.visualization.embedded?20:150,
-            marginTop: 70,
-            marginBottom: App.visualization.embedded?60:100,
-            height: viewPortWidth-(App.visualization.embedded?0:70),
-            width: viewPortWidth,
+            zoomType: App.is_touch_device()?null:'xy',
+            marginLeft: marginLeft,
+            marginRight: marginRight,
+            marginTop: marginTop,
+            marginBottom: marginBottom,
+            height: viewPortSize+marginTop+marginBottom,
+            width: viewPortSize+marginLeft+marginRight,
             ignoreHiddenSeries: false
         },
         credits: {
-            href: options['credits']['href'],
+            href: App.is_touch_device()?null:options['credits']['href'],
             text: options['credits']['text'],
+            target: '_blank',
             position: {
                 align: 'right',
-                x: -10,
+                x: -5,
                 verticalAlign: 'bottom',
                 y: -2
             },
@@ -61,21 +71,19 @@ App.chart_library['bubbles'] = function(view, options) {
         },
         title: {
             text: options.titles.title,
-            x: viewPortWidth/2-(App.visualization.embedded?20:150),
-            width: viewPortWidth-(App.visualization.embedded?100:250),
             align: 'center',
             style: {
                 color: '#000000',
-                fontWeight: 'bold'
+                fontWeight: App.width_s()?'normal':'bold',
+                width: viewPortSize
             }
         },
         subtitle: {
             text: options.titles.subtitle,
-            x: viewPortWidth/2-(App.visualization.embedded?20:150),
-            width: viewPortWidth-(App.visualization.embedded?100:250),
             style: {
                 color: '#000000',
-                fontWeight: 'bold'
+                fontWeight: App.width_s()?'normal':'bold',
+                width: viewPortSize
             }
         },
         xAxis: [{
@@ -86,8 +94,8 @@ App.chart_library['bubbles'] = function(view, options) {
                 text: options.titles.xAxisTitle,
                 style: {
                     color: '#000000',
-                    fontWeight: 'bold',
-                    width: viewPortWidth-100
+                    fontWeight: App.width_s()?'normal':'bold',
+                    width: viewPortSize
                 }
             },
             startOnTick: false,
@@ -109,11 +117,11 @@ App.chart_library['bubbles'] = function(view, options) {
                 text: options.titles.yAxisTitle,
                 style: {
                     color: '#000000',
-                    fontWeight: 'bold',
-                    width: viewPortWidth-200
+                    fontWeight: App.width_s()?'normal':'bold'
                 },
                 margin: 30
             },
+            margin: 35,
             labels: {
                 style: {
                     color: '#000000'
@@ -121,24 +129,33 @@ App.chart_library['bubbles'] = function(view, options) {
             }
         },
         tooltip: {
+            animation: false,
             formatter: options['tooltip_formatter'],
-            useHTML: true
+            useHTML: true,
+            snap: 0
         },
         legend: {
-            enabled: !App.visualization.embedded,
+            animation: false,
+            enabled: !App.visualization.embedded && !App.width_s(),
             layout: 'vertical',
             align: 'right',
             verticalAlign: 'top',
             style: {
-                fontFamily: 'Verdana',
                 fontSize: '11px'
             },
-            x: -5,
-            y: 45,
-            borderWidth: 1,
-            floating: true
+            itemStyle: {
+                fontSize: '11px',
+                fontWeight: 'normal'
+            },
+            itemWidth: legendItemWidth-20,
+            x: 0,
+            y: marginTop,
+            borderWidth: 1
         },
         plotOptions: {
+            series: {
+                stickyTracking: false
+            },
             bubble: {
                 dataLabels: {
                     enabled: true,
@@ -168,6 +185,7 @@ App.chart_library['bubbles'] = function(view, options) {
     }
 
     App.chart = new Highcharts.Chart(chartOptions);
+    App.jQuery('#highcharts_zoom_in').hide();
 
     var metadata = {
         'chart-title': options.titles.title,

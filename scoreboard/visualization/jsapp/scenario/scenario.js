@@ -1059,8 +1059,9 @@ App.ShareOptionsView = Backbone.View.extend({
         ev.stopPropagation();
         var chartdiv = $(".highcharts-container");
         if (chartdiv && App.chart.options && App.chart.options.exporting) {
-            App.chart.options.exporting.sourceWidth = 1200;
-            App.chart.options.exporting.sourceHeight = 1200*chartdiv.height()/chartdiv.width();
+            var minwidth = Math.min($(window).height(), 750);
+            App.chart.options.exporting.sourceWidth = minwidth;
+            App.chart.options.exporting.sourceHeight = minwidth*chartdiv.height()/chartdiv.width();
         }
         App.jQuery('input[name="svg"]', this.svg_form).attr('value', App.chart.getSVG());
         // appendTo body to make it work in Internet Explorer
