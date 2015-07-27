@@ -157,6 +157,11 @@ App.chart_library['bubbles'] = function(view, options) {
                 stickyTracking: false
             },
             bubble: {
+                events: {
+                    legendItemClick: function() {
+                        if (App.is_touch_device()) return false;
+                    }
+                },
                 dataLabels: {
                     enabled: true,
                     color: '#222222',

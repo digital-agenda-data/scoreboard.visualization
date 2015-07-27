@@ -147,6 +147,11 @@ App.chart_library['scatter'] = function(view, options) {
                 dataLabels: {
                     // see common.js:App.format_series
                 },
+                events: {
+                    legendItemClick: function() {
+                        if (App.is_touch_device()) return false;
+                    }
+                },
                 states: {
                     hover: {
                         marker: {

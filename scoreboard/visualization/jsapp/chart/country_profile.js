@@ -274,7 +274,14 @@ App.chart_library['country_profile'] = function(view, options) {
                 }
             },
             plotOptions: {
-                series: { stacking: 'normal' },
+                series: {
+                    stacking: 'normal',
+                    events: {
+                        legendItemClick: function() {
+                            if (App.is_touch_device()) return false;
+                        }
+                    },
+                },
                 bar: { pointWidth: 25 }
             },
             series: stack_series

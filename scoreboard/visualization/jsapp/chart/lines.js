@@ -43,7 +43,7 @@ App.chart_library['lines'] = function(view, options) {
                   }
                 }
             });
-        }
+        };
     });
 
     var viewPortWidth = _.min([$(window).width(), 1130]) - 30;
@@ -218,6 +218,11 @@ App.chart_library['lines'] = function(view, options) {
                     lineWidth: 1,
                     radius: 3,
                     lineColor: null
+                },
+                events: {
+                    legendItemClick: function() {
+                        if (App.is_touch_device()) return false;
+                    }
                 }
             }
         },

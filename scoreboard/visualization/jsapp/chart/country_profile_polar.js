@@ -173,7 +173,12 @@ App.chart_library['country_profile_polar'] = function(view, options) {
         },
         plotOptions: {
             series: {
-                stickyTracking: false
+                stickyTracking: false,
+                events: {
+                    legendItemClick: function() {
+                        if (App.is_touch_device()) return false;
+                    }
+                }
             }
         },
         legend: {
