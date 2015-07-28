@@ -167,6 +167,7 @@ App.chart_library['country_profile_polar'] = function(view, options) {
         },
         tooltip: {
             animation: false,
+            hideDelay: 100,
             useHTML: true,
             formatter: cp_polar_tooltip_formatter,
             snap: 0

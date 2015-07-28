@@ -130,6 +130,7 @@ App.chart_library['bubbles'] = function(view, options) {
         },
         tooltip: {
             animation: false,
+            hideDelay: 100,
             formatter: options['tooltip_formatter'],
             useHTML: true,
             snap: 0

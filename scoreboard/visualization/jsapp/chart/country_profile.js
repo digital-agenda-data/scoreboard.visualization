@@ -260,6 +260,7 @@ App.chart_library['country_profile'] = function(view, options) {
             },
             tooltip: {
                 animation: false,
+                hideDelay: 100,
                 formatter: function(){
                     var unit = this.point.attributes['unit-measure']['notation'];
                     var title = this.point.attributes['unit-measure']['short-label'];

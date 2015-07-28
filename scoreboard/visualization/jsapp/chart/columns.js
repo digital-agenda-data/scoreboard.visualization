@@ -177,6 +177,7 @@ App.chart_library['columns'] = function(view, options) {
         },
         tooltip: {
             animation: false,
+            hideDelay: 100,
             formatter: options['tooltip_formatter'],
             useHTML: true
         },

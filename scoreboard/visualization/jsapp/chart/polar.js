@@ -100,7 +100,9 @@ App.chart_library['polar'] = function(view, options) {
         },
         yAxis: yAxis,
         tooltip: {
+            animation: false,
             useHTML: true,
+            hideDelay: 100,
             formatter: options['tooltip_formatter']
             // style is set from external css
         },

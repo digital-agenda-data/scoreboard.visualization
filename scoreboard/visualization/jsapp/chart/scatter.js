@@ -114,6 +114,7 @@ App.chart_library['scatter'] = function(view, options) {
         },
         tooltip: {
             animation: false,
+            hideDelay: 100,
             useHTML: true,
             formatter: options['tooltip_formatter'],
             snap: 0

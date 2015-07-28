@@ -181,6 +181,7 @@ App.chart_library['lines'] = function(view, options) {
         tooltip: {
             animation: false,
             useHTML: true,
+            hideDelay: 100,
             formatter: options['tooltip_formatter'],
             snap: 0
         },
