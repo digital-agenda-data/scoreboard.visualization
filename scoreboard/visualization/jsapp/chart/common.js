@@ -88,11 +88,14 @@ App.format_series = function (data, sort, multidim, category, highlights, animat
                 var data = [{
                     'name': notation,
                     'attributes': _(datapoint).omit('value'),
-                    'x': datapoint['value']['x'] * App.multiplicator(datapoint['unit-measure']['x']['notation']),
-                    'y': datapoint['value']['y'] * App.multiplicator(datapoint['unit-measure']['y']['notation'])
+                    'x': datapoint['value']['x'] *
+                        (datapoint['unit-measure']?App.multiplicator(datapoint['unit-measure']['x']['notation']):1),
+                    'y': datapoint['value']['y'] *
+                        (datapoint['unit-measure']?App.multiplicator(datapoint['unit-measure']['y']['notation']):1)
                 }]
                 if (multidim == 3){
-                    data[0]['z'] = datapoint['value']['z'] * App.multiplicator(datapoint['unit-measure']['z']['notation'])
+                    data[0]['z'] = datapoint['value']['z'] *
+                        (datapoint['unit-measure']?App.multiplicator(datapoint['unit-measure']['z']['notation']):1);
                 }
                 var output = {
                     'name': datapoint[category]['label'],
@@ -187,7 +190,7 @@ App.format_series = function (data, sort, multidim, category, highlights, animat
                     if ( typeof(value) == "string" ) {
                         value = parseFloat(value);
                     }
-                    item['value'] = value * App.multiplicator(item['unit-measure']['notation']);
+                    item['value'] = value * (item['unit-measure']?App.multiplicator(item['unit-measure']['notation']):1);
                 });
             }
             var data = _(item['data']).map(extract_data);
