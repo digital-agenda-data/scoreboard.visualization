@@ -81,13 +81,7 @@
   "titles": {
     "title": [
       {
-        "prefix": "Country profile for ",
-        "suffix": null,
-        "facet_name": "ref-area",
-        "format": "label"
-      },
-      {
-        "prefix": ", ",
+        "prefix": "Country profiles for ",
         "suffix": " indicators",
         "facet_name": "indicator-group",
         "format": "label"
