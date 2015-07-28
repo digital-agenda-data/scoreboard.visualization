@@ -217,7 +217,7 @@ App.chart_library['country_profile_polar'] = function(view, options) {
     App.jQuery("#the-chart g text title").each(function() {
         var new_text = category_tooltips_by_name[App.jQuery(this).text()];
         if (new_text) {
-            App.jQuery(this).text(new_text);
+            App.jQuery(this).text('');
             App.jQuery(this).parent().qtip({ content: { text: new_text } });
         }
     });
