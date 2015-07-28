@@ -132,10 +132,10 @@ App.chart_library['country_profile_polar'] = function(view, options) {
             tickColor: '#191919',
             labels: {
                 style: {
-                    fontWeight: App.width_s()?'normal':'bold',
+                    fontWeight: 'normal',
                     color: '#000000'
                 },
-                useHTML: true,
+                useHTML: false,
                 formatter: function() {
                     return category_names[this.value];
                     // tooltips are added using jQuery, see below
@@ -207,8 +207,19 @@ App.chart_library['country_profile_polar'] = function(view, options) {
     App.chart = new Highcharts.Chart(chartOptions);
     // add tooltips on x-labels using jQuery
     // cannot use labels.formatter because it breaks the png export
+    /*
+    // for html-labels (useHtml: true)
     App.jQuery(".highcharts-xaxis-labels > span").each(function() {
         App.jQuery(this).prop("title", category_tooltips_by_name[App.jQuery(this).text()])
+    });
+    */
+    // for svg-version labels (useHtml: false)
+    App.jQuery("#the-chart g text title").each(function() {
+        var new_text = category_tooltips_by_name[App.jQuery(this).text()];
+        if (new_text) {
+            App.jQuery(this).text(new_text);
+            App.jQuery(this).parent().qtip({ content: { text: new_text } });
+        }
     });
     
     var metadata = {
