@@ -215,10 +215,18 @@ App.chart_library['country_profile_polar'] = function(view, options) {
     */
     // for svg-version labels (useHtml: false)
     App.jQuery("#the-chart g text title").each(function() {
+        // when the text is long, it is split into several tspan elements and a title is added
         var new_text = category_tooltips_by_name[App.jQuery(this).text()];
         if (new_text) {
             App.jQuery(this).text('');
             App.jQuery(this).parent().qtip({ content: { text: new_text } });
+        }
+    });
+    App.jQuery("#the-chart g text").each(function() {
+        // when the text is short, it is a single element
+        var new_text = category_tooltips_by_name[App.jQuery(this).text()];
+        if (new_text) {
+            App.jQuery(this).qtip({ content: { text: new_text } });
         }
     });
     
