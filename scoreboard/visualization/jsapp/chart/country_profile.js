@@ -152,6 +152,7 @@ App.chart_library['country_profile'] = function(view, options) {
         }
         //var viewPortHeight = _.min([$(window).height()-250, 250 + series[0].data.length * 45]);
         var viewPortHeight = 250 + series[0].data.length * 45;
+        var hasScroll = viewPortHeight>$(window).height();
 
         var titleFontSize = 16;
         if ( viewPortHeight < 450 ) titleFontSize = 14;
@@ -164,7 +165,8 @@ App.chart_library['country_profile'] = function(view, options) {
                 defaultSeriesType: 'bar',
                 marginLeft: labelsWidth,
                 marginRight: 50,
-                height: viewPortHeight
+                height: viewPortHeight,
+                width: hasScroll?($(window).width()-50):null
             },
             credits: {
                 href: App.is_touch_device()?null:options['credits']['href'],
