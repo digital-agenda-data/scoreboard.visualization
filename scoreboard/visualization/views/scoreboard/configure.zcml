@@ -21,6 +21,14 @@
     title="Scoreboad View"
     />
 
+  <browser:page
+    for="eea.app.visualization.interfaces.IVisualizationEnabled"
+    name="config.json"
+    class=".view.View"
+    permission="zope2.View"
+    attribute="config_json"
+    />
+
   <browser:resource name="scoreboard.highchart.icon.png" file="icon.png" />
   <browser:resource name="scoreboard.highchart.preview.png" file="preview.png" />
 
