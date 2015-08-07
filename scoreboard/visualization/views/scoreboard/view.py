@@ -2,6 +2,7 @@
 """
 import json
 from zope.interface import implements
+from zope.component import queryMultiAdapter
 from eea.app.visualization.views.view import ViewForm
 from edw.datacube.interfaces import IDataCube
 from .interfaces import IScoreboardView
@@ -56,6 +57,10 @@ class View(ViewForm):
     @property
     def config(self):
         return self.data.get('configuration', '{}')
+
+    def config_json(self):
+        view = queryMultiAdapter((self.context, self.request), name=u"scoreboard.highchart")
+        return view.config
 
     def jsapp_html(self):
         return jsapp_html_for_visualization(self.context)
