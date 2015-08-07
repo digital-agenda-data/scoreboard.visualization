@@ -54,9 +54,7 @@ App.chart_library['columns'] = function(view, options) {
     }
 
 
-    var has_legend = options['series-legend-label'] && options['series-legend-label'] != 'none';
     var viewPortWidth = _.min([$(window).width(), 1130]) - 30;
-    var legendWidth = _.min([viewPortWidth * 0.3, 170]);
     var viewPortHeight = _.min([$(window).height()-100, 450]);
     if ( App.visualization.embedded ) {
         viewPortHeight = _.min([$(window).height(), 470]) - 20;
@@ -66,14 +64,6 @@ App.chart_library['columns'] = function(view, options) {
     if ( viewPortHeight < 450 ) titleFontSize = 14;
     if ( viewPortHeight < 350 ) titleFontSize = 12;
     if ( viewPortWidth < 600 ) titleFontSize = titleFontSize-1;
-    var marginTop = 100;
-    if ( App.visualization.embedded ) {
-        if ( options.titles.title ) {
-            marginTop = 10 + 20 * Math.ceil(options.titles.title.length / 60);
-        } else {
-            marginTop = 20;
-        }
-    }
     // set predefined colors
     var colors = [];
     _(series).each(function(item, index) {
@@ -87,14 +77,11 @@ App.chart_library['columns'] = function(view, options) {
     var chartOptions = {
         chart: {
             renderTo: container,
-            defaultSeriesType: 'column',
-            zoomType: 'y',
-            marginLeft: 55,
-            marginRight: 10 + (has_legend?legendWidth:0),
-            marginTop: marginTop,
-            marginBottom: 80,
-            height: viewPortHeight,
-            width: viewPortWidth,
+            type: 'column',
+            zoomType: App.is_touch_device()?null:'x',
+            panning: true,
+            pinchType: 'x',
+            height: Math.min($(window).height(), 600),
             events: {
                 load: function(event) {
                     view.trigger('chart_load', {
@@ -107,29 +94,27 @@ App.chart_library['columns'] = function(view, options) {
         },
         colors: colors,
         credits: {
-            href: options['credits']['href'],
+            href: App.is_touch_device()?null:options['credits']['href'],
             text: options['credits']['text'],
+            target: '_blank',
             position: {
                 align: 'right',
-                x: -10,
+                x: -5,
                 verticalAlign: 'bottom',
                 y: -2
             },
             style: {
+                fontFamily: App.font_family,
                 fontSize: '12px',
                 color: '#222222'
+                //width: $(window).width()-10
             }
         },
         title: {
             text: options.titles.title,
-            align: "center",
-            x: viewPortWidth/2-25,
-            width: viewPortWidth - 60,
-            y: App.visualization.embedded ? 5 : 35,
             style: {
                 color: '#000000',
-                fontFamily: 'Verdana',
-                fontWeight: 'bold',
+                fontFamily: App.font_family,
                 fontSize: titleFontSize + 'px'
             }
         },
@@ -137,13 +122,9 @@ App.chart_library['columns'] = function(view, options) {
             text: options.titles.subtitle,
             style: {
                 color: '#000000',
-                fontWeight: 'bold',
-                fontFamily: 'Verdana',
+                fontFamily: App.font_family,
                 fontSize: (titleFontSize-1) + 'px'
             },
-            align: 'left',
-            x: 45,
-            y: marginTop-15
         },
         xAxis: {
             type: 'category',
@@ -164,45 +145,87 @@ App.chart_library['columns'] = function(view, options) {
             max: max_value,
             title: {
                 text: options.titles.yAxisTitle,
+                align: 'middle',
                 style: {
                     color: '#000000',
-                    fontWeight: 'bold',
-                    fontSize: (titleFontSize-2) + 'px'
+                    fontFamily: App.font_family,
+                    fontSize: (titleFontSize-3) + 'px'
+                    // TODO: wrapping does not work whiteSpace: 'normal'
                 }
             }
         },
         legend: {
+            animation: false,
             layout: 'vertical',
-            align: 'left',
-            verticalAlign: 'top',
-            x: viewPortWidth - legendWidth - 15,
-            y: App.visualization.embedded ? 35 : 70,
+            align: App.width_s()?'center':'right',
+            verticalAlign: App.width_s()?'bottom':'top',
+            y: 10,
+            title: {
+                text: 'Legend',
+                style: {
+                    fontWeight: 'normal',
+                    fontFamily: App.font_family
+                }
+            },
             borderWidth: 0,
-            backgroundColor: '#FFF',
-            width: 170,
-            itemMarginBottom: 5,
             itemStyle: {
-                fontFamily: 'Verdana',
                 fontSize: '11px',
-                width: legendWidth - 30
+                fontWeight: 'normal',
+                fontFamily: App.font_family,
+                width: App.width_s()?viewPortWidth-20:150
             }
         },
         tooltip: {
+            animation: false,
+            hideDelay: 100,
             formatter: options['tooltip_formatter'],
             useHTML: true
         },
         plotOptions: {
             column: {
-                stacking: (options['stacked']?'normal':null)
+                stacking: (options['stacked']?'normal':null),
+                events: {
+                    legendItemClick: function() {
+                        if (App.is_touch_device()) return false;
+                    }
+                }
             }
         },
         series: init_series
     };
 
+    /*
+    if ( App.is_touch_device() ) {
+        // enable center on click
+        chartOptions.plotOptions.series = {
+          point: {
+            events: {
+              click: function (event) {
+                 var xt = App.chart.xAxis[0].getExtremes();
+                 var max = event.point.index + Math.round(xt.max-xt.min-1)/2;
+                 // keep number of visible points
+                 var min = max-xt.max+xt.min;
+                 if (max > xt.dataMax) {
+                     // shift left
+                     min = min - max + xt.dataMax;
+                     max = xt.dataMax;
+                 }
+                 if ( min < xt.dataMin ) {
+                     // shift right
+                     max = max + xt.dataMin - min;
+                     min = xt.dataMin;
+                 }
+                 App.chart.xAxis[0].setExtremes(min, max);
+              }
+            }
+          }
+        }
+    }
+    */
     // check link for composite charts
     if (typeof this.data.custom_properties != 'undefined') {
       var dai_breakdown_chart = this.data.custom_properties['dai-breakdown-chart'];
-      if ( dai_breakdown_chart) {
+      if ( dai_breakdown_chart && !App.visualization.embedded && !App.is_touch_device()) {
         chartOptions.plotOptions.series = {
           cursor: 'pointer',
           point: {
@@ -221,7 +244,7 @@ App.chart_library['columns'] = function(view, options) {
     App.set_default_chart_options(chartOptions);
     App.disable_legend(chartOptions, options);
     App.override_zoom();
-    var chart = new Highcharts.Chart(chartOptions);
+    App.chart = new Highcharts.Chart(chartOptions);
     var metadata = {
         'chart-title': options.titles.title,
         'chart-subtitle': options.titles.subtitle,
@@ -234,14 +257,14 @@ App.chart_library['columns'] = function(view, options) {
     view.trigger('chart_ready', series, metadata);
 
     if (options['plotlines']){
-        App.add_plotLines(chart, init_series, options['plotlines']);
+        App.add_plotLines(App.chart, init_series, options['plotlines']);
     }
 
     if (options['animation']){
         if(!App.chart_controls){
             App.chart_controls = new App.GraphControlsView({
                 model: new Backbone.Model(),
-                chart: chart,
+                chart: App.chart,
                 snapshots_data: series,
                 interval: window.interval_set,
                 plotlines: options['plotlines'],
@@ -250,7 +273,7 @@ App.chart_library['columns'] = function(view, options) {
             });
             $('#the-filters .footer').append(App.chart_controls.$el);
         }else{
-            App.chart_controls.chart = chart;
+            App.chart_controls.chart = App.chart;
             App.chart_controls.update_data(series);
         };
     }

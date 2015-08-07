@@ -111,10 +111,11 @@ App.format_series = function (data, sort, multidim, category, highlights, animat
                     },
                     'dataLabels': {
                         'enabled': true,
-                        'x': 16,
-                        'y': 4,
                         'style': {
-                            'font-weight': 'normal'
+                            color: '#000000',
+                            fontWeight: 'normal',
+                            fontSize: '10px',
+                            fontFamily: App.font_family
                         },
                         'formatter': label_formatter
                     }
@@ -349,7 +350,8 @@ App.add_plotLines = function(chart, series, chart_type){
 }
 
 App.disable_legend = function(chartOptions, options){
-    if (options && (!options['series-legend-label'] || options['series-legend-label'] == 'none')){
+    if (options && (!options['series-legend-label'] || options['series-legend-label'] == 'none' ||
+        chartOptions && chartOptions.series.length < 2)){
         var disabled_legend = {
             legend: {enabled: false}
         };
@@ -368,7 +370,7 @@ App.override_zoom = function() {
 }
 
 App.set_default_chart_options = function(chartOptions){
-    var menuItems = _.rest(Highcharts.getOptions().exporting.buttons.contextButton.menuItems, 2);
+    Highcharts.setOptions({ chart: { style: { fontFamily: App.font_family }}});
     _(chartOptions).extend({
         navigation: {
             buttonOptions: {
@@ -382,6 +384,8 @@ App.set_default_chart_options = function(chartOptions){
             }
         }
     });
+/* print and download buttons moved to share panel
+    var menuItems = _.rest(Highcharts.getOptions().exporting.buttons.contextButton.menuItems, 2);
     if ( ! App.visualization.embedded ) {
         _(chartOptions).extend({
             exporting: {
@@ -392,10 +396,42 @@ App.set_default_chart_options = function(chartOptions){
                     exportButton: {
                         text: 'Download image',
                         // Use only the download related menu items from the default context button
-                        menuItems: menuItems
+                        menuItems: menuItems,
+                        theme: {
+                          'stroke-width': 1,
+                          stroke: '#99C1D2',
+                          fill: '#BEE0F0',
+                          r: 3,
+                         states: {
+                             hover: {
+                                 stroke: '#7CA8BB',
+                                 fill: '#94C5DB'
+                             },
+                             select: {
+                                 stroke: '#7CA8BB',
+                                 fill: '#94C5DB'
+                             }
+                          }
+                        }
                     },
                     printButton: {
                         text: 'Print chart',
+                        theme: {
+                          'stroke-width': 1,
+                          stroke: '#398439',
+                          fill: '#449D44',
+                          r: 3,
+                         states: {
+                             hover: {
+                                 stroke: '#0A710A',
+                                 fill: '#2A862A'
+                             },
+                             select: {
+                                 stroke: '#0A710A',
+                                 fill: '#2A862A'
+                             }
+                          }
+                        },
                         onclick: function () {
                             this.print();
                         }
@@ -404,6 +440,7 @@ App.set_default_chart_options = function(chartOptions){
             }
         });
     }
+*/
 }
 
 App.title_formatter = function(parts, meta_data){

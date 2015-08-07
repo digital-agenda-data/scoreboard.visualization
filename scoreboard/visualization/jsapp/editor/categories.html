@@ -1,11 +1,13 @@
-<label>
-  Categories by:
-</label>
-<select name="categories">
-<option value="">--</option>
-{{# series_options }}
-  <option value="{{ name }}"
-    {{# if selected }}selected{{/ if }}
-    >{{ name }}</option>
-{{/ series_options }}
-</select>
+<div class="row">
+  <label class="col-md-3 col-sm-6">
+    Categories by:
+  </label>
+  <select name="categories" class="col-md-9 col-sm-6">
+  <option value="">--</option>
+  {{# series_options }}
+    <option value="{{ name }}"
+      {{# if selected }}selected{{/ if }}
+      >{{ name }}</option>
+  {{/ series_options }}
+  </select>
+</div>

@@ -20,8 +20,12 @@ App.chart_library['country_profile_polar'] = function(view, options) {
                     true // ignore percentage unit (do not multiply by 100)
                  );
 	// filter items without value (some added automatically in common.js (diffs_collection)
+    var max_y = 2; // max radius, by default = 2 (highest eu country)
     _(series).each(function(serie) {
         serie.data = _(serie.data).filter(function(item) {
+            if ( item.y && item.y > max_y ) {
+                max_y = item.y;
+            }
             return item.y != undefined && !isNaN(item.y) && item.y != null;
         });
     });
@@ -29,6 +33,7 @@ App.chart_library['country_profile_polar'] = function(view, options) {
     var category_keys = {};
     var category_keys_invert = {};
     var category_names = {};
+    var category_tooltips_by_name = {};
     var counter = 1;
     _.map(series, function(elem) {
         _(elem.data).each(function(item){
@@ -50,6 +55,7 @@ App.chart_library['country_profile_polar'] = function(view, options) {
                 } else {
                     category_names[counter] = item.attributes.indicator['short-label'] || item.attributes.indicator.label;
                 }
+                category_tooltips_by_name[category_names[counter]] = (category_keys_invert[counter]||['']).join('<br>');
                 category_keys[key] = counter++;
             }
             item.name = category_keys[key];
@@ -57,11 +63,7 @@ App.chart_library['country_profile_polar'] = function(view, options) {
         });
     });
 
-    var has_legend = options['series-legend-label'] && options['series-legend-label'] != 'none';
-    var marginTop = 100;
-    var viewPortWidth = _.min([$(window).width(), 1130]) - 30;
-    var viewPortHeight = _.min([$(window).height()-100, 650]);
-    var legendWidth = _.min([viewPortWidth * 0.3, 170]);
+    var legendItemWidth = 120;
     var titleFontSize = 16;
     var cp_polar_tooltip_formatter = function() {
         var unit_notation = this.point.attributes['unit-measure']['notation'];
@@ -89,21 +91,17 @@ App.chart_library['country_profile_polar'] = function(view, options) {
             renderTo: container,
             polar: true,
             type: 'line',
-            marginLeft: 55,
-            marginRight: 10 + (has_legend?legendWidth:0),
-            marginTop: marginTop,
-            marginBottom: 80,
-            height: viewPortHeight,
-            width: viewPortWidth,
+            height: Math.min($(window).height(), 600)
         },
         credits: {
-            href: options['credits']['href'],
+            href: App.is_touch_device()?null:options['credits']['href'],
             text: options['credits']['text'],
+            target: '_blank',
             position: {
-                align: 'right',
-                x: -10,
+                align: 'center',
+                x: -5,
                 verticalAlign: 'bottom',
-                y: -2
+                y: -5
             },
             style: {
                 fontSize: '12px',
@@ -112,27 +110,19 @@ App.chart_library['country_profile_polar'] = function(view, options) {
         },
         title: {
             text: options.titles.title,
-            align: "center",
-            x: viewPortWidth/2-25,
-            width: viewPortWidth - 50,
-            y: App.visualization.embedded ? 5 : 35,
+            align: 'center',
             style: {
                 color: '#000000',
-                fontFamily: 'Verdana',
-                fontSize: titleFontSize + 'px',
-                fontWeight: 'bold'
+                fontWeight: App.width_s()?'normal':'bold'
             }
         },
         subtitle: {
             text: options.titles.subtitle,
-            align: "left",
-            x: 45,
-            y: marginTop-20,
+            align: 'center',
             style: {
                 color: '#000000',
-                fontFamily: 'Verdana',
-                fontSize: (titleFontSize-1) + 'px',
-                fontWeight: 'bold'
+                fontWeight: App.width_s()?'normal':'bold',
+                fontSize: (titleFontSize-1) + 'px'
             }
         },
         xAxis: {
@@ -142,12 +132,15 @@ App.chart_library['country_profile_polar'] = function(view, options) {
             tickColor: '#191919',
             labels: {
                 style: {
+                    fontWeight: 'normal',
                     color: '#000000'
                 },
-                useHTML: true,
+                useHTML: false,
                 formatter: function() {
-                    var title = (category_keys_invert[this.value]||['']).join('<br>');
-                    return '<div title="' + title + '">'+category_names[this.value]+'</div>'
+                    return category_names[this.value];
+                    // tooltips are added using jQuery, see below
+                    // var title = (category_keys_invert[this.value]||['']).join('<br>');
+                    // return '<span title="' + title + '">'+category_names[this.value]+'</span>'
                 }
              },
         },
@@ -155,45 +148,54 @@ App.chart_library['country_profile_polar'] = function(view, options) {
             lineWidth: 0,
             gridLineWidth: 1,
             tickInterval: 1,
+            tickPositions: [0, 1, 2, max_y],
             tickColor: '#FF0000',
+            showLastLabel: true,
             labels: {
+                align: 'center',
                 formatter: function() {
-                    return ['', 'EU average', ''][this.value];
+                    return ['', 'EU average', 'Highest EU country', ''][this.value];
                 },
                 style: {
-                    fontFamily: 'Tahoma',
-                    fontSize: '10px',
+                    color: '#000000',
+                    fontWeight: 'normal',
+                    fontSize: '10px'
                 }
             },
             min: 0,
-            max: 2
+            max: max_y
         },
         tooltip: {
+            animation: false,
+            hideDelay: 100,
             useHTML: true,
             formatter: cp_polar_tooltip_formatter,
             snap: 0
         },
         plotOptions: {
             series: {
-                stickyTracking: false
+                stickyTracking: false,
+                events: {
+                    legendItemClick: function() {
+                        if (App.is_touch_device()) return false;
+                    }
+                }
             }
         },
         legend: {
-            layout: 'horizontal',
-            align: 'center',
-            verticalAlign: 'bottom',
-            // useHTML: true,
-            // disabled because IE9 raises SCRIPT5007: Unable to get property 'childNodes'
-            // when changing the indicator
-            x: 0,
-            y: -10,
+            animation: false,
+            layout: (App.visualization.embedded || App.width_s())?'horizontal':'vertical',
+            align: (App.visualization.embedded || App.width_s())?'center':'right',
+            verticalAlign: (App.visualization.embedded || App.width_s())?'bottom':'top',
+            x: (App.visualization.embedded || App.width_s())?0:0,
+            y: (App.visualization.embedded || App.width_s())?-10:50,
             borderWidth: 0,
             backgroundColor: '#FFF',
-            itemMarginBottom: 5,
+            itemMarginBottom: (App.visualization.embedded || App.width_s())?5:0,
             itemStyle: {
-                fontFamily: 'Verdana',
+                fontWeight: 'normal',
                 fontSize: '10px',
-                width: legendWidth - 30
+                width: legendItemWidth
             }
         },
         series: series
@@ -202,8 +204,32 @@ App.chart_library['country_profile_polar'] = function(view, options) {
     App.set_default_chart_options(chartOptions);
     App.disable_legend(chartOptions, options);
     App.override_zoom();
-    var chart = new Highcharts.Chart(chartOptions);
-
+    App.chart = new Highcharts.Chart(chartOptions);
+    // add tooltips on x-labels using jQuery
+    // cannot use labels.formatter because it breaks the png export
+    /*
+    // for html-labels (useHtml: true)
+    App.jQuery(".highcharts-xaxis-labels > span").each(function() {
+        App.jQuery(this).prop("title", category_tooltips_by_name[App.jQuery(this).text()])
+    });
+    */
+    // for svg-version labels (useHtml: false)
+    App.jQuery("#the-chart g text title").each(function() {
+        // when the text is long, it is split into several tspan elements and a title is added
+        var new_text = category_tooltips_by_name[App.jQuery(this).text()];
+        if (new_text) {
+            App.jQuery(this).text('');
+            App.jQuery(this).parent().qtip({ content: { text: new_text } });
+        }
+    });
+    App.jQuery("#the-chart g text").each(function() {
+        // when the text is short, it is a single element
+        var new_text = category_tooltips_by_name[App.jQuery(this).text()];
+        if (new_text) {
+            App.jQuery(this).qtip({ content: { text: new_text } });
+        }
+    });
+    
     var metadata = {
         'chart-title': options.titles.title,
         'chart-subtitle': options.titles.subtitle,

@@ -347,8 +347,14 @@
           },
           {
             "prefix": "by ",
-            "suffix": "<br>",
+            "suffix": null,
             "facet_name": "z-breakdown",
+            "format": "label"
+          },
+          {
+            "prefix": " (",
+            "suffix": ")",
+            "facet_name": "z-unit-measure",
             "format": "label"
           }
         ],
@@ -361,8 +367,14 @@
           },
           {
             "prefix": "by ",
-            "suffix": "<br>",
+            "suffix": null,
             "facet_name": "x-breakdown",
+            "format": "label"
+          },
+          {
+            "prefix": " (",
+            "suffix": ")",
+            "facet_name": "x-unit-measure",
             "format": "label"
           }
         ],
@@ -375,8 +387,14 @@
           },
           {
             "prefix": "by ",
-            "suffix": "<br>",
+            "suffix": null,
             "facet_name": "y-breakdown",
+            "format": "label"
+          },
+          {
+            "prefix": " (",
+            "suffix": ")",
+            "facet_name": "y-unit-measure",
             "format": "label"
           }
         ]

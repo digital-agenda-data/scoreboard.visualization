@@ -100,7 +100,9 @@ App.chart_library['polar'] = function(view, options) {
         },
         yAxis: yAxis,
         tooltip: {
+            animation: false,
             useHTML: true,
+            hideDelay: 100,
             formatter: options['tooltip_formatter']
             // style is set from external css
         },
@@ -128,7 +130,7 @@ App.chart_library['polar'] = function(view, options) {
     App.set_default_chart_options(chartOptions);
     App.disable_legend(chartOptions, options);
     App.override_zoom();
-    var chart = new Highcharts.Chart(chartOptions);
+    App.chart = new Highcharts.Chart(chartOptions);
 
     var metadata = {
         'chart-title': options.titles.title,

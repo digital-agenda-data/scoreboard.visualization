@@ -1,8 +1,8 @@
-<label>
-  {{ name }}
+<label class="title-preview-label">
+  {{ name }} preview:
 </label>
 {{# if preview }}
-<div class="well well-small" name="title-preview">{{ preview }}</div>
+<div class="title-preview-box" name="title-preview">{{ preview }}</div>
 {{/ if }}
 <div name="title-parts"></div>
 <button name="add-title-part">

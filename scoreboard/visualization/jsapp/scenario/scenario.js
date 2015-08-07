@@ -944,6 +944,10 @@ var BaseDialogView = Backbone.View.extend({
 App.ShareOptionsView = Backbone.View.extend({
 
     events: {
+        'click #highcharts_zoom_in': 'highcharts_zoom_in',
+        'click #highcharts_zoom_reset': 'highcharts_zoom_reset',
+        'click #highcharts_print': 'highcharts_print',
+        'click #highcharts_download': 'highcharts_download',
         'click #csv': 'request_csv',
         'click #excel': 'request_excel',
         'click #embed': 'request_embed',
@@ -961,6 +965,27 @@ App.ShareOptionsView = Backbone.View.extend({
             'target': '_top',
             'method': 'POST'
         });
+        this.svg_form = App.jQuery('<form>', {
+            'id': 'svg2pngform',
+            'action': App.URL + '/svg2png',
+            'target': '_top',
+            'method': 'POST'
+        });
+        App.jQuery(this.svg_form).append(
+            App.jQuery('<input>', {
+                'name': 'svg',
+                'type': 'hidden'
+            }
+        ));
+        var tokens = window.location.pathname.split("/");
+        var filename = tokens[tokens.length-1];
+        App.jQuery(this.svg_form).append(
+            App.jQuery('<input>', {
+                'name': 'filename',
+                'type': 'hidden',
+                'value': filename + '.png'
+            }
+        ));
         this.render();
     },
 
@@ -970,10 +995,81 @@ App.ShareOptionsView = Backbone.View.extend({
         this.$el.find('form').submit();
     },
 
+    request_excel: function(ev){
+        ev.preventDefault();
+        App.jQuery('input[name="format"]', this.form).remove();
+        App.jQuery(this.$el.find('form')).append(
+            App.jQuery('<input>', {
+                'name': 'format',
+                'value': 'xls',
+                'type': 'hidden'
+            }
+        )).submit();
+    },
+
     request_embed: function(ev){
         ev.stopPropagation();
-        window.location.replace(window.location.pathname + "/embedded" + window.location.hash);
+        window.location.href = window.location.pathname + "/embedded" + window.location.hash;
         return false;
+    },
+
+    highcharts_print: function(ev){
+        ev.stopPropagation();
+        App.chart.print();
+    },
+
+    highcharts_enable_zoom: function(zoom_type) {
+        if (!App.chart.options.chart.zoomType) {
+            App.chart.options.chart.zoomType = zoom_type;
+            App.chart = new Highcharts.Chart(App.chart.options);
+            App.jQuery('#highcharts_zoom_in').hide();
+            App.jQuery('#highcharts_zoom_reset').show();
+            App.jQuery('#highcharts_zoom_in').html(old);
+        }
+    },
+
+    highcharts_zoom_in: function(ev){
+        // custom button only visible in touchscreen devices
+        ev.stopPropagation();
+        if (App.chart.options.chart.type == 'column') {
+            this.highcharts_enable_zoom('x');
+            App.chart.xAxis[0].setExtremes(App.chart.xAxis[0].getExtremes().dataMin, Math.ceil(App.chart.xAxis[0].getExtremes().max/2));
+        } else if (App.chart.options.chart.type == 'spline') {
+            this.highcharts_enable_zoom('xy');
+        }
+        App.jQuery('html, body').animate({ scrollTop: App.jQuery("#the-chart").offset().top }, 1);
+    },
+    
+    highcharts_zoom_reset: function(ev){
+        ev.stopPropagation();
+        if (App.chart.options.chart.zoomType) {
+            // disable zoom and recreate chart
+            App.chart.options.chart.zoomType = null;
+            App.chart = new Highcharts.Chart(App.chart.options);
+            App.jQuery('#highcharts_zoom_in').show();
+            App.jQuery('#highcharts_zoom_reset').hide();
+        }
+        App.chart.zoomOut();
+        //App.chart.xAxis[0].setExtremes(null, null);
+        //App.chart.yAxis[0].setExtremes(null, null);
+        App.jQuery('html, body').animate({ scrollTop: App.jQuery("#the-chart").offset().top }, 1);
+    },
+    
+    highcharts_download: function(ev){
+        ev.stopPropagation();
+        var chartdiv = $(".highcharts-container");
+        if (chartdiv && App.chart.options && App.chart.options.exporting) {
+            var minwidth = Math.min($(window).height(), 750);
+            if (App.chart.options.chart.polar) {
+                minwidth = 1200;
+            }
+            App.chart.options.exporting.sourceWidth = minwidth;
+            App.chart.options.exporting.sourceHeight = minwidth*chartdiv.height()/chartdiv.width();
+        }
+        App.jQuery('input[name="svg"]', this.svg_form).attr('value', App.chart.getSVG());
+        // appendTo body to make it work in Internet Explorer
+        this.svg_form.appendTo('body').submit().remove();
+        //this.svg_form.submit();
     },
 
     get_forum_url: function() {
@@ -996,18 +1092,6 @@ App.ShareOptionsView = Backbone.View.extend({
         var modal_form = new BaseDialogView({form_action: form_action});
         modal_form.render();
         return false;
-    },
-
-    request_excel: function(ev){
-        ev.preventDefault();
-        App.jQuery('input[name="format"]', this.form).remove();
-        App.jQuery(this.$el.find('form')).append(
-            App.jQuery('<input>', {
-                'name': 'format',
-                'value': 'xls',
-                'type': 'hidden'
-            }
-        )).submit();
     },
 
     metadata_ready: function(annotations){
@@ -1041,9 +1125,11 @@ App.ShareOptionsView = Backbone.View.extend({
     },
 
     render: function() {
-        this.$el.html(this.template({'related': this.related.html()}));
+        this.$el.html(this.template({
+            'related': this.related.html(),
+            'zoomEnabled': App.is_touch_device()
+        }));
         App.jQuery(this.form).appendTo(this.$el);
-        //window.addthis.button('#scoreboard-addthis', {}, {url: this.url});
         if ( window.addthis) {
             window.addthis.toolbox('.addthis_toolbox', {}, {url: this.url});
         }

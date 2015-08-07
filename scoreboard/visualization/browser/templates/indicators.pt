@@ -2,84 +2,98 @@
   i18n:domain="plone">
   <div metal:fill-slot="main"
     tal:define="normalizeString nocall:context/@@plone/normalizeString;">
-    <h1><span id="dataset-title" tal:content="here/getExtended_title"/></h1>
-
-    <div class="dataset-manage bootstrap">
-      <a class="btn btn-mini" tal:attributes="href string:${here/absolute_url}"><i class="icon-file"></i> Dataset</a>
-      <a class="btn btn-mini btn-primary" tal:attributes="href string:${here/absolute_url}/visualizations"><i class="icon-tasks icon-white"></i> Charts</a>
-      <a class="btn btn-mini" tal:attributes="href string:${here/absolute_url}/../"><i class="icon-align-justify"></i> Datasets</a>
+    <div class="row">
+      <div class="col-md-12">
+        <h1 class="documentFirstHeading"><span id="dataset-title" tal:content="here/getExtended_title"/></h1>
+      </div>
     </div>
-    <br />
 
-    <p id="dataset-description" tal:content="structure here/getSummary" />
+    <div class="row">
+      <div class="dataset-manage bootstrap col-md-12">
+        <ul class="nav nav-tabs">
+          <li><a tal:attributes="href string:${portal_url}/."><span class="glyphicon glyphicon-home" aria-hidden="true"></span> Home</a></li>
+          <li><a tal:attributes="href string:${here/absolute_url}/visualizations"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span> Charts</a></li>
+          <li><a tal:attributes="href string:${here/absolute_url}"><span class="glyphicon glyphicon-file" aria-hidden="true"></span> Dataset</a></li>
+          <li class="active"><a href="#"><span class="glyphicon glyphicon-tags" aria-hidden="true"></span> Indicators</a></li>
+        </ul>
+      </div>
+    </div>
 
-    <p>The following table provides methodological information about the source, the scope and the definition of each indicator. For more details, click on the links in the table or explore the whole database.</p>
+    <div class="row">
+      <div class="col-md-12 white-area rounded-top use-top-padding">
+        <p id="dataset-description" tal:content="structure here/getSummary" />
+        <p>The following table provides methodological information about the source, the scope and the definition of each indicator. For more details, click on the links in the table or explore the whole database.</p>
+        <div id="indicators-toc" class="listing-description"> </div>
+      </div>
+    </div>
 
+    <div class="row">
+      <div class="col-md-12 white-area no-top-bottom use-bottom-padding rounded-bottom">
+        <table class="list_indicators">
+          <thead>
+              <tr>
+                  <th style="width:20%">Indicator</th>
+                  <th style="width:40%">Definition and scope</th>
+                  <th style="width:8%">Time coverage</th>
+                  <th style="width:12%">Explore more using SPARQL queries</th>
+                  <th style="width:20%">Source</th></tr>
+          </thead>
 
+          <tbody>
+            <tal:row tal:repeat="row view/dataset_details">
+                <tr class="groupName" tal:condition="python:row['type'] == 'header'" tal:define="indicator python:row['indicator']" tal:attributes="id python:normalizeString(indicator.get('groupName', ''))">
+                    <td colspan="5" tal:define="groupName indicator/groupName|nothing">
+                        <tal:block condition="groupName">
+                            <span tal:replace="groupName"></span>
+                        </tal:block>
+                    </td>
+                </tr>
+                <tr tal:condition="python:row['type'] == 'row'" tal:define="indicator python:row['indicator']">
+                    <td class="even" tal:define="longlabel indicator/longlabel|nothing">
+                        <tal:block condition="longlabel">
+                            <span tal:replace="longlabel"></span>
+                        </tal:block>
+                    </td>
+                    <td class="odd" tal:define="definition indicator/definition|nothing; notes indicator/notes|nothing; notation indicator/notation|indicator/indicator">
+                        <tal:block condition="notation">
+                            <strong class="notation">Notation: </strong><span tal:replace="notation"></span>
+                        </tal:block>
+                        <br tal:condition="python:notation and (definition or notes)"/>
+                        <tal:block condition="definition">
+                            <strong class="definition">Definition: </strong><span tal:replace="definition"></span>
+                        </tal:block>
+                        <br tal:condition="python:definition and notes"/>
+                        <tal:block condition="notes">
+                            <strong class="notes">Notes: </strong><span tal:replace="notes"></span>
+                        </tal:block>
+                    </td>
+                    <td class="even">
+                        <span tal:replace="indicator/minYear"></span> - <span tal:replace="indicator/maxYear"></span>
+                    </td>
+                    <td class="odd">
+                        <a target="_blank"
+                          tal:attributes="href python:view.getIndicatorURLData('find_countries_query', indicator);">Find countries</a>
+                        <br />
+                        <a target="_blank"
+                          tal:attributes="href python:view.getIndicatorURLData('find_breakdowns_query', indicator);">Find breakdowns</a>
+                    </td>
+                    <td class="odd" tal:define="sourcelink indicator/sourcelink|nothing; sourcelabel indicator/sourcelabel|nothing">
+                        <a tal:condition="sourcelink" tal:attributes="href sourcelink" tal:content="sourcelabel"></a>
+                        <span tal:condition="not:sourcelink" tal:replace="sourcelabel"></span>
+                    </td>
+                </tr>
+            </tal:row>
+          </tbody>
+        </table>
+      </div>
+    </div>
 
-    <div id="indicators-toc" class="listing-description"> </div>
-    <br />
-    <table class="list_indicators">
-      <thead>
-          <tr>
-              <th style="width:20%">Indicator</th>
-              <th style="width:40%">Definition and scope</th>
-              <th style="width:8%">Time coverage</th>
-              <th style="width:12%">Explore more using SPARQL queries</th>
-              <th style="width:20%">Source</th></tr>
-      </thead>
-
-      <tbody>
-        <tal:row tal:repeat="row view/dataset_details">
-            <tr class="groupName" tal:condition="python:row['type'] == 'header'" tal:define="indicator python:row['indicator']" tal:attributes="id python:normalizeString(indicator.get('groupName', ''))">
-                <td colspan="5" tal:define="groupName indicator/groupName|nothing">
-                    <tal:block condition="groupName">
-                        <span tal:replace="groupName"></span>
-                    </tal:block>
-                </td>
-            </tr>
-            <tr tal:condition="python:row['type'] == 'row'" tal:define="indicator python:row['indicator']">
-                <td class="even" tal:define="longlabel indicator/longlabel|nothing">
-                    <tal:block condition="longlabel">
-                        <span tal:replace="longlabel"></span>
-                    </tal:block>
-                </td>
-                <td class="odd" tal:define="definition indicator/definition|nothing; notes indicator/notes|nothing; notation indicator/notation|indicator/indicator">
-                    <tal:block condition="notation">
-                        <strong class="notation">Notation: </strong><span tal:replace="notation"></span>
-                    </tal:block>
-                    <br tal:condition="python:notation and (definition or notes)"/>
-                    <tal:block condition="definition">
-                        <strong class="definition">Definition: </strong><span tal:replace="definition"></span>
-                    </tal:block>
-                    <br tal:condition="python:definition and notes"/>
-                    <tal:block condition="notes">
-                        <strong class="notes">Notes: </strong><span tal:replace="notes"></span>
-                    </tal:block>
-                </td>
-                <td class="even">
-                    <span tal:replace="indicator/minYear"></span> - <span tal:replace="indicator/maxYear"></span>
-                </td>
-                <td class="odd">
-                    <a target="_blank"
-                      tal:attributes="href python:view.getIndicatorURLData('find_countries_query', indicator);">Find countries</a>
-                    <br />
-                    <a target="_blank"
-                      tal:attributes="href python:view.getIndicatorURLData('find_breakdowns_query', indicator);">Find breakdowns</a>
-                </td>
-                <td class="odd" tal:define="sourcelink indicator/sourcelink|nothing; sourcelabel indicator/sourcelabel|nothing">
-                    <a tal:condition="sourcelink" tal:attributes="href sourcelink" tal:content="sourcelabel"></a>
-                    <span tal:condition="not:sourcelink" tal:replace="sourcelabel"></span>
-                </td>
-            </tr>
-        </tal:row>
-      </tbody>
-    </table>
-
-    <input type="hidden" id="dataset-value" tal:attributes="value here/dataset" />
-
-    <div id="dataset-navigation" class="navigation-widget"></div>
+    <div class="row">
+      <div class="col-md-12">
+        <input type="hidden" id="dataset-value" tal:attributes="value here/dataset" />
+        <div id="dataset-navigation" class="navigation-widget"></div>
+      </div>
+    </div>
 
   </div>
 </html>
-
