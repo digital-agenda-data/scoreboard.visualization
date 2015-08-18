@@ -262,6 +262,7 @@ App.chart_library['country_profile'] = function(view, options) {
             },
             tooltip: {
                 animation: false,
+                useHTML: true,
                 hideDelay: 100,
                 formatter: function(){
                     var unit = this.point.attributes['unit-measure']['notation'];
