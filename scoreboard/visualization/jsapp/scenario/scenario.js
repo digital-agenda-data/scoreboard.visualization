@@ -645,6 +645,9 @@ App.GraphControlsView = Backbone.View.extend({
     },
 
     on_next: function(){
+        if (App.is_touch_device()) {
+          App.jQuery('html, body').animate({ scrollTop: App.jQuery(".chart-controls").offset().top-10 }, 1);
+        }
         var current_value = this.model.get('value');
         var max = this.snapshots_data.length - 1;
         var next_value = current_value + 1;
@@ -656,6 +659,9 @@ App.GraphControlsView = Backbone.View.extend({
     },
 
     on_prev: function(){
+        if (App.is_touch_device()) {
+          App.jQuery('html, body').animate({ scrollTop: App.jQuery(".chart-controls").offset().top-10 }, 1);
+        }
         var current_value = this.model.get('value');
         var max = this.snapshots_data.length - 1;
         var next_value = current_value - 1;
@@ -700,7 +706,7 @@ App.GraphControlsView = Backbone.View.extend({
 
     render: function() {
         this.$el.html(this.template(
-            { 'auto': this.model.get('auto') }
+            { 'auto': this.model.get('auto'), 'is_not_touch_device': !App.is_touch_device() }
         ));
         var prev = this.$el.find('#prev');
         var play = this.$el.find('#play');
@@ -1024,7 +1030,6 @@ App.ShareOptionsView = Backbone.View.extend({
             App.chart = new Highcharts.Chart(App.chart.options);
             App.jQuery('#highcharts_zoom_in').hide();
             App.jQuery('#highcharts_zoom_reset').show();
-            App.jQuery('#highcharts_zoom_in').html(old);
         }
     },
 
