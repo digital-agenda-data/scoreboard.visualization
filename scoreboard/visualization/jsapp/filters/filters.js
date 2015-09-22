@@ -394,6 +394,8 @@ App.MultipleSelectFilter = App.SelectFilter.extend({
             multiple: true,
             filter: true,
             width: '100%',
+            minimumCountSelected: 5,
+            minumimCountSelected: 5,
             multipleWidth: 160,
             selectAllText: 'Select all/none',
             setSelects: selected_value,
