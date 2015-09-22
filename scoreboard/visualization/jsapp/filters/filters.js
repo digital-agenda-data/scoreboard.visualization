@@ -342,6 +342,7 @@ App.MultipleSelectFilter = App.SelectFilter.extend({
     template: App.get_template('filters/multiple_select.html'),
 
     events: _({
+        //'click input[type="checkbox"]': 'on_selection_change',
         'click input[type="button"][id$="-add-all"]': 'add_all',
         'click input[type="button"][id$="-clear"]': 'clear'
     }).extend(App.SelectFilter.prototype.events),
@@ -386,20 +387,32 @@ App.MultipleSelectFilter = App.SelectFilter.extend({
             'filter_label': this.label,
             'filter_name': this.name
         }));
-        this.$el.find('select').select2();
-        this.$el.find('select').select2("val", this.model.get(this.name));
+        var select = this.$el.find('select');
+        var key = this.name;
+        var model = this.model;
+        select.multipleSelect({
+            multiple: true,
+            filter: true,
+            width: '100%',
+            multipleWidth: 160,
+            selectAllText: 'Select all/none',
+            setSelects: selected_value,
+            onClose: function() {
+                // replaces on_selection_change
+                model.set(key, select.multipleSelect('getSelects'));
+            }
+        });
+        this.$el.find('select').multipleSelect("setSelects", selected_value);
     },
 
     add_all: function() {
         var all = _(this.dimension_options).pluck('notation');
-        this.model.set(this.name, []);
-        $(this.$el.find('select')).select2("val", "");
         this.model.set(this.name, all);
-        $(this.$el.find('select')).select2("val", all);
+        App.jQuery(this.$el.find('select')).multipleSelect('checkAll');
     },
 
     clear: function() {
-        this.$el.find('select').select2("val", "");
+        App.jQuery(this.$el.find('select')).multipleSelect('uncheckAll');
         this.model.set(this.name, []);
     }
 
