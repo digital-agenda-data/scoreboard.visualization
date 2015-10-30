@@ -1,11 +1,13 @@
-<label>
-  Multiple series by:
-</label>
-<select name="multiple_series">
-<option value="">--</option>
-{{# series_options }}
-  <option value="{{ name }}"
-    {{# if selected }}selected{{/ if }}
-    >{{ name }}</option>
-{{/ series_options }}
-</select>
+<div class="row">
+  <label class="col-md-3 col-sm-6">
+    Multiple series by:
+  </label>
+  <select name="multiple_series" class="col-md-9 col-sm-6">
+  <option value="">--</option>
+  {{# series_options }}
+    <option value="{{ name }}"
+      {{# if selected }}selected{{/ if }}
+      >{{ name }}</option>
+  {{/ series_options }}
+  </select>
+</div>

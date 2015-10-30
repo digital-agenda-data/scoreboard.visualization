@@ -100,6 +100,10 @@ App.ScenarioChartView = Backbone.View.extend({
             }
         });
         App.trim_dimension_group_args(relevant_args, this.dimension_group_map);
+        // remove whitelist filters from args
+        relevant_args = _(relevant_args).omit(
+            _.chain(this.options.filters_schema).where({'type':'whitelist'}).pluck('dimension').value()
+        );
         relevant_args = _({rev: this.data_revision}).extend(relevant_args);
         delete relevant_args["__dataset"];
         return $.getJSON(url, relevant_args);
@@ -127,31 +131,9 @@ App.ScenarioChartView = Backbone.View.extend({
             return;
         }
         this.$el.html("");
-        var unit_is_pc = [];
-        if(this.schema['multidim'] == 3){
+        if (this.schema['multidim'] > 1){
             args['join_by'] = this.schema.category_facet;
-            var units = [this.model.get('x-unit-measure') || '',
-                         this.model.get('y-unit-measure') || '',
-                         this.model.get('z-unit-measure') || '']
         }
-        else if(this.schema['multidim'] == 2){
-            args['join_by'] = this.schema.category_facet;
-            var units = [this.model.get('x-unit-measure') || '',
-                         this.model.get('y-unit-measure') || '']
-        }
-        else if(this.schema['multiple_series'] == 2){
-            var units = [this.model.get('x-unit-measure') || '',
-                         this.model.get('y-unit-measure') || '']
-        } else {
-            var units = [this.model.get('unit-measure') || ''];
-        }
-        _(units).each(function(unit){
-            var evaluation = false
-            if (unit && unit.length > 3 && unit.substring(0,3).toLowerCase() == 'pc_' ){
-                evaluation = true;
-            }
-            unit_is_pc.push(evaluation);
-        });
         // category_facet, value and unit-measure always in tooltip
         var tooltip_attributes = ['value', 'unit-measure'];;
         if ( this.schema['tooltips'] ) {
@@ -169,13 +151,15 @@ App.ScenarioChartView = Backbone.View.extend({
         var multiple_series = this.multiple_series;
         var chart_data = {
             'tooltip_formatter': function() {
+                // TODO: move this function
                 var attrs = this.point.attributes;
                 var out = '<b>' + attrs[category_facet.name].label + '</b>';
+                //out += JSON.stringify(attrs);
                 // point value(s) and unit-measure
                 if (_.contains(tooltip_attributes, 'value')) {
                     if ( multidim ) {
                         out += '<br><b>x</b>: ';
-                        if (unit_is_pc[0]) {
+                        if (attrs['unit-measure'] && App.unit_is_percent(attrs['unit-measure']['x']['notation'])) {
                           // keep only three significant digits
                           out += this.x.toPrecision(3);
                           out += '%';
@@ -192,23 +176,19 @@ App.ScenarioChartView = Backbone.View.extend({
                         out += '<b>y</b>: ';
                     }
                     var is_percent = false;
-                    if ( multidim ) {
-                        if (unit_is_pc[1]) is_percent = true;
-                    } else {
-                        // no multidim, but may be multi-lines chart
-                        var series_is_pc = unit_is_pc[0];
-                        if (typeof unit_is_pc[this.series.index] != 'undefined') {
-                            series_is_pc = unit_is_pc[this.series.index];
-                        }
-                        if (series_is_pc && !this.point.isNA) {
-                            is_percent = true;
-                        }
-                    }
                     if ( this.point.isNA ) {
                         out += '<b>' + this.series.name  + '</b><br>';
                         out += '<b>Data not available</b>'
                     } else {
                         // keep only three significant digits
+                        var is_percent = false;
+                        if (attrs['unit-measure']) {
+                            if (multidim) {
+                                is_percent = App.unit_is_percent(attrs['unit-measure']['y']['notation']);
+                            } else {
+                                is_percent = App.unit_is_percent(attrs['unit-measure']['notation']);
+                            }
+                        }
                         if ( is_percent ) {
                           out += this.y.toPrecision(3);
                           out += '%';
@@ -232,7 +212,7 @@ App.ScenarioChartView = Backbone.View.extend({
                     }
                     if ( multidim == 3 ) {
                         out += '<br><b>z</b>: ';
-                        if (unit_is_pc[2]) {
+                        if (attrs['unit-measure'] && App.unit_is_percent(attrs['unit-measure']['z']['notation'])) {
                           // keep only three significant digits
                           out += this.point.z.toPrecision(3);
                           out += '%';
@@ -295,7 +275,7 @@ App.ScenarioChartView = Backbone.View.extend({
                 return this.value;
             },
             'series_names': {},
-            'series_ending_labels': {}, 'unit_is_pc': unit_is_pc,
+            'series_ending_labels': {},
             'plotlines': this.schema['plotlines'] || false,
             'animation': this.schema['animation'] || false,
             'series-legend-label': this.schema['series-legend-label'] || 'none',
@@ -324,6 +304,10 @@ App.ScenarioChartView = Backbone.View.extend({
             // TODO: proper handling of all-values dimensions
             // indicator is a filter because it is the category facet
             args = _.omit(args, 'indicator');
+            data_method = '/datapoints_cp';
+        }
+        else if(this.schema['chart_type'] === 'country_profile_polar'){
+            args.subtype = 'bar';
             data_method = '/datapoints_cp';
         }
         else {
@@ -440,9 +424,47 @@ App.ScenarioChartView = Backbone.View.extend({
         _(this.get_meta_data(chart_data)).forEach(function(req) {
             requests.push(req);
         });
-        this.requests_in_flight = requests;
 
+        this.whitelist_dimensions = _.chain(this.options.filters_schema).where({'type':'whitelist'}).pluck('dimension').value();
+        // check if we need whitelist
         var that = this;
+        if (this.whitelist_dimensions.length > 0) {
+            var whitelist_request = $.getJSON(this.cube_url + '/whitelist.json');
+            whitelist_request.done(function(data) {
+                var result = _(data).map(function(obj) {
+                    // pick only whitelisted properties and convert to lowercase
+                    var newobj = {}
+                    _(that.whitelist_dimensions).each(function(dimension){
+                        if (obj[dimension]) {
+                          newobj[dimension] = obj[dimension].toLowerCase();
+                        }
+                    });
+                    return newobj;
+                })
+                that.whitelist_data = result;
+            });
+            requests.push(whitelist_request);
+        }
+        if (this.schema['chart_type'] === 'country_profile_polar') {
+            // only store the whitelist in App.whitelist
+            var whitelist_request = $.getJSON(this.cube_url + '/whitelist.json');
+            whitelist_request.done(function(data) {
+                App.whitelist = _(data).map(function(obj) {
+                  var newobj = {};
+                  _(_(obj).pairs()).each(function (item) {
+                    if (item[0] == 'name') {
+                      newobj['name'] = item[1];
+                    } else {
+                      newobj[item[0]] = item[1].toLowerCase();
+                    }
+                  });
+                  return newobj;
+                });
+            });
+            requests.push(whitelist_request);
+        }
+
+        this.requests_in_flight = requests;
 
         var ajax_calls = $.when.apply($, requests);
         ajax_calls.done(_.bind(function() {
@@ -453,14 +475,47 @@ App.ScenarioChartView = Backbone.View.extend({
                 var sample_point, legend_candidates,
                     resp = responses[n],
                     datapoints = resp[0]['datapoints'];
-                if(this.client_filter && (this.schema['chart_type'] !== 'country_profile') && this.multiple_series != 2 ) {
+                if(this.client_filter && this.multiple_series != 2 &&
+                    (this.schema['chart_type'] !== 'country_profile' && this.schema['chart_type'] !== 'polar')  ) {
+                    // filter values based on the multiple select input
                     var dimension = this.dimensions_mapping[this.client_filter];
                     datapoints = _(datapoints).filter(function(item) {
                         return _(client_filter_options).contains(
                             item[dimension]['notation']);
                     }, this);
                 }
-
+                // filter based on whitelist
+                if (this.whitelist_data) {
+                    datapoints = _(datapoints).filter(function(item) {
+                        var item_extract = {};
+                        _(this.whitelist_dimensions).each(function(dimension) {
+                            // extract only the whitelisted properties (in lowercase)
+                            item_extract[dimension] = item[dimension]['notation'].toLowerCase();
+                        });
+                        return _(this.whitelist_data).where(item_extract).length > 0;
+                    }, this);
+                    if (_(this.options.filters_schema).where({'dimension':'time-period', 'type':'select'}).length > 0) {
+                        // filter only latest values for time-period
+                        var keys = _.keys(this.whitelist_data[0]);
+                        keys.push('time-period');
+                        // cannot use _.uniq because we need to keep the most recent value
+                        var filtered_datapoints = {};
+                        _(datapoints).each(function(item) {
+                            var key = _.chain(item).pick(keys).pluck('notation').value();
+                            // extract only year (assume the format is: YYYY, YYYY-MM, YYYY-MM-DD etc)
+                            key[keys.length-1] = key[keys.length-1].split('-')[0];
+                            if (filtered_datapoints[key]) {
+                              // there is already another datapoint for the same time-period
+                              // keep only most recent, assume date format is comparable
+                              if (item['time-period']['notation'] > filtered_datapoints[key]['time-period']['notation']) {
+                                  filtered_datapoints[key] = item;
+                              }
+                            }
+                            filtered_datapoints[key] = item;
+                        }, this);
+                        datapoints = _.values(filtered_datapoints);
+                    }
+                }
                 if ( this.multiple_series == 2 ) {
                     sample_point = datapoints[0];
                     if ( sample_point ) {
@@ -590,6 +645,9 @@ App.GraphControlsView = Backbone.View.extend({
     },
 
     on_next: function(){
+        if (App.is_touch_device()) {
+          App.jQuery('html, body').animate({ scrollTop: App.jQuery(".chart-controls").offset().top-10 }, 1);
+        }
         var current_value = this.model.get('value');
         var max = this.snapshots_data.length - 1;
         var next_value = current_value + 1;
@@ -601,6 +659,9 @@ App.GraphControlsView = Backbone.View.extend({
     },
 
     on_prev: function(){
+        if (App.is_touch_device()) {
+          App.jQuery('html, body').animate({ scrollTop: App.jQuery(".chart-controls").offset().top-10 }, 1);
+        }
         var current_value = this.model.get('value');
         var max = this.snapshots_data.length - 1;
         var next_value = current_value - 1;
@@ -645,7 +706,7 @@ App.GraphControlsView = Backbone.View.extend({
 
     render: function() {
         this.$el.html(this.template(
-            { 'auto': this.model.get('auto') }
+            { 'auto': this.model.get('auto'), 'is_not_touch_device': !App.is_touch_device() }
         ));
         var prev = this.$el.find('#prev');
         var play = this.$el.find('#play');
@@ -717,7 +778,16 @@ App.AnnotationsView = Backbone.View.extend({
         }, this);
         var ajax_calls = $.when.apply($, requests);
         ajax_calls.done(_.bind(function() {
-            if(data != []) {
+            // handler for metadata (annotations) requests
+            this.$el.empty();
+            var chart_description = this.description.html();
+            var section_title = this.schema['annotations'] &&
+              this.schema['annotations']['title'] ||
+              'Definition and scopes:';
+            if ( this.schema.annotations && this.schema.annotations.notes ) {
+                chart_description = this.schema.annotations.notes;
+            }
+            if(data && data.length > 0) {
                 var blocks_order = _(annotations.filters).pluck('name');
                 var blocks = _.chain(data).sortBy(function(item){
                     return _(blocks_order).indexOf(item['filter_name']);
@@ -730,25 +800,15 @@ App.AnnotationsView = Backbone.View.extend({
                         "filter_label": facet.label
                     });
                 }, this).value();
-                var chart_description = this.description.html();
-                if ( this.schema.annotations && this.schema.annotations.notes ) {
-                    chart_description = this.schema.annotations.notes;
-                }
-                var section_title = this.schema['annotations'] &&
-                  this.schema['annotations']['title'] ||
-                  'Definition and scopes:';
-                var context = {
-                     "description": chart_description,
-                     "section_title": section_title,
-                     "indicators_details_url": this.cube_url + '/indicators',
-                     "blocks": blocks
-                };
-                this.trigger('metadata_ready', context);
-                this.$el.html(this.template(context));
             }
-            else {
-                this.$el.empty();
-            }
+            var context = {
+                 "description": chart_description,
+                 "section_title": section_title,
+                 "indicators_details_url": this.cube_url + '/indicators',
+                 "blocks": blocks
+            };
+            this.trigger('metadata_ready', context);
+            this.$el.html(this.template(context));
         }, this));
     }
 
@@ -890,6 +950,10 @@ var BaseDialogView = Backbone.View.extend({
 App.ShareOptionsView = Backbone.View.extend({
 
     events: {
+        'click #highcharts_zoom_in': 'highcharts_zoom_in',
+        'click #highcharts_zoom_reset': 'highcharts_zoom_reset',
+        'click #highcharts_print': 'highcharts_print',
+        'click #highcharts_download': 'highcharts_download',
         'click #csv': 'request_csv',
         'click #excel': 'request_excel',
         'click #embed': 'request_embed',
@@ -907,6 +971,27 @@ App.ShareOptionsView = Backbone.View.extend({
             'target': '_top',
             'method': 'POST'
         });
+        this.svg_form = App.jQuery('<form>', {
+            'id': 'svg2pngform',
+            'action': App.URL + '/svg2png',
+            'target': '_top',
+            'method': 'POST'
+        });
+        App.jQuery(this.svg_form).append(
+            App.jQuery('<input>', {
+                'name': 'svg',
+                'type': 'hidden'
+            }
+        ));
+        var tokens = window.location.pathname.split("/");
+        var filename = tokens[tokens.length-1];
+        App.jQuery(this.svg_form).append(
+            App.jQuery('<input>', {
+                'name': 'filename',
+                'type': 'hidden',
+                'value': filename + '.png'
+            }
+        ));
         this.render();
     },
 
@@ -916,10 +1001,80 @@ App.ShareOptionsView = Backbone.View.extend({
         this.$el.find('form').submit();
     },
 
+    request_excel: function(ev){
+        ev.preventDefault();
+        App.jQuery('input[name="format"]', this.form).remove();
+        App.jQuery(this.$el.find('form')).append(
+            App.jQuery('<input>', {
+                'name': 'format',
+                'value': 'xls',
+                'type': 'hidden'
+            }
+        )).submit();
+    },
+
     request_embed: function(ev){
         ev.stopPropagation();
-        window.location.replace(window.location.pathname + "/embedded" + window.location.hash);
+        window.location.href = window.location.pathname + "/embedded" + window.location.hash;
         return false;
+    },
+
+    highcharts_print: function(ev){
+        ev.stopPropagation();
+        App.chart.print();
+    },
+
+    highcharts_enable_zoom: function(zoom_type) {
+        if (!App.chart.options.chart.zoomType) {
+            App.chart.options.chart.zoomType = zoom_type;
+            App.chart = new Highcharts.Chart(App.chart.options);
+            App.jQuery('#highcharts_zoom_in').hide();
+            App.jQuery('#highcharts_zoom_reset').show();
+        }
+    },
+
+    highcharts_zoom_in: function(ev){
+        // custom button only visible in touchscreen devices
+        ev.stopPropagation();
+        if (App.chart.options.chart.type == 'column') {
+            this.highcharts_enable_zoom('x');
+            App.chart.xAxis[0].setExtremes(App.chart.xAxis[0].getExtremes().dataMin, Math.ceil(App.chart.xAxis[0].getExtremes().max/2));
+        } else if (App.chart.options.chart.type == 'spline') {
+            this.highcharts_enable_zoom('xy');
+        }
+        App.jQuery('html, body').animate({ scrollTop: App.jQuery("#the-chart").offset().top }, 1);
+    },
+    
+    highcharts_zoom_reset: function(ev){
+        ev.stopPropagation();
+        if (App.chart.options.chart.zoomType) {
+            // disable zoom and recreate chart
+            App.chart.options.chart.zoomType = null;
+            App.chart = new Highcharts.Chart(App.chart.options);
+            App.jQuery('#highcharts_zoom_in').show();
+            App.jQuery('#highcharts_zoom_reset').hide();
+        }
+        App.chart.zoomOut();
+        //App.chart.xAxis[0].setExtremes(null, null);
+        //App.chart.yAxis[0].setExtremes(null, null);
+        App.jQuery('html, body').animate({ scrollTop: App.jQuery("#the-chart").offset().top }, 1);
+    },
+    
+    highcharts_download: function(ev){
+        ev.stopPropagation();
+        var chartdiv = $(".highcharts-container");
+        if (chartdiv && App.chart.options && App.chart.options.exporting) {
+            var minwidth = Math.min($(window).height(), 750);
+            if (App.chart.options.chart.polar) {
+                minwidth = 1200;
+            }
+            App.chart.options.exporting.sourceWidth = minwidth;
+            App.chart.options.exporting.sourceHeight = minwidth*chartdiv.height()/chartdiv.width();
+        }
+        App.jQuery('input[name="svg"]', this.svg_form).attr('value', App.chart.getSVG());
+        // appendTo body to make it work in Internet Explorer
+        this.svg_form.appendTo('body').submit().remove();
+        //this.svg_form.submit();
     },
 
     get_forum_url: function() {
@@ -942,18 +1097,6 @@ App.ShareOptionsView = Backbone.View.extend({
         var modal_form = new BaseDialogView({form_action: form_action});
         modal_form.render();
         return false;
-    },
-
-    request_excel: function(ev){
-        ev.preventDefault();
-        App.jQuery('input[name="format"]', this.form).remove();
-        App.jQuery(this.$el.find('form')).append(
-            App.jQuery('<input>', {
-                'name': 'format',
-                'value': 'xls',
-                'type': 'hidden'
-            }
-        )).submit();
     },
 
     metadata_ready: function(annotations){
@@ -987,9 +1130,11 @@ App.ShareOptionsView = Backbone.View.extend({
     },
 
     render: function() {
-        this.$el.html(this.template({'related': this.related.html()}));
+        this.$el.html(this.template({
+            'related': this.related.html(),
+            'zoomEnabled': App.is_touch_device()
+        }));
         App.jQuery(this.form).appendTo(this.$el);
-        //window.addthis.button('#scoreboard-addthis', {}, {url: this.url});
         if ( window.addthis) {
             window.addthis.toolbox('.addthis_toolbox', {}, {url: this.url});
         }

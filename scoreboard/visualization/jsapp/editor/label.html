@@ -1,12 +1,12 @@
 <label>{{ title }}</label>
-<select name="facet" class="span3">
+<select name="facet" class="col-md-3 col-sm-3 col-xs-3">
 {{# facet_options }}
   <option value="{{ value }}"
     {{# if selected }}selected{{/ if }}
     >{{ label }}</option>
 {{/ facet_options }}
 </select>
-<select name="field" class="span2">
+<select name="field" class="col-md-2 col-sm-2 col-xs-2">
 {{# field_options }}
   <option value="{{ value }}"
     {{# if selected }}selected{{/ if }}

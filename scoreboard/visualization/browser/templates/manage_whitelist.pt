@@ -16,10 +16,9 @@
 
          <span class="alert-error" tal:content="error" />
          <br/>
-         <div class="input-group">
-           <span class="input-group-addon">Select file for upload</span>
-           <input type="file" class="form-control"
-             placeholder="Select file for upload" name="file">
+         <div class="input-group select-file-upload">
+           <span class="label-select-file-upload">Select file for upload:</span>
+           <input type="file" placeholder="Select file for upload" name="file">
          </div>
          <br/>
          <div class="input-group">
@@ -31,16 +30,14 @@
          </div>
          <br/>
          <div class="input-group">
-          <input type="submit" class="btn btn-mini btn-primary"
-           name="form.submitted" value="Import XLS" />
-          <input type="submit" class="btn btn-mini" name="export"
-           value="Export XLS" />
+          <input type="submit" class="btn btn-sm btn-primary btn-import-xls" name="form.submitted" value="Import XLS" />
+          <input type="submit" class="btn btn-sm btn-default btn-export-xls" name="export" value="Export XLS" />
          </div>
       </form>
       </div>
       <br/>
       <div class="whitelist">
-        <table id="whitelist-table">
+        <table id="whitelist-table" class="white-area">
           <thead>
           </thead>
           <tbody>

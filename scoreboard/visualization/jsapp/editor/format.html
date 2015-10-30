@@ -5,10 +5,11 @@
 {{/ descriptions }}
 
 <h5>Credits</h5>
-
-<label>Text</label>
-<input type="text" class="span5" name="credits-text" value="{{ credits.text }}">
-
-<br>
-<label>Link</label>
-<input type="text" class="span5" name="credits-link" value="{{ credits.link }}">
+<div class="row">
+  <label class="col-md-1 col-sm-6">Text</label>
+  <input type="text" class="col-md-10 col-sm-6" name="credits-text" value="{{ credits.text }}">
+</div>
+<div class="row">
+  <label class="col-md-1 col-sm-6">Link</label>
+  <input type="text" class="col-md-10 col-sm-6" name="credits-link" value="{{ credits.link }}">
+</div>

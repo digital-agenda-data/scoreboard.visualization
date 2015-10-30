@@ -128,6 +128,9 @@
     },
     "breakdown-group": {
         "facet": "breakdown-group"
+    },
+    "ref-area": {
+        "facet": "ref-area"
     }
   },
   "multiple_series": "breakdown",
@@ -156,7 +159,7 @@
     ],
     "subtitle": [
       {
-        "facet_name": "time-period",
+        "facet_name": "ref-area",
         "prefix": null,
         "suffix": null,
         "format": "label"

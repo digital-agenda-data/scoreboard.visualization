@@ -13,22 +13,23 @@ App.chart_library['lines'] = function(view, options) {
                     options['series'],
                     options['sort'],
                     options['multidim'],
-                    options['unit_is_pc'],
                     options['category_facet'],
                     options['highlights']);
 	_.map(series, function(elem) {
         var lastElem;
         _(elem.data).each(function(item){
-            if (item.y != undefined) {
+            if (item.y != undefined && !isNaN(item.y) && item.y != null) {
                 lastElem = item;
+            } else {
+               item.y = null;
             }
         });
         if (lastElem) {
             _(lastElem).extend({
                 dataLabels: {
                   enabled: true,
-                  crop: false,
-                  overflow: 'none',
+                  //crop: false,
+                  //overflow: 'none',
                   x: 3,
                   align: 'left',
                   verticalAlign: 'middle',
@@ -42,24 +43,20 @@ App.chart_library['lines'] = function(view, options) {
                   }
                 }
             });
-        }
+        };
     });
 
     var viewPortWidth = _.min([$(window).width(), 1130]) - 30;
-    var legendWidth = _.min([viewPortWidth * 0.25, 250]);
-    var viewPortHeight = _.min([$(window).height()-100, 450]);
-    if ( App.visualization.embedded ) {
-        viewPortHeight = _.min([$(window).height(), 470]) - 20;
-    }
+    var viewPortHeight = _.min([$(window).height(), 470]) - 20;
 
     var titleFontSize = 16;
     if ( viewPortHeight < 450 ) titleFontSize = 14;
     if ( viewPortHeight < 350 ) titleFontSize = 12;
     if ( viewPortWidth < 600 ) titleFontSize = titleFontSize-1;
+    if ( viewPortWidth < 450 ) titleFontSize = titleFontSize-2;
 
     var yAxis = {
         min:0,
-        //max: options['unit_is_pc'][0]?100:null,
         minRange: 1,
         startOnTick: false,
         minPadding: 0.1,
@@ -67,8 +64,8 @@ App.chart_library['lines'] = function(view, options) {
             text: typeof(options.titles.yAxisTitle) == 'string'?options.titles.yAxisTitle:options.titles.yAxisTitle[0],
             style: {
                 color: '#000000',
-                fontSize: (titleFontSize-2) + 'px',
-                fontWeight: 'bold'
+                fontFamily: App.font_family,
+                fontSize: (titleFontSize-2) + 'px'
             }
         },
         labels: {
@@ -94,21 +91,19 @@ App.chart_library['lines'] = function(view, options) {
         var yAxis = [yAxis];
         yAxis.push({
             min:0,
-            //max: options['unit_is_pc'][1]?100:null,
             max: max_value,
             opposite: true,
             title: {
                 text: options.titles.yAxisTitle[1],
-                //text: 'second series',
                 style: {
                     color: '#000',
-                    fontSize: (titleFontSize-2) + 'px',
-                    fontWeight: 'bold'
+                    fontFamily: App.font_family,
+                    fontSize: (titleFontSize-2) + 'px'
                 }
             },
             labels: {
                 style: {
-                    color: '#000'
+                    color: '#000000'
                 }
             }
         });
@@ -118,34 +113,21 @@ App.chart_library['lines'] = function(view, options) {
         });
     }
 
-    var has_legend = options['series-legend-label'] && options['series-legend-label'] != 'none';
-    var marginTop = 100;
-    if ( App.visualization.embedded ) {
-        if ( options.titles.title ) {
-            marginTop = 10 + 20 * Math.ceil(options.titles.title.length / 60);
-        } else {
-            marginTop = 20;
-        }
-    }
     var chartOptions = {
         chart: {
             renderTo: container,
             type: 'spline',
-            zoomType: 'y',
-            marginLeft: 60,
-            marginRight: 70 + (has_legend?legendWidth:0),
-            marginTop: marginTop,
-            marginBottom: 50,
-            height: viewPortHeight,
-            width: viewPortWidth
+            zoomType: App.is_touch_device()?null:'xy',
+            height: viewPortHeight
         },
         colors: App.SERIES_COLOR,
         credits: {
-            href: options['credits']['href'],
+            href: App.is_touch_device()?null:options['credits']['href'],
             text: options['credits']['text'],
+            target: '_blank',
             position: {
                 align: 'right',
-                x: -10,
+                x: -5,
                 verticalAlign: 'bottom',
                 y: -2
             },
@@ -156,33 +138,23 @@ App.chart_library['lines'] = function(view, options) {
         },
         title: {
             text: options.titles.title,
-            align: "center",
-            x: viewPortWidth/2-25,
-            width: viewPortWidth - 50,
-            y: App.visualization.embedded ? 5 : 35,
             style: {
                 color: '#000000',
-                fontFamily: 'Verdana',
-                fontSize: titleFontSize + 'px',
-                fontWeight: 'bold'
+                fontFamily: App.font_family,
+                fontSize: titleFontSize + 'px'
             }
         },
         subtitle: {
             text: options.titles.subtitle,
-            align: "left",
-            x: 45,
-            y: marginTop-20,
             style: {
                 color: '#000000',
-                fontFamily: 'Verdana',
+                fontFamily: App.font_family,
                 fontSize: (titleFontSize-1) + 'px',
-                fontWeight: 'bold'
             }
         },
         xAxis: {
             type: 'datetime',
             tickInterval: 3600 * 24 * 1000 * 365,
-            //minorTickInterval: 3600 * 24 * 1000 * 365 / 2,
             minorGridLineWidth: 0,
             minorTickWidth: 1,
             lineColor: '#191919',
@@ -196,48 +168,62 @@ App.chart_library['lines'] = function(view, options) {
             },
             startOnTick: true,
             endOnTick: true,
-            showLastLabel: true,
+            showLastLabel: false,
             labels: {
-                align: App.visualization.embedded?'right':'left',
-                rotation: App.visualization.embedded?-45:0,
+                align: 'left',
                 style: {
                     color: '#000000'
                 },
-                x: 20
+                x: App.width_s()?5:20
             }
         },
         yAxis: yAxis,
         tooltip: {
+            animation: false,
             useHTML: true,
-            formatter: options['tooltip_formatter']
-            // style is set from external css
+            hideDelay: 100,
+            formatter: options['tooltip_formatter'],
+            snap: 0
         },
         legend: {
+            animation: false,
             layout: 'vertical',
-            align: 'left',
-            verticalAlign: 'top',
+            align: App.width_s()?'center':'right',
+            verticalAlign: App.width_s()?'bottom':'top',
             // useHTML: true,
-            // disabled because IE9 raises SCRIPT5007: Unable to get property 'childNodes'
-            // when changing the indicator
-            x: viewPortWidth - legendWidth - 15,
-            y: 100,
+            // useHTML disabled because IE9 raises SCRIPT5007: Unable to get property 'childNodes' when changing the indicator
+            y: App.width_s()?null:20,
+            title: {
+                text: 'Legend',
+                style: {
+                    fontWeight: 'normal',
+                    fontFamily: App.font_family
+                }
+            },
             borderWidth: 0,
             backgroundColor: '#FFF',
             itemMarginBottom: 5,
             itemStyle: {
-                fontFamily: 'Verdana',
-                fontSize: '10px',
-                width: legendWidth - 30
+                fontSize: '11px',
+                fontWeight: 'normal',
+                fontFamily: App.font_family,
+                width: App.width_s()?viewPortWidth-20:150
             }
         },
         plotOptions: {
             series: {
                 connectNulls: true,
+                stickyTracking: false,
                 marker: {
                     fillColor: null,
                     lineWidth: 1,
                     radius: 3,
                     lineColor: null
+                },
+                events: {
+                    legendItemClick: function() {
+                        if (App.is_touch_device()) return false;
+                    }
                 }
             }
         },
@@ -247,7 +233,7 @@ App.chart_library['lines'] = function(view, options) {
     App.set_default_chart_options(chartOptions);
     App.disable_legend(chartOptions, options);
     App.override_zoom();
-    var chart = new Highcharts.Chart(chartOptions);
+    App.chart = new Highcharts.Chart(chartOptions);
 
     var metadata = {
         'chart-title': options.titles.title,

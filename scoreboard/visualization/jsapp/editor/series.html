@@ -1,43 +1,47 @@
-<label>Legend</label>
-<select class="span2" name="legend-label">
-{{# legend_label_options }}
-  <option value="{{ value }}"
-    {{# if selected }}selected{{/ if }}
-    >{{ label }}</option>
-{{/ legend_label_options }}
-</select>
+<div class="row">
+  <label class="col-md-3 col-sm-6">Legend</label>
+  <select class="col-md-9 col-sm-6" name="legend-label">
+  {{# legend_label_options }}
+    <option value="{{ value }}"
+      {{# if selected }}selected{{/ if }}
+      >{{ label }}</option>
+  {{/ legend_label_options }}
+  </select>
+</div>
 
+<div class="row">
+  <label class="col-md-3 col-sm-6">Point label</label>
+  <select class="col-md-9 col-sm-6" name="point-label">
+  {{# point_label_options }}
+    <option value="{{ value }}"
+      {{# if selected }}selected{{/ if }}
+      >{{ label }}</option>
+  {{/ point_label_options }}
+  </select>
+</div>
 
-<br>
-<label>Point label</label>
-<select class="span2" name="point-label">
-{{# point_label_options }}
-  <option value="{{ value }}"
-    {{# if selected }}selected{{/ if }}
-    >{{ label }}</option>
-{{/ point_label_options }}
-</select>
+<div class="row">
+  <label class="col-md-3 col-sm-6">Series ending label</label>
+  <select class="col-md-9 col-sm-6" name="ending-label">
+  {{# ending_label_options }}
+    <option value="{{ value }}"
+      {{# if selected }}selected{{/ if }}
+      >{{ label }}</option>
+  {{/ ending_label_options }}
+  </select>
+</div>
 
-<br>
-<label>Series ending label</label>
-<select class="span2" name="ending-label">
-{{# ending_label_options }}
-  <option value="{{ value }}"
-    {{# if selected }}selected{{/ if }}
-    >{{ label }}</option>
-{{/ ending_label_options }}
-</select>
-
-<br>
-<label>Tooltips:</label>
-<ul>
-{{# tooltips }}
-  <li>
-    <label>
-      <input type="checkbox" name="tooltip" value="{{ value }}"
-             {{# if checked }}checked{{/ if }}>
-      {{ label }}
-    </label>
-  </li>
-{{/ tooltips }}
-</ul>
+<div class="row">
+  <label class="col-md-3 col-sm-6">Tooltips:</label>
+  <ul class="col-md-8 col-sm-6">
+  {{# tooltips }}
+    <li>
+      <label>
+        <input type="checkbox" name="tooltip" value="{{ value }}"
+               {{# if checked }}checked{{/ if }}>
+        {{ label }}
+      </label>
+    </li>
+  {{/ tooltips }}
+  </ul>
+</div>

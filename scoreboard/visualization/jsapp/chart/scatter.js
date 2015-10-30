@@ -14,7 +14,6 @@ App.chart_library['scatter'] = function(view, options) {
                     options['series'],
                     options['sort'],
                     options['multidim'],
-                    options['unit_is_pc'],
                     options['category_facet'],
                     options['highlights']);
 
@@ -31,28 +30,37 @@ App.chart_library['scatter'] = function(view, options) {
         }
     });
 
-    var viewPortWidth = _.min([$(window).width(), 770]) - 20;
+    var legendItemWidth = 120;
+    var marginRight = (App.visualization.embedded || App.width_s())?0:(30+legendItemWidth);
+    var marginLeft = 100;
+    var marginTop = 30;
+    var marginBottom = 90;
+    var viewPortSize = _.min([700,
+        ($(window).width()-marginRight-marginLeft-20),  // 20 to avoid a scrollbar
+        ($(window).height()-marginTop-marginBottom)
+    ]);
     var chartOptions = {
         chart: {
             renderTo: container,
             defaultSeriesType: 'scatter',
-            zoomType: 'xy',
-            marginLeft: App.visualization.embedded?80:100,
-            marginRight: App.visualization.embedded?20:150,
-            marginTop: 30,
-            marginBottom: 70,
-            height: viewPortWidth-(App.visualization.embedded?0:100),
-            width: viewPortWidth,
+            zoomType: App.is_touch_device()?null:'xy',
+            marginLeft: marginLeft,
+            marginRight: marginRight,
+            marginTop: marginTop,
+            marginBottom: marginBottom,
+            height: viewPortSize+marginTop+marginBottom,
+            width: viewPortSize+marginLeft+marginRight,
             ignoreHiddenSeries: false
         },
         credits: {
-            href: options['credits']['href'],
+            href: App.is_touch_device()?null:options['credits']['href'],
             text: options['credits']['text'],
+            target: '_blank',
             position: {
                 align: 'right',
-                x: -10,
+                x: -5,
                 verticalAlign: 'bottom',
-                y: -5
+                y: -2
             },
             style: {
                 fontSize: '12px',
@@ -62,12 +70,9 @@ App.chart_library['scatter'] = function(view, options) {
         title: {
             text: options.titles.title,
             align: 'center',
-            x: viewPortWidth/2-(App.visualization.embedded?20:150),
-            width: viewPortWidth-(App.visualization.embedded?100:250),
             style: {
                 color: '#000000',
-                fontFamily: 'Verdana',
-                fontWeight: 'bold'
+                fontWeight: 'normal'
             }
         },
         xAxis: [{
@@ -78,14 +83,12 @@ App.chart_library['scatter'] = function(view, options) {
                 text: options.titles.xAxisTitle,
                 style: {
                     color: '#000000',
-                    fontWeight: 'bold',
-                    width: viewPortWidth-100
+                    fontWeight: App.width_s()?'normal':'bold',
+                    width: viewPortSize
                 }
             },
             showLastLabel: true,
             labels: {
-                formatter: _.partial(App.tick_labels_formatter,
-                                     options.unit_is_pc[0]),
                 style: {
                     color: '#000000'
                 }
@@ -99,41 +102,56 @@ App.chart_library['scatter'] = function(view, options) {
                 text: options.titles.yAxisTitle,
                 style: {
                     color: '#000000',
-                    fontWeight: 'bold',
-                    width: viewPortWidth-300
+                    fontWeight: App.width_s()?'normal':'bold'
                 },
                 margin: 35
             },
             labels: {
-                formatter: _.partial(App.tick_labels_formatter,
-                                     options.unit_is_pc[1]),
                 style: {
                     color: '#000000'
                 }
             }
         },
         tooltip: {
+            animation: false,
+            hideDelay: 100,
+            useHTML: true,
             formatter: options['tooltip_formatter'],
-            useHTML: true
+            snap: 0
         },
         legend: {
-            enabled: !App.visualization.embedded,
+            animation: false,
+            enabled: !App.visualization.embedded && !App.width_s(),
             layout: 'vertical',
             align: 'right',
             verticalAlign: 'top',
             style: {
-                fontFamily: 'Verdana',
                 fontSize: '11px'
             },
-            x: -5,
-            y: 30,
-            borderWidth: 1,
-            floating: true
+            itemStyle: {
+                fontSize: '11px',
+                fontWeight: 'normal'
+            },
+            itemWidth: legendItemWidth-20,
+            x: 0,
+            y: marginTop,
+            borderWidth: 1
         },
         plotOptions: {
+            series: {
+                stickyTracking: false
+            },
             scatter: {
                 marker: {
                     // radius:1 // see common.js:App.format_series
+                },
+                dataLabels: {
+                    // see common.js:App.format_series
+                },
+                events: {
+                    legendItemClick: function() {
+                        if (App.is_touch_device()) return false;
+                    }
                 },
                 states: {
                     hover: {
@@ -152,7 +170,9 @@ App.chart_library['scatter'] = function(view, options) {
         App.disable_legend(chartOptions, options);
     }
 
-    var chart = new Highcharts.Chart(chartOptions);
+    App.chart = new Highcharts.Chart(chartOptions);
+    // hide zoom button on mobile devices (default zoom in is enough)
+    App.jQuery('#highcharts_zoom_in').hide();
 
     var metadata = {
         'chart-title': options.titles.title,
@@ -166,7 +186,7 @@ App.chart_library['scatter'] = function(view, options) {
     view.trigger('chart_ready', series, metadata, options['chart_type']);
 
     if (options['plotlines']){
-        App.add_plotLines(chart, series[0], options['plotlines']);
+        App.add_plotLines(App.chart, series[0], options['plotlines']);
     }
 
     if (options['animation']){
@@ -182,7 +202,7 @@ App.chart_library['scatter'] = function(view, options) {
             });
             $('#the-filters .footer').append(App.chart_controls.$el);
         }else{
-            App.chart_controls.chart = chart;
+            App.chart_controls.chart = App.chart;
             App.chart_controls.update_data(series);
         };
     }

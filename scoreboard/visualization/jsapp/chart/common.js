@@ -15,13 +15,13 @@ function sort_serie(serie, sort, category_facet){
         else{
             if (sort.by == 'value'){
                 var value = item['y'];
-                if (isNaN(value)){
+                if (isNaN(value) || value == null){
                     value = 0;
                 }
                 return sort.order * value;
             }
             if (sort.by == 'category'){
-                if (category_facet == 'time-period'){
+                if (_.contains(App.TIME_PERIOD_DIMENSIONS, category_facet)){
                     return item['x'];
                 } else {
                     return item['name'];
@@ -66,10 +66,8 @@ App.sort_by_total_stacked = function (series, sort){
   });
 }
 
-App.format_series = function (data, sort, multidim, percent, category, highlights, animation, series_point_label){
-    var multiplicators = _(percent).map(function(pc){
-        return pc?100:1;
-    });
+App.format_series = function (data, sort, multidim, category, highlights, animation, series_point_label, ignore_percents){
+    // ignore_percents is only used by the country profile => multidim = 0
     var countrycolor = function(code) {
         if (_.isNull(App.COUNTRY_COLOR[code]) || _.isUndefined(App.COUNTRY_COLOR[code])) {
             return null;
@@ -90,11 +88,14 @@ App.format_series = function (data, sort, multidim, percent, category, highlight
                 var data = [{
                     'name': notation,
                     'attributes': _(datapoint).omit('value'),
-                    'x': datapoint['value']['x'] * multiplicators[0],
-                    'y': datapoint['value']['y'] * multiplicators[1]
+                    'x': datapoint['value']['x'] *
+                        (datapoint['unit-measure']?App.multiplicator(datapoint['unit-measure']['x']['notation']):1),
+                    'y': datapoint['value']['y'] *
+                        (datapoint['unit-measure']?App.multiplicator(datapoint['unit-measure']['y']['notation']):1)
                 }]
                 if (multidim == 3){
-                    data[0]['z'] = datapoint['value']['z'] * multiplicators[2]
+                    data[0]['z'] = datapoint['value']['z'] *
+                        (datapoint['unit-measure']?App.multiplicator(datapoint['unit-measure']['z']['notation']):1);
                 }
                 var output = {
                     'name': datapoint[category]['label'],
@@ -110,10 +111,11 @@ App.format_series = function (data, sort, multidim, percent, category, highlight
                     },
                     'dataLabels': {
                         'enabled': true,
-                        'x': 16,
-                        'y': 4,
                         'style': {
-                            'font-weight': 'normal'
+                            color: '#000000',
+                            fontWeight: 'normal',
+                            fontSize: '10px',
+                            fontFamily: App.font_family
                         },
                         'formatter': label_formatter
                     }
@@ -139,6 +141,7 @@ App.format_series = function (data, sort, multidim, percent, category, highlight
             return _(serie).sortBy('name');
         }).value();
     }else{
+        // not multidim
         var first_serie = false;
         var series_counter = {};
         var extract_data = function(series_item){
@@ -181,20 +184,16 @@ App.format_series = function (data, sort, multidim, percent, category, highlight
 
         var diffs_collection = {}
         var series = _.chain(data).map(function(item, key){
-            // multiply with 100 for percentages
-            _(item['data']).map(function(item) {
-                var value = item['value'];
-                if ( typeof(value) == "string" ) {
-                    value = parseFloat(value);
-                }
-                if ( multiplicators[key] ) {
-                    // multiple_series=2 (multilines)
-                    item['value'] = value * multiplicators[key];
-                } else {
-                    // same unit of measure for all series
-                    item['value'] = value * multiplicators[0];
-                }
-            });
+            // multiply with 100 for percentages unless ignore_percents is true
+            if (!ignore_percents) {
+                _(item['data']).map(function(item) {
+                    var value = item['value'];
+                    if ( typeof(value) == "string" ) {
+                        value = parseFloat(value);
+                    }
+                    item['value'] = value * (item['unit-measure']?App.multiplicator(item['unit-measure']['notation']):1);
+                });
+            }
             var data = _(item['data']).map(extract_data);
             _.chain(data).
               each(function(item){
@@ -233,7 +232,7 @@ App.format_series = function (data, sort, multidim, percent, category, highlight
                                 ['y', null]])
                   );
               });
-            if (category == 'time-period' || category == 'refPeriod'){
+            if (_.contains(App.TIME_PERIOD_DIMENSIONS, category)){
                 var date_pattern = /^([0-9]{4})(?:-(?:([0-9]{2})|(?:Q([0-9]){1})|(?:H([0-9]){1})))*$/;
                 _(serie).each(function(item){
                     var matches = date_pattern.exec(item['code']);
@@ -351,11 +350,23 @@ App.add_plotLines = function(chart, series, chart_type){
 }
 
 App.disable_legend = function(chartOptions, options){
-    if (options && (!options['series-legend-label'] || options['series-legend-label'] == 'none')){
+    if (options && (!options['series-legend-label'] || options['series-legend-label'] == 'none' ||
+        chartOptions && chartOptions.series.length < 2)){
         var disabled_legend = {
             legend: {enabled: false}
         };
         _(chartOptions).extend(disabled_legend);
+        // if the name of the single series is not a total, show it in chart title/subtitle
+        if (chartOptions.series[0].notation && !_.contains(App.notation_totals, chartOptions.series[0].notation)) {
+          if (!chartOptions.subtitle.text || chartOptions.subtitle.text == '') {
+              // use chart subtitle instead of legend, if not used
+            chartOptions.subtitle.text = chartOptions.series[0].name;
+          } else {
+              var title = chartOptions.title.text || '';
+              // use chart title instead of legend
+              chartOptions.title.text = title + ' - ' + chartOptions.series[0].name;
+          }
+        }
     }
 }
 
@@ -370,7 +381,7 @@ App.override_zoom = function() {
 }
 
 App.set_default_chart_options = function(chartOptions){
-    var menuItems = _.rest(Highcharts.getOptions().exporting.buttons.contextButton.menuItems, 2);
+    Highcharts.setOptions({ chart: { style: { fontFamily: App.font_family }}});
     _(chartOptions).extend({
         navigation: {
             buttonOptions: {
@@ -384,6 +395,8 @@ App.set_default_chart_options = function(chartOptions){
             }
         }
     });
+/* print and download buttons moved to share panel
+    var menuItems = _.rest(Highcharts.getOptions().exporting.buttons.contextButton.menuItems, 2);
     if ( ! App.visualization.embedded ) {
         _(chartOptions).extend({
             exporting: {
@@ -394,10 +407,42 @@ App.set_default_chart_options = function(chartOptions){
                     exportButton: {
                         text: 'Download image',
                         // Use only the download related menu items from the default context button
-                        menuItems: menuItems
+                        menuItems: menuItems,
+                        theme: {
+                          'stroke-width': 1,
+                          stroke: '#99C1D2',
+                          fill: '#BEE0F0',
+                          r: 3,
+                         states: {
+                             hover: {
+                                 stroke: '#7CA8BB',
+                                 fill: '#94C5DB'
+                             },
+                             select: {
+                                 stroke: '#7CA8BB',
+                                 fill: '#94C5DB'
+                             }
+                          }
+                        }
                     },
                     printButton: {
                         text: 'Print chart',
+                        theme: {
+                          'stroke-width': 1,
+                          stroke: '#398439',
+                          fill: '#449D44',
+                          r: 3,
+                         states: {
+                             hover: {
+                                 stroke: '#0A710A',
+                                 fill: '#2A862A'
+                             },
+                             select: {
+                                 stroke: '#0A710A',
+                                 fill: '#2A862A'
+                             }
+                          }
+                        },
                         onclick: function () {
                             this.print();
                         }
@@ -406,17 +451,7 @@ App.set_default_chart_options = function(chartOptions){
             }
         });
     }
-}
-
-
-App.tick_labels_formatter = function(max100) {
-    if (this.value < 0){
-        return null;
-    }
-    if (max100 && this.value > 100){
-        return null;
-    }
-    return this.value;
+*/
 }
 
 App.title_formatter = function(parts, meta_data){
@@ -424,14 +459,15 @@ App.title_formatter = function(parts, meta_data){
         if(!part.prefix){
             part = _(part).omit('prefix');
         }
-        part.text = '';
+        //part.text = '';
         if (!meta_data){
             part.text = part.facet_name + "(" + part.format + ")";
-        }
-        else if (_(meta_data).has(part.facet_name)){
+        } else if (_(meta_data).has(part.facet_name)) {
             // todo: configurable list of notations for totals
             if ( meta_data[part.facet_name]['notation'] &&
-                 !_.contains(App.notation_totals, meta_data[part.facet_name]['notation'])) {
+                 _.contains(App.notation_totals, meta_data[part.facet_name]['notation'])) {
+              part.text = null;
+            } else {
               part.text = meta_data[part.facet_name][part.format];
             }
         }
@@ -442,22 +478,17 @@ App.title_formatter = function(parts, meta_data){
     var titleAsArray = [];
 
     _(parts).each(function(item, idx){
-        var prefix = item.prefix || '';
-        if (idx > 0 && !parts[idx-1].suffix && !prefix){
-            prefix = ' ';
-        }
-        var suffix = item.suffix || '';
-        var part = (item.text != 'Total')?item.text:null;
-        var part = null;
-        if (item.text != 'Total') {
-          part = item.text;
-        }
-        if ( item.asArray ) {
-            titleAsArray.push(part);
-        } else {
-            if (part){
-                title += (prefix + part + suffix);
+        if (item.text) {
+          if ( item.asArray ) {
+            titleAsArray.push(item.text);
+          } else {
+            var prefix = item.prefix || '';
+            if (idx > 0 && !parts[idx-1].suffix && !prefix){
+                prefix = ' ';
             }
+            var suffix = item.suffix || '';
+            title += (prefix + item.text + suffix);
+          }
         }
     });
 
