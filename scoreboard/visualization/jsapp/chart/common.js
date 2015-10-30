@@ -356,6 +356,17 @@ App.disable_legend = function(chartOptions, options){
             legend: {enabled: false}
         };
         _(chartOptions).extend(disabled_legend);
+        // if the name of the single series is not a total, show it in chart title/subtitle
+        if (chartOptions.series[0].notation && !_.contains(App.notation_totals, chartOptions.series[0].notation)) {
+          if (!chartOptions.subtitle.text || chartOptions.subtitle.text == '') {
+              // use chart subtitle instead of legend, if not used
+            chartOptions.subtitle.text = chartOptions.series[0].name;
+          } else {
+              var title = chartOptions.title.text || '';
+              // use chart title instead of legend
+              chartOptions.title.text = title + ' - ' + chartOptions.series[0].name;
+          }
+        }
     }
 }
 
