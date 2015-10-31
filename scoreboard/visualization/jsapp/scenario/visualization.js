@@ -16,6 +16,8 @@ App.Visualization = Backbone.View.extend({
         this.viewPortH = $(window).height();
         if (this.embedded) {
             this.$el.html(this.embedded_template());
+            // hide cookie notification
+            $('.cookie-consent').hide();
         } else {
             this.$el.html(this.template());
         }
