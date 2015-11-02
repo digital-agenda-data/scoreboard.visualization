@@ -1067,6 +1067,8 @@ App.ShareOptionsView = Backbone.View.extend({
             var minwidth = Math.min($(window).height(), 750);
             if (App.chart.options.chart.polar) {
                 minwidth = 1200;
+            } else if (App.chart.options.yAxis[0].title.text) {
+                minwidth =  Math.max(minwidth, 20 * App.chart.options.yAxis[0].title.text.length);
             }
             App.chart.options.exporting.sourceWidth = minwidth;
             App.chart.options.exporting.sourceHeight = minwidth*chartdiv.height()/chartdiv.width();
