@@ -18,7 +18,6 @@ setup(name='scoreboard.visualization',
       license='GPL',
       install_requires=[
         'setuptools',
-        'edw.highcharts',
         'eea.app.visualization',
         'edw.datacube',
         'Jinja2',
