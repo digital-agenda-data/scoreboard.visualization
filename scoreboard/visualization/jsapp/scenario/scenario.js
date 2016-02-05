@@ -1065,11 +1065,15 @@ App.ShareOptionsView = Backbone.View.extend({
         ev.stopPropagation();
         var chartdiv = $(".highcharts-container");
         if (chartdiv && App.chart.options && App.chart.options.exporting) {
-            var minwidth = Math.min($(window).height(), 1024);
+            //var minwidth = Math.min($(window).width(), 1200);
+            var minwidth = $(chartdiv).width();
             if (App.chart.options.chart.polar) {
                 minwidth = 1200;
             } else if (App.chart.options.yAxis[0].title.text) {
-                minwidth =  Math.max(minwidth, 20 * App.chart.options.yAxis[0].title.text.length);
+                var ytitle_lines = App.chart.options.yAxis[0].title.text.split('<br>');
+                _(ytitle_lines).each(function(line) {
+                    minwidth =  Math.max(minwidth, 7 * line.length);
+                });
             }
             App.chart.options.exporting.sourceWidth = minwidth;
             App.chart.options.exporting.sourceHeight = minwidth*chartdiv.height()/chartdiv.width();
