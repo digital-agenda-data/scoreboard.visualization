@@ -928,7 +928,6 @@ var BaseDialogView = Backbone.View.extend({
     render: function() {
         var self = this;
         this.$el.html(this.template()).dialog({width: 600,
-                                               height:450,
                                                title: 'Add comment',
                                                close: function(event, ui)
                                                     {
