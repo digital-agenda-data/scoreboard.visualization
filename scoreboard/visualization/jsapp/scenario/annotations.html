@@ -6,16 +6,16 @@
 </p>
 <ul>
   {{# if this.definition }}
-  <li><strong>Definition: </strong> {{ this.definition }}</li>
+  <li><strong>Definition: </strong> {{{ this.definition }}}</li>
   {{/ if }}
   {{# if this.note }}
   <li>
-    <strong>Notes: </strong>{{ this.note }}
+    <strong>Notes: </strong>{{{ this.note }}}
   </li>
   {{/ if }}
   {{# if this.source_definition }}
   <li>
-    <strong>Source: </strong>{{ this.source_definition }}&nbsp;[<a href="{{ this.source_url }}">More&nbsp;information</a>]
+    <strong>Source: </strong>{{{ this.source_definition }}}&nbsp;[<a href="{{ this.source_url }}">More&nbsp;information</a>]
   </li>
   {{/ if }}
 </ul>
