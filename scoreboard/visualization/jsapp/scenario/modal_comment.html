@@ -1,13 +1,14 @@
 <div class="comment_form">
   <form method="post">
   <input type="hidden" name="form.submitted" value="1">
-  <label for="title">Title: </label>
+  <label for="title">Subject: </label>
   <span id="title_error" class="error"></span>
   <input type="text" name="title" id="title" /><br />
   <label for="text">Comment: </label>
-  <textarea rows="10" cols="50" id="text" name="text"></textarea>
-  <label for="anon_name">Email (optional): </label>
-  <input type="text" name="anon_name" id="anon_name" /><br />
+  <textarea rows="5" cols="50" id="text" name="text" placeholder="
+    Enter your comment here.
+    Include the email address if you wish to receive our reply by email.
+    If you choose to do so, your contact details will not be published."></textarea>
   <input name="captcha_control" type="hidden" value="1" />
   <label for="captcha_field">ReCaptcha field: </label>
   <span id="captcha_error" class="error"></span>
