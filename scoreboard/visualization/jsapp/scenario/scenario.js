@@ -1117,6 +1117,11 @@ App.ShareOptionsView = Backbone.View.extend({
             App.chart.options.exporting.scale = 1;
 
             App.chart.exportChartLocal();
+        } else {
+            App.jQuery('input[name="svg"]', this.svg_form).attr('value', App.chart.getSVG());
+            // appendTo body to make it work in Internet Explorer
+            this.svg_form.attr('action', App.URL + '/svg2png');
+            this.svg_form.appendTo('body').submit().remove();
         }
     },
 
