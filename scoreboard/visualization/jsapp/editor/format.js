@@ -137,7 +137,7 @@ App.FormatEditor = Backbone.View.extend({
                 return text.toJSON();
             }),
             credits: _({
-                text: "European Commission, Digital Agenda Scoreboard",
+                text: "European Commission, Digital Scoreboard",
                 link: "http://ec.europa.eu/digital-agenda/en/graphs/"
             }).extend(this.model.get('credits'))
         };

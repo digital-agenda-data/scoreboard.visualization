@@ -17,7 +17,7 @@
   "category_facet": "time-period",
   "chart_type": "lines",
   "credits": {
-    "text": "European Commission, Digital Agenda Scoreboard",
+    "text": "European Commission, Digital Scoreboard",
     "link": "http://ec.europa.eu/digital-agenda/en/graphs/"
   },
   "facets": [
