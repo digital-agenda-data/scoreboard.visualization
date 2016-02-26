@@ -25,7 +25,7 @@
   "chart_type": "scatter",
   "credits": {
     "link": "http://ec.europa.eu/digital-agenda/en/graphs/",
-    "text": "European Commission, Digital Agenda Scoreboard"
+    "text": "European Commission, Digital Scoreboard"
   },
   "facets": [
     {
