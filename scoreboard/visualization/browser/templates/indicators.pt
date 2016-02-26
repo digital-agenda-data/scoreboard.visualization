@@ -60,11 +60,11 @@
                         </tal:block>
                         <br tal:condition="python:notation and (definition or notes)"/>
                         <tal:block condition="definition">
-                            <strong class="definition">Definition: </strong><span tal:replace="definition"></span>
+                            <strong class="definition">Definition: </strong><span tal:content="structure definition"></span>
                         </tal:block>
                         <br tal:condition="python:definition and notes"/>
                         <tal:block condition="notes">
-                            <strong class="notes">Notes: </strong><span tal:replace="notes"></span>
+                            <strong class="notes">Notes: </strong><span tal:content="structure notes"></span>
                         </tal:block>
                     </td>
                     <td class="even">
