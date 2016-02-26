@@ -265,7 +265,7 @@ App.ScenarioChartView = Backbone.View.extend({
             },
             'credits': {
                 'href': this.schema['credits'] && this.schema['credits']['link'] || 'http://ec.europa.eu/digital-agenda/en/graphs/',
-                'text': this.schema['credits'] && this.schema['credits']['text'] || 'European Commission, Digital Agenda Scoreboard'
+                'text': this.schema['credits'] && this.schema['credits']['text'] || 'European Commission, Digital Scoreboard'
             },
             'xlabels_formatter': function() {
                 var max_length = 15;
