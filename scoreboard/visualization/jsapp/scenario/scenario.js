@@ -4,6 +4,7 @@
 (function($) {
 "use strict";
 
+App.EventBus = _.extend({}, Backbone.Events);
 
 App.ScenarioChartView = Backbone.View.extend({
 
@@ -36,7 +37,14 @@ App.ScenarioChartView = Backbone.View.extend({
             }
         }, this);
         this.requests_in_flight = [];
+        this.listLoadDone = false;
+        this.listenTo(App.EventBus, 'listLoadDone', this.load_done);
         this.load_chart();
+    },
+
+    load_done: function(){
+        this.listLoadDone = true;
+        // todo: update view?
     },
 
     remove_loading_add_msg: function(txt){
@@ -66,33 +74,28 @@ App.ScenarioChartView = Backbone.View.extend({
     get_meta_data: function(chart_data){
         var meta_data = {};
         chart_data['meta_data'] = meta_data;
-        var requests = [];
 
-        _(this.schema['labels']).forEach(function(label_spec, label_name) {
-            if (_.chain(this.schema.facets).pluck('name').contains(label_spec.facet).value()){
-                var facet_value = this.model.get(label_spec['facet']);
-                if ( typeof facet_value == "object" ) {
-                    // workaround around multiple values are supported by dimension_labels
-                    facet_value = facet_value[0] || "";
+        if(this.listLoadDone) {
+            _(this.schema['labels']).forEach(function (label_spec, label_name) {
+                if (_.chain(this.schema.facets).pluck('name').contains(label_spec.facet).value()) {
+                    var facet_value = this.model.get(label_spec['facet']);
+                    if (typeof facet_value == "object") {
+                        // workaround around multiple values are supported by dimension_labels
+                        facet_value = facet_value[0] || "";
+                    }
+
+                    if (this.listLoadDone) {
+                        meta_data[label_name] = _(App.mdata[label_name]).find(function (item2) {
+                            return item2['notation'] == facet_value;
+                        });
+                    }
                 }
-                var args = {
-                    'dimension': this.dimensions_mapping[label_spec['facet']],
-                    'value': facet_value,
-                    'rev': this.data_revision
-                };
-                var ajax = $.getJSON(this.cube_url + '/dimension_labels', args);
-                ajax.done(function(data) {
-                    meta_data[label_name] = data;
-                });
-                requests.push(ajax);
-            }
-        }, this);
-
-        return requests;
+            }, this);
+        }
     },
 
     request_datapoints: function(url, args){
-        var relevant_args = {}
+        var relevant_args = {};
         _(args).each(function(value, key){
             if (value!='any'){
                 var pair = _.object([[key, value]]);
@@ -421,9 +424,7 @@ App.ScenarioChartView = Backbone.View.extend({
             client_filter_options = this.model.get(this.client_filter);
         }
 
-        _(this.get_meta_data(chart_data)).forEach(function(req) {
-            requests.push(req);
-        });
+        this.get_meta_data(chart_data);
 
         this.whitelist_dimensions = _.chain(this.options.filters_schema).where({'type':'whitelist'}).pluck('dimension').value();
         // check if we need whitelist
@@ -433,14 +434,14 @@ App.ScenarioChartView = Backbone.View.extend({
             whitelist_request.done(function(data) {
                 var result = _(data).map(function(obj) {
                     // pick only whitelisted properties and convert to lowercase
-                    var newobj = {}
+                    var newobj = {};
                     _(that.whitelist_dimensions).each(function(dimension){
                         if (obj[dimension]) {
                           newobj[dimension] = obj[dimension].toLowerCase();
                         }
                     });
                     return newobj;
-                })
+                });
                 that.whitelist_data = result;
             });
             requests.push(whitelist_request);
@@ -733,6 +734,7 @@ App.GraphControlsView = Backbone.View.extend({
 });
 
 
+
 App.AnnotationsView = Backbone.View.extend({
 
     template: App.get_template('scenario/annotations.html'),
@@ -745,9 +747,91 @@ App.AnnotationsView = Backbone.View.extend({
             _(this.schema['facets']).pluck('name'),
             _(this.schema['facets']).pluck('dimension')
         );
-        this.model.on('change', this.render, this);
+        this.data = [];
         this.description = $('#parent-fieldname-description').detach();
-        this.render();
+        this.init_data();
+    },
+
+    init_data: function() {
+        var data = this.data;
+        var requests = [];
+        var args = {};
+        args['rev'] = this.data_revision;
+
+        var url = this.cube_url + '/my_indicators';
+
+        requests.push(
+            $.getJSON(url, args, function(resp) {
+                data['indicator'] = resp;
+            })
+        );
+
+        url = this.cube_url + '/my_breakdowns';
+        requests.push(
+            $.getJSON(url, args, function(resp) {
+                data['breakdown'] = resp;
+            })
+        );
+
+        url = this.cube_url + '/my_unitmeasures';
+        requests.push(
+            $.getJSON(url, args, function(resp) {
+                data['unit-measure'] = resp;
+            })
+        );
+
+        var ajax_calls = $.when.apply($, requests);
+        ajax_calls.done(_.bind(function() {
+            this.render_second();
+            this.model.on('change', this.render_second, this);
+            App.mdata = this.data;
+            App.EventBus.trigger('listLoadDone');
+        }, this));
+    },
+
+    render_second: function() {
+        var annotations = this.schema['annotations'] || {};
+        var blocks_order = _(annotations.filters).pluck('name');
+
+        var blocks = _.chain(annotations.filters).map(function(item) {
+
+            var fn = item['name'];
+            var facet_values = this.model.get(fn);
+
+            var found = _(this.data[fn]).find(function (item2) {
+                return item2['notation'] == facet_values;
+            });
+
+            if (found) {
+                var facet = _(this.schema.facets).find(function(item){
+                    return item['name'] == fn
+                });
+
+                return _(found).extend({
+                    "filter_label": facet.label
+                })
+            } else {
+                return [];
+            }
+        }, this).value();
+
+        var chart_description = this.description.html();
+        var section_title = this.schema['annotations'] &&
+            this.schema['annotations']['title'] ||
+            'Definition and scopes:';
+        if ( this.schema.annotations && this.schema.annotations.notes ) {
+            chart_description = this.schema.annotations.notes;
+        }
+
+        var context = {
+            "description": chart_description,
+            "section_title": section_title,
+            "indicators_details_url": this.cube_url + '/indicators',
+            "blocks": blocks
+        };
+        this.$el.empty();
+        this.trigger('metadata_ready', context);
+        this.$el.html(this.template(context));
     },
 
     render: function() {
