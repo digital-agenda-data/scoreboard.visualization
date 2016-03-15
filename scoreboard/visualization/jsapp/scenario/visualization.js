@@ -94,6 +94,7 @@ App.Visualization = Backbone.View.extend({
             }, this);
         }
 
+        App.cube_metadata = this.get_metadata(options);
 
         if (this.embedded){
             this.filters_box = new App.EmbeddedFiltersBox({
@@ -171,6 +172,20 @@ App.Visualization = Backbone.View.extend({
 
         this.chart_view.on('chart_ready', this.chart_view.chart_ready);
 
+    },
+
+    get_metadata: function(options) {
+
+        var url = options['cube_url'] + '/dimension_metadata';
+        var args = {};
+        args['rev'] = options['data_revision'] || '';
+
+        return JSON.parse( $.ajax({
+            type: "GET",
+            url: url,
+            async: false,
+            data: args
+        }).responseText);
     },
 
     update_hashcfg: function() {
