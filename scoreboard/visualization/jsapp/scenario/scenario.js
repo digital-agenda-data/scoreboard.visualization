@@ -399,12 +399,13 @@ App.ScenarioChartView = Backbone.View.extend({
                 }
                 labels_request.done(function(data) {
                     var results = data['options'];
-                    chart_data['series_names'] = _.object(
-                        _(results).pluck('notation'),
-                        _(results).pluck(series_names));
-                    chart_data['series_ending_labels'] = _.object(
-                        _(results).pluck('notation'),
-                        _(results).pluck(series_ending_labels));
+                    chart_data['series_names'] = {};
+                    chart_data['series_ending_labels'] = {};
+                    _(results).forEach(function(item){
+                        var metadata = App.metadata_by_uri(item['uri']);
+                        chart_data['series_names'][metadata['notation']] = metadata[series_names];
+                        chart_data['series_ending_labels'][metadata['notation']] = metadata[series_ending_labels];
+                    });
                 });
                 requests.push(labels_request);
             }

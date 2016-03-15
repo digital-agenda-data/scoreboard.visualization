@@ -221,5 +221,16 @@ App.create_visualization = function(container, schema) {
     });
 };
 
+App.metadata_by_uri = function(uri) {
+    var metadata = null;
+    _(App.cube_metadata).find(function(dim_list){
+        metadata = _(dim_list).find(function(dimension){
+            return dimension['uri'] == uri;
+        });
+        return metadata;
+    });
+    return metadata;
+};
+
 
 })(App.jQuery);

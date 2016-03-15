@@ -103,14 +103,7 @@ App.SelectFilter = Backbone.View.extend({
         var list_result = [];
 
         _(data['options']).forEach(function(item){
-            var metadata = null;
-            _(App.cube_metadata).find(function(dim_list){
-                metadata = _(dim_list).find(function(dimension){
-                    return dimension['uri'] == item['uri'];
-                });
-                return metadata;
-            });
-
+            var metadata = App.metadata_by_uri(item['uri']);
             if(!!metadata) {
                 list_result.push(metadata);
             }
