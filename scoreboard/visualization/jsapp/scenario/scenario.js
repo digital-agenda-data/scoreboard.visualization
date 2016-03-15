@@ -753,19 +753,22 @@ App.AnnotationsView = Backbone.View.extend({
 
             var fn = item['name'];
             var facet_values = this.model.get(fn);
-
-            var found = _(App.cube_metadata[fn]).find(function (item2) {
-                return item2['notation'] == facet_values;
+            var facet = _(this.schema.facets).find(function(item3){
+                return item3['name'] == fn;
             });
 
-            if (found) {
-                var facet = _(this.schema.facets).find(function(item){
-                    return item['name'] == fn
+            if(facet) {
+                var found = _(App.cube_metadata[facet['dimension']]).find(function (item2) {
+                    return item2['notation'] == facet_values;
                 });
 
-                return _(found).extend({
-                    "filter_label": facet.label
-                })
+                if (found) {
+                    return _(found).extend({
+                        "filter_label": facet.label
+                    })
+                } else {
+                    return [];
+                }
             } else {
                 return [];
             }
