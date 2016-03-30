@@ -100,7 +100,7 @@
         "PT", "RO", "SI", "SK", "FI",
         "SE", "UK", "IS", "NO"],
         "dimension": "ref-area",
-        "ignore_values": ["EU27"],
+        "ignore_values": ["EU27", "EU28", "EU"],
         "label": "Select the countries",
         "name": "ref-area",
         "position": "upper-right",
