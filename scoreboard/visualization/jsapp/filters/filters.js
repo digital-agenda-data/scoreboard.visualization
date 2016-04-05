@@ -105,6 +105,16 @@ App.SelectFilter = Backbone.View.extend({
         _(data['options']).forEach(function(item){
             var metadata = App.metadata_by_uri(item['uri']);
             if(!!metadata) {
+                if(!!item['group_notation'] && item['group_notation'] != metadata['group_notation']){
+                    var group = _(App.cube_metadata[App.groupers[metadata['dimension']]]).find(function(dimension){
+                        return dimension['notation'] == item['group_notation'];
+                    });
+                    if(!!group){
+                        metadata = _.clone(metadata);
+                        metadata['group_notation'] = group['notation'];
+                        metadata['group_name'] = group['short_label'];
+                    }
+                }
                 list_result.push(metadata);
             }
         }, this);

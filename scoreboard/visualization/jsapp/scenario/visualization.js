@@ -184,6 +184,8 @@ App.Visualization = Backbone.View.extend({
             type: "GET",
             url: url,
             async: false,
+            cache: true,
+            dataType: 'json',
             data: args
         }).responseText);
     },
@@ -223,13 +225,17 @@ App.create_visualization = function(container, schema) {
 
 App.metadata_by_uri = function(uri) {
     var metadata = null;
-    _(App.cube_metadata).find(function(dim_list){
-        metadata = _(dim_list).find(function(dimension){
+
+    for (var key in App.cube_metadata) {
+        metadata = _(App.cube_metadata[key]).find(function(dimension){
             return dimension['uri'] == uri;
         });
-        return metadata;
-    });
-    return metadata;
+        if(!!metadata){
+            metadata['dimension'] = key;
+            return metadata;
+        }
+    }
+    return null;
 };
 
 
