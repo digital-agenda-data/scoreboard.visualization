@@ -954,6 +954,7 @@ App.ShareOptionsView = Backbone.View.extend({
         'click #highcharts_print': 'highcharts_print',
         'click #highcharts_download': 'highcharts_download',
         'click #highcharts_download_svg': 'highcharts_download_svg',
+        'click #highcharts_download_local': 'highcharts_download_local',
         'click #csv': 'request_csv',
         'click #excel': 'request_excel',
         'click #embed': 'request_embed',
@@ -1094,6 +1095,28 @@ App.ShareOptionsView = Backbone.View.extend({
             // appendTo body to make it work in Internet Explorer
             this.svg_form.attr('action', App.URL + '/export.svg');
             this.svg_form.appendTo('body').submit().remove();
+        }
+    },
+
+    highcharts_download_local: function(ev){
+        ev.stopPropagation();
+        var chartdiv = $(".highcharts-container");
+        if (chartdiv && App.chart.options && App.chart.options.exporting) {
+
+           var minwidth = $(chartdiv).width();
+            if (App.chart.options.chart.polar) {
+                minwidth = 1200;
+            } else if (App.chart.options.yAxis[0].title.text) {
+                var ytitle_lines = App.chart.options.yAxis[0].title.text.split('<br>');
+                _(ytitle_lines).each(function(line) {
+                    minwidth =  Math.max(minwidth, 7 * line.length);
+                });
+            }
+            App.chart.options.exporting.sourceWidth = minwidth;
+            App.chart.options.exporting.sourceHeight = minwidth*chartdiv.height()/chartdiv.width();
+            App.chart.options.exporting.scale = 1;
+
+            App.chart.exportChartLocal();
         }
     },
 
