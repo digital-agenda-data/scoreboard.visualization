@@ -758,21 +758,31 @@ App.AnnotationsView = Backbone.View.extend({
             });
 
             if(facet) {
-                var found = _(App.cube_metadata[facet['dimension']]).find(function (item2) {
-                    return item2['notation'] == facet_values;
+                if(facet_values && facet_values.constructor !== Array){
+                    facet_values = [facet_values];
+                }
+                return _(facet_values).map(function(item4){
+                    var found = _(App.cube_metadata[facet['dimension']]).find(function (item2) {
+                        return item2['notation'] == item4;
+                    });
+
+                    if (found) {
+                        return _(found).extend({
+                            "filter_label": facet.label
+                        })
+                    } else {
+                        return null;
+                    }
                 });
 
-                if (found) {
-                    return _(found).extend({
-                        "filter_label": facet.label
-                    })
-                } else {
-                    return [];
-                }
             } else {
                 return [];
             }
         }, this).value();
+
+        blocks = _(blocks).reduce(function(result, item5){
+            return result.concat(item5);
+        },[]);
 
         var chart_description = this.description.html();
         var section_title = this.schema['annotations'] &&
