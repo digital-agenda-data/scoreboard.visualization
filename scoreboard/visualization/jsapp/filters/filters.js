@@ -99,6 +99,32 @@ App.SelectFilter = Backbone.View.extend({
         this.$el.addClass('loading-small');
     },
 
+    populate: function(data){
+        var list_result = [];
+
+        _(data['options']).forEach(function(item){
+            var metadata = App.metadata_by_uri(item['uri']);
+            if(!!metadata) {
+                if(!!item['group_notation'] && item['group_notation'] != metadata['group_notation']){
+                    var group = _(App.cube_metadata[App.groupers[metadata['dimension']]]).find(function(dimension){
+                        return dimension['notation'] == item['group_notation'];
+                    });
+                    if(!!group){
+                        metadata = _.clone(metadata);
+                        metadata['group_notation'] = group['notation'];
+                        metadata['group_name'] = group['short_label'];
+                    }
+                }
+                list_result.push(metadata);
+            }
+        }, this);
+
+        var result = {};
+        result['options'] = list_result;
+
+        return result;
+    },
+
     update: function() {
         this.$el.addClass('on-hold');
         this.update_loading_bar();
@@ -145,8 +171,12 @@ App.SelectFilter = Backbone.View.extend({
         // load options
         App.trim_dimension_group_args(args, this.dimension_group_map);
         this.ajax = this.fetch_options(args);
-        this.ajax.done(_.bind(function(data) {
+        this.ajax.done(_.bind(function(data2) {
             this.ajax = null;
+
+            // populate the full data from app metadata
+            var data = this.populate(data2);
+
             if (this.options.include_wildcard){
                 _(data['options']).unshift(
                     _.object([

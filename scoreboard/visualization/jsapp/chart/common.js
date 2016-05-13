@@ -64,7 +64,7 @@ App.sort_by_total_stacked = function (series, sort){
         return sorted_codes.indexOf(point.code);
     });
   });
-}
+};
 
 App.format_series = function (data, sort, multidim, category, highlights, animation, series_point_label, ignore_percents){
     // ignore_percents is only used by the country profile => multidim = 0
@@ -292,7 +292,7 @@ App.format_series = function (data, sort, multidim, category, highlights, animat
       App.sort_by_total_stacked(series, sort);
     }
     return series;
-}
+};
 
 App.compute_plotLines = function compute_plotLines(coord, series, axis_type){
     var values = _.chain(series);
@@ -331,7 +331,7 @@ App.compute_plotLines = function compute_plotLines(coord, series, axis_type){
       values = values.pluck('data').map(map_stage).reduce(reduce_stage).value();
       return (values.min + values.max)/2;
     } else return 0;
-}
+};
 
 App.add_plotLines = function(chart, series, chart_type){
     _.chain([chart.xAxis, chart.yAxis]).each(function(item){
@@ -347,7 +347,7 @@ App.add_plotLines = function(chart, series, chart_type){
             }
         });
     });
-}
+};
 
 App.disable_legend = function(chartOptions, options){
     if (options && (!options['series-legend-label'] || options['series-legend-label'] == 'none' ||
@@ -368,7 +368,7 @@ App.disable_legend = function(chartOptions, options){
           }
         }
     }
-}
+};
 
 App.override_zoom = function() {
     Highcharts.Axis.prototype.zoom = function (newMin, newMax) {
@@ -378,7 +378,7 @@ App.override_zoom = function() {
 		this.setExtremes( newMin, newMax, false,  undefined,  { trigger: 'zoom' });
 		return true;
    };
-}
+};
 
 App.set_default_chart_options = function(chartOptions){
     Highcharts.setOptions({ chart: { style: { fontFamily: App.font_family }}});
@@ -452,7 +452,7 @@ App.set_default_chart_options = function(chartOptions){
         });
     }
 */
-}
+};
 
 App.title_formatter = function(parts, meta_data){
     parts = _(parts).map(function(part){
