@@ -171,11 +171,11 @@ App.SelectFilter = Backbone.View.extend({
         // load options
         App.trim_dimension_group_args(args, this.dimension_group_map);
         this.ajax = this.fetch_options(args);
-        this.ajax.done(_.bind(function(data2) {
+        this.ajax.done(_.bind(function(data) {
             this.ajax = null;
 
             // populate the full data from app metadata
-            var data = this.populate(data2);
+            // var data = this.populate(data2);
 
             if (this.options.include_wildcard){
                 _(data['options']).unshift(
@@ -316,7 +316,9 @@ App.SelectFilter = Backbone.View.extend({
                     label = item[0];
                 } else if ( grouper.options_labels[item[0]] ) {
                     label = grouper.options_labels[item[0]].short_label ||
-                            grouper.options_labels[item[0]].label;
+                            grouper.options_labels[item[0]].label
+                } else {
+                    label = item[0]
                 }
                 options = _(item[1]).map(function(item) {
                     var selected = (item['notation'] == selected_value);
@@ -327,7 +329,7 @@ App.SelectFilter = Backbone.View.extend({
                 return out;
             }).sortBy(function(item){
                 // keep same order of groups from grouper
-                var index = 0;
+                var index = 9999;
                 if ( grouper && grouper.dimension_options ) {
                   _(grouper.dimension_options).find(function(grouper_item, grouper_index) {
                     if (item['notation'] == grouper_item['notation']) index = grouper_index;
