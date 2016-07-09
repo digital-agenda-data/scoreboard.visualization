@@ -51,10 +51,19 @@ App.scenario9_table_filters_schema = {
     }
   ],
   labels: {
-    'title': {facet: 'ref-area', field: 'label'},
     'indicator-group': {facet: 'indicator-group', field: 'label'},
     'ref-area': {facet: 'ref-area', field: 'label'},
     'time-period': {facet: 'time-period', field: 'label'}
+  },
+  titles: {
+    "title": [
+      {
+        "prefix": "Country profile for ",
+        "suffix": null,
+        "facet_name": "ref-area",
+        "format": "label"
+      }
+    ]
   }
 };
 
