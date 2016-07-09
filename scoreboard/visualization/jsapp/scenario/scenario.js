@@ -77,7 +77,6 @@ App.ScenarioChartView = Backbone.View.extend({
                 var facet = _(this.schema.facets).find(function(item3){
                     return item3['name'] == label_name;
                 });
-
                 meta_data[label_name] = _(App.cube_metadata[facet['dimension']]).find(function (item2) {
                     return item2['notation'] == facet_value;
                 });
@@ -758,8 +757,13 @@ App.AnnotationsView = Backbone.View.extend({
             });
 
             if(facet) {
-                if(facet_values && facet_values.constructor !== Array){
-                    facet_values = [facet_values];
+                if(facet_values && !_(facet_values).isArray()){
+                    if (_(facet_values).isObject()) {
+                        // can be dict in case of DESI sliders
+                        facet_values = _.keys(facet_values);
+                    } else {
+                        facet_values = [facet_values];
+                    }
                 }
                 return _(facet_values).map(function(item4){
                     var found = _(App.cube_metadata[facet['dimension']]).find(function (item2) {
@@ -778,7 +782,8 @@ App.AnnotationsView = Backbone.View.extend({
             } else {
                 return [];
             }
-        }, this).value();
+        }, this).reject(function(item) { return !item[0] }).value();
+        // reject nulls in case no metadata was found
 
         blocks = _(blocks).reduce(function(result, item5){
             return result.concat(item5);
