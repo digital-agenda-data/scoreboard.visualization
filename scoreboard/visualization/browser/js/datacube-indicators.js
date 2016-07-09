@@ -21,12 +21,14 @@ scoreboard.visualization.datacube.indicators = {
         toc.append(toc_ul);
         jQuery.each(captions, function(i, o){
             var tr = jQuery(o);
-            var li = jQuery('<li>');
-            var a = jQuery('<a>');
-            a.attr('href', 'indicators#' + tr.attr('id'));
-            a.text(tr.text());
-            li.append(a);
-            toc_ul.append(li);
+            if ( tr.text() && tr.text().trim().length ) {
+              var li = jQuery('<li>');
+              var a = jQuery('<a>');
+              a.attr('href', 'indicators#' + tr.attr('id'));
+              a.text(tr.text());
+              li.append(a);
+              toc_ul.append(li);
+            }
         });
     },
     addNavigation: function(){
