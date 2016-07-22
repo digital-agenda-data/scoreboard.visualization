@@ -261,7 +261,7 @@ App.ScenarioChartView = Backbone.View.extend({
                 'text': this.schema['credits'] && this.schema['credits']['text'] || 'European Commission, Digital Scoreboard'
             },
             'xlabels_formatter': function() {
-                var max_length = 15;
+                var max_length = 20;
                 if (this.value.length > max_length){
                     return this.value.substr(0, max_length) + ' ...';
                 }

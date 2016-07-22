@@ -132,9 +132,9 @@ App.chart_library['columns'] = function(view, options) {
             tickColor: '#191919',
             labels: {
                 autoRotation: [-45, -90],
-                align: 'right',
+                //align: 'right',
                 padding: 0,
-                formatter: options['xlabels_formatter'],
+                //formatter: options['xlabels_formatter'],
                 style: {
                     color: '#000000',
                     width: 700
