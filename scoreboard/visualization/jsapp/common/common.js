@@ -164,7 +164,8 @@ App.width_m = function() {
 }
 
 App.is_touch_device = function() {
-  return ("ontouchstart" in window || navigator.msMaxTouchPoints) && !navigator.userAgent.match('Windows');
+   return (/Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent) ||
+   (/Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.platform)));
 }
 
 App.font_family = "Lucida Sans Unicode, Candara, Calibri, Futura, Helvetica";
