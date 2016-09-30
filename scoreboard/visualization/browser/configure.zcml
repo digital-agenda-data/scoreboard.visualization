@@ -35,6 +35,16 @@
     file="./js/manage-whitelist.js"
    />
 
+  <browser:resource
+    name="scoreboard.visualization.manage-annotations.js"
+    file="./js/manage-annotations.js"
+   />
+
+  <browser:resourceDirectory
+    name="scoreboard.visualization.external"
+    directory="./external"
+   />
+
   <browser:page
     name="indicators"
     for="edw.datacube.interfaces.IDataCube"
@@ -87,6 +97,30 @@
     permission="cmf.ManagePortal"
     for="Products.CMFCore.interfaces.ISiteRoot"
     template="templates/manage_whitelist.pt"
+    />
+
+  <browser:page
+    name="manage-annotations"
+    class=".views.AnnotationsView"
+    permission="cmf.ManagePortal"
+    for="Products.CMFCore.interfaces.ISiteRoot"
+    template="templates/manage_annotations.pt"
+    />
+
+  <browser:page
+    name="annotations.json"
+    for="edw.datacube.interfaces.IDataCube"
+    permission="zope2.View"
+    class=".views.AnnotationsView"
+    attribute="annotationsJSON"
+    />
+
+  <browser:page
+    name="saveAnnotation"
+    for="edw.datacube.interfaces.IDataCube"
+    permission="zope2.View"
+    class=".views.AnnotationsView"
+    attribute="saveAnnotation"
     />
 
   <browser:page

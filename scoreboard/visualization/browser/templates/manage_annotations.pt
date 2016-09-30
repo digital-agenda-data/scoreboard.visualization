@@ -1,0 +1,40 @@
+<html metal:use-macro="here/main_template/macros/master"
+  i18n:domain="plone">
+  <tal:js metal:fill-slot="javascript_head_slot">
+  <script tal:attributes="src string:${portal_url}/++resource++scoreboard.visualization.external/ckeditor/ckeditor.js"></script>
+  <!--script tal:attributes="src string://cdn.ckeditor.com/4.5.11/standard/ckeditor.js"></script-->
+  <script tal:attributes="src string:${portal_url}/++resource++scoreboard.visualization.manage-annotations.js"></script>
+  </tal:js>
+  <metal:style fill-slot="style_slot">
+  <!--link rel="stylesheet" type="text/css" tal:attributes="href string:${portal_url}/++resource++scoreboard.visualization.external/ckeditor/contents.css"-->
+  </metal:style>
+  <div metal:fill-slot="main">
+    <h1>Manage annotations</h1>
+    <textarea id="datacubes" style="display: none" tal:content="python:view.datasetsJSON()"></textarea>
+    <textarea id="global_annotations" style="display: none" tal:content="python:view.globalAnnotationsJSON()"></textarea>
+    <div tal:define="datasets view/dataSets">
+      <div id="message" style="display: none" class="alert" role="alert"></div>
+      <br/>
+      <div class="input-group">
+        <select id="datasets" name="datasets">
+          <option tal:repeat="dataset datasets" tal:attributes="value python: dataset[0]" tal:content="python: dataset[1]" >
+          </option>
+        </select>
+      </div>
+    </div>
+    <br/>
+    <div class="container white-area">
+      <table id="annotations-table" class="list_indicators">
+        <thead>
+          <tr class="whitelist-head-row">
+            <th width="30%">Indicator</th>
+            <th width="50%">Annotation</th>
+            <th width="20%">Operations</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</html>
