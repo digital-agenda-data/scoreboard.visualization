@@ -248,6 +248,7 @@ class AnnotationsView(BaseView):
     def annotationsJSON(self):
         dataset = self.context.getId()
         data = self.annotations.get(dataset, {})
+        self.request.response.setHeader("Content-Type", "application/json")
         return json.dumps(data)
 
     def datasetsJSON(self):
@@ -261,10 +262,12 @@ class AnnotationsView(BaseView):
         data = json.loads(stool.getProperty('ANNOTATIONS'))
         data.setdefault(dataset, {})
         data[dataset][indicator] = self.request.editabledata
+        if not self.request.editabledata:
+            del data[dataset][indicator]
         stool.manage_changeProperties(ANNOTATIONS=json.dumps(data, indent=2))
         if not self.request.editabledata:
-            return "Deleted."
-        return "Saved."
+            return "Deleted note for indicator %s." % (indicator)
+        return "Saved note for indicator %s." % (indicator)
 
 
 class CacheView(BrowserView):

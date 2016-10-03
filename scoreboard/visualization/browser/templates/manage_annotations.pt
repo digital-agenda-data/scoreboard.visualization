@@ -13,7 +13,7 @@
     <textarea id="datacubes" style="display: none" tal:content="python:view.datasetsJSON()"></textarea>
     <textarea id="global_annotations" style="display: none" tal:content="python:view.globalAnnotationsJSON()"></textarea>
     <div tal:define="datasets view/dataSets">
-      <div id="message" style="display: none" class="alert" role="alert"></div>
+      <div id="message" style="display: none;position:fixed;top:0;right:0" class="alert" role="alert"></div>
       <br/>
       <div class="input-group">
         <select id="datasets" name="datasets">

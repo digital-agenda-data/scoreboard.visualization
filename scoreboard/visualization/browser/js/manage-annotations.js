@@ -123,7 +123,11 @@ scoreboard.visualization.annotations_manager = {
                     self.messageInfo(data);
                 },
                 onFailure: function(editor, status, request) {
-                    self.messageError("Save failed. (" + status + ")");
+                    if ( status == -1 ) {
+                       self.messageInfo("Not changed."); 
+                    } else {
+                       self.messageError("Save failed. (" + status + ")");
+                    }
                 },
             }
         });
