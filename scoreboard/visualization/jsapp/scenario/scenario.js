@@ -797,6 +797,15 @@ App.AnnotationsView = Backbone.View.extend({
             chart_description = this.schema.annotations.notes;
         }
 
+        // check indicator annotations from Plone
+        blocks = _(blocks).map(function(item) {
+            if (App.cube_html_annotations[item['notation']]) {
+                return _(item).extend({'html_annotation': App.cube_html_annotations[item['notation']]});
+            } else {
+                return item;
+            }
+        });
+
         var context = {
             "description": chart_description,
             "section_title": section_title,
