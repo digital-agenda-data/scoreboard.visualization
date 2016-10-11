@@ -3,7 +3,7 @@
   <div metal:fill-slot="main"
     tal:define="normalizeString nocall:context/@@plone/normalizeString;">
     <div class="row">
-      <div class="col-md-12">
+      <div class="heading-wrapper">
         <h1 class="documentFirstHeading"><span id="dataset-title" tal:content="here/getExtended_title"/></h1>
       </div>
     </div>
