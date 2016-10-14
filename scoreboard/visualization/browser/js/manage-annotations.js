@@ -98,7 +98,8 @@ scoreboard.visualization.annotations_manager = {
         var annotation = jQuery(div).html(); // save a copy of the old value
         var indicator = jQuery(div).parent().parent().attr('data-notation');
         CKEDITOR.inline(indicator, {
-            extraPlugins: 'sourcedialog,save',
+            extraPlugins: 'sourcedialog,save,format',
+            format_tags: 'p;h3;pre',
             startupFocus: hasFocus,
             inlinecancel: {
                 onCancel: function(editor) {
