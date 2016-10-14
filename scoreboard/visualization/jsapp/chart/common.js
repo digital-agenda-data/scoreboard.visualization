@@ -380,7 +380,7 @@ App.override_zoom = function() {
    };
 };
 
-App.set_default_chart_options = function(chartOptions){
+App.set_default_chart_options = function(chartOptions) {
     Highcharts.setOptions({ chart: { style: { fontFamily: App.font_family }}});
     _(chartOptions).extend({
         navigation: {
@@ -395,6 +395,28 @@ App.set_default_chart_options = function(chartOptions){
             }
         }
     });
+    if ( App.visualization.embedded ) {
+        Highcharts.Chart.prototype.callbacks.push(function (chart) {
+            Highcharts.addEvent(chart, 'load', function (e) {
+                var box = chart.credits.getBBox();
+                if (box) {
+                    var text = chart.renderer.text('See more visualisations: <span style="color:#0073A8">digital-agenda-data.eu</span>', box.x - 40, box.y-5)
+                        .css({ cursor: 'pointer' })
+                        .add();
+                     text.element.onclick = function() {
+                        var pathItems = window.location.pathname.split('/');
+                        pathItems.pop();
+                        var link = document.createElement('a');
+                        link.href = window.location.protocol + '://' + window.location.hostname + ':' + window.location.port + pathItems.join('/') + window.location.hash;
+                        link.target = '_blank';
+                        document.body.appendChild(link);
+                        link.click();
+                    };
+                }
+            });
+        });
+    };
+
 /* print and download buttons moved to share panel
     var menuItems = _.rest(Highcharts.getOptions().exporting.buttons.contextButton.menuItems, 2);
     if ( ! App.visualization.embedded ) {
