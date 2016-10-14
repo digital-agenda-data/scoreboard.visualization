@@ -407,7 +407,11 @@ App.set_default_chart_options = function(chartOptions) {
                         .add();
                     var pathItems = window.location.pathname.split('/');
                     pathItems.pop();
-                    var href = window.location.protocol + '://' + window.location.hostname + ':' + window.location.port + pathItems.join('/') + window.location.hash;
+                    var portStr = '';
+                    if (window.location.port) {
+                        portStr = ':' + window.location.port;
+                    };
+                    var href = window.location.protocol + '//' + window.location.hostname + portStr + pathItems.join('/') + window.location.hash;
                     text.href = href;
                     chart.credits._extra_text = text;
                     text.element.onclick = function() {
