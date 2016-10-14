@@ -184,7 +184,11 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'showCredits', function (proceed, cr
               // dynamically create an anchor element and click it
               // use the settings defined in highcharts (credits.target)
               var link = document.createElement('a');
-              link.href = credits.href;
+              if (App.visualization.embedded && App.chart.credits._extra_text) {
+                link.href = App.chart.credits._extra_text.href;
+              } else {
+                link.href = credits.href;
+              }
               link.target = credits.target||'_blank';
               document.body.appendChild(link);
               link.click();

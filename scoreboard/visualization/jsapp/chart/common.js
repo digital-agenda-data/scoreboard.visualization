@@ -400,14 +400,19 @@ App.set_default_chart_options = function(chartOptions) {
             Highcharts.addEvent(chart, 'load', function (e) {
                 var box = chart.credits.getBBox();
                 if (box) {
-                    var text = chart.renderer.text('See more visualisations: <span style="color:#0073A8">digital-agenda-data.eu</span>', box.x - 40, box.y-5)
+                    var text = chart.renderer.text('See more visualisations: <span style="color:#0073A8">digital-agenda-data.eu</span>',
+                        box.x + box.width, box.y-5)
+                        .attr({ align: 'right' })
                         .css({ cursor: 'pointer' })
                         .add();
-                     text.element.onclick = function() {
-                        var pathItems = window.location.pathname.split('/');
-                        pathItems.pop();
+                    var pathItems = window.location.pathname.split('/');
+                    pathItems.pop();
+                    var href = window.location.protocol + '://' + window.location.hostname + ':' + window.location.port + pathItems.join('/') + window.location.hash;
+                    text.href = href;
+                    chart.credits._extra_text = text;
+                    text.element.onclick = function() {
                         var link = document.createElement('a');
-                        link.href = window.location.protocol + '://' + window.location.hostname + ':' + window.location.port + pathItems.join('/') + window.location.hash;
+                        link.href = href;
                         link.target = '_blank';
                         document.body.appendChild(link);
                         link.click();
