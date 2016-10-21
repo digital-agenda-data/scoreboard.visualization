@@ -701,7 +701,10 @@ App.CompositeFilter = App.AllValuesFilter.extend({
             'chart-url': document.URL,
             'filters-applied': filters_applied
         };
-        App.visualization.share.chart_ready(this.current_series, metadata);
+        if (App.visualization.share) {
+            // can happen if addthis not loaded properly
+            App.visualization.share.chart_ready(this.current_series, metadata);
+        }
     },
 
     adjust_value: function() {
