@@ -499,7 +499,11 @@ App.title_formatter = function(parts, meta_data){
                  _.contains(App.notation_totals, meta_data[part.facet_name]['notation'])) {
               part.text = null;
             } else {
-              part.text = meta_data[part.facet_name][part.format];
+              if (meta_data[part.facet_name] && meta_data[part.facet_name][part.format]) {
+                  part.text = meta_data[part.facet_name][part.format];
+              } else {
+                part.text = '';
+              }
             }
         }
         return part;
