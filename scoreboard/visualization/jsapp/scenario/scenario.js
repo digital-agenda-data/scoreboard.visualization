@@ -460,6 +460,7 @@ App.ScenarioChartView = Backbone.View.extend({
 
         var ajax_calls = $.when.apply($, requests);
         ajax_calls.done(_.bind(function() {
+          try {
             var responses = _(arguments).toArray();
             if(requests.length < 2) { responses = [responses]; }
 
@@ -549,6 +550,10 @@ App.ScenarioChartView = Backbone.View.extend({
 
             this.data = chart_data;
             this.render();
+          } catch(err) {
+            console.log(err);
+            that.remove_loading_add_msg('Error occured. Please refresh the page.');
+          }
         }, this)).fail(function(){
             that.remove_loading_add_msg('Error occured. Please refresh the page.');
         });
