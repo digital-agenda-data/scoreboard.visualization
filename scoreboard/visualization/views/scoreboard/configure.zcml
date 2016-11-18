@@ -31,6 +31,7 @@
 
   <browser:resource name="scoreboard.highchart.icon.png" file="icon.png" />
   <browser:resource name="scoreboard.highchart.preview.png" file="preview.png" />
+  <browser:resource name="scoreboard.highchart.mapdata.europe_rusia_small.geojson" file="mapdata/europe_rusia_small.geojson" />
 
   <subscriber
     for="scoreboard.visualization.interfaces.IScoreboardVisualization

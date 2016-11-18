@@ -35,6 +35,7 @@ App.ScenarioChartView = Backbone.View.extend({
             }
         }, this);
         this.requests_in_flight = [];
+        App.jsonmaps = {};
         this.load_chart();
     },
 
@@ -454,6 +455,14 @@ App.ScenarioChartView = Backbone.View.extend({
                 });
             });
             requests.push(whitelist_request);
+        }
+
+        if (!App.jsonmaps['europe']) {
+            var get_map = $.getJSON("../../++resource++scoreboard.highchart.mapdata.europe_rusia_small.geojson")
+            get_map.done(function(data) {
+                App.jsonmaps['europe'] = data
+            })
+            requests.push(get_map)
         }
 
         this.requests_in_flight = requests;
@@ -1125,10 +1134,10 @@ App.ShareOptionsView = Backbone.View.extend({
         var chartdiv = $(".highcharts-container");
         if (chartdiv && App.chart.options && App.chart.options.exporting) {
 
-           var minwidth = $(chartdiv).width();
+            var minwidth = $(chartdiv).width();
             if (App.chart.options.chart.polar) {
                 minwidth = 1200;
-            } else if (App.chart.options.yAxis[0].title.text) {
+            } else if (App.chart.options.yAxis[0].title && App.chart.options.yAxis[0].title.text) {
                 var ytitle_lines = App.chart.options.yAxis[0].title.text.split('<br>');
                 _(ytitle_lines).each(function(line) {
                     minwidth =  Math.max(minwidth, 7 * line.length);
