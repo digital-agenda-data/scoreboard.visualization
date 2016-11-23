@@ -55,10 +55,7 @@
                 enabled: true,
             },
             tooltip: {
-                backgroundColor: 'white',
-                borderWidth: 1,
-                borderColor: '#AAA',
-                borderRadius: 2
+                useHTML: true
             },
             colorAxis: {
                 tickPixelInterval: 40,
@@ -80,7 +77,6 @@
                 data: series[0].data,
                 mapData: App.jsonmaps['europe'],
                 tooltip: {
-                    myval: 'bla',
                     headerFormat: '',
                     pointFormatter: function() {
                         // this bound to point
