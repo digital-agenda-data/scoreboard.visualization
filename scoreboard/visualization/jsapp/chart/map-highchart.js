@@ -26,7 +26,7 @@
             'chart-url': document.URL,
             'filters-applied': _(this.model.attributes).pairs()
         };
-        var title = options.titles.title
+        var title = options.titles.title;
         var unit = options['meta_data']['unit-measure'];
         var chartMap = new Highcharts.Map(map_div[0], {
             chart: {
@@ -35,11 +35,11 @@
                 style: {}
             },
             title: {
-                text: title,
+                text: title
             },
             legend: {
                 title: {
-                    text: unit.short_label,
+                    text: unit && unit.short_label || '',
                     style: {
                         position: 'absolute',
                         transform: 'rotate(-90deg) translate(-150%, -100%)',
@@ -49,10 +49,10 @@
                 enabled: true,
                 layout: 'vertical',
                 align: 'left',
-                verticalAlign: 'middle',
+                verticalAlign: 'middle'
             },
             mapNavigation: {
-                enabled: true,
+                enabled: true
             },
             tooltip: {
                 useHTML: true
@@ -72,16 +72,17 @@
             },
             series: [{
                 name: title,
-                unit_name: unit.short_label,
+                unit_name: unit && unit.short_label || '',
                 joinBy: ['CNTR_ID', 'code'],
                 data: series[0].data,
                 mapData: App.jsonmaps['europe'],
                 tooltip: {
                     headerFormat: '',
                     pointFormatter: function() {
-                        // this bound to point
+                        // this bound to point; don't rely on the closure you see here
                         var country_name = this.options.code === 'MK' ? "Macedonia, FYR" : this.options.name;
-                        var html = '<span><b>' + country_name + '</b>: <br/>' + this.value + ' ' + this.series.options.unit_name + '<br/></span>';
+                        var value_text = (this.value ? App.round(this.value, 3) + ' ' + this.series.options.unit_name : 'n/a');
+                        var html = '<span><b>' + country_name + '</b>: <br/>' + value_text + '<br/></span>';
                         return html;
                     }
                 }
