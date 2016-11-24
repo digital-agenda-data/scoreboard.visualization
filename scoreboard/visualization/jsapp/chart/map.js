@@ -72,16 +72,16 @@
             },
             series: [{
                 name: title,
-                unit_name: unit && unit.short_label || '',
                 joinBy: ['CNTR_ID', 'code'],
                 data: series[0].data,
-                mapData: App.jsonmaps['europe'],
+                mapData: options.jsonmaps['europe'],
                 tooltip: {
                     headerFormat: '',
                     pointFormatter: function() {
-                        // this bound to point; don't rely on the closure you see here
+                        // this ptr bound to point
                         var country_name = this.options.code === 'MK' ? "Macedonia, FYR" : this.options.name;
-                        var value_text = (this.value ? App.round(this.value, 3) + ' ' + this.series.options.unit_name : 'n/a');
+                        var unit_name = unit && unit.short_label || '';
+                        var value_text = App.round(this.value, 3) + ' ' + unit_name;
                         var html = '<span><b>' + country_name + '</b>: <br/>' + value_text + '<br/></span>';
                         return html;
                     }

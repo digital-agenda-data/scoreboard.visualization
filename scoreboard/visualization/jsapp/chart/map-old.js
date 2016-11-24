@@ -90,7 +90,7 @@ function draw_legend(paper, colorscale, x0, y0, min, max, unit, orientation, leg
 };
 
 
-App.chart_library['map'] = function(view, options) {
+App.chart_library['map-old'] = function(view, options) {
     var container = view.el
     var map_div = $('<div/>').addClass('map-chart');
     /*$(container).empty().append($('<p>', {

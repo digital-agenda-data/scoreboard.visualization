@@ -34,8 +34,8 @@ App.ScenarioChartView = Backbone.View.extend({
                 this.multidim_value.push(facet['dimension']);
             }
         }, this);
+        this.jsonmaps = {};
         this.requests_in_flight = [];
-        App.jsonmaps = {};
         this.load_chart();
     },
 
@@ -282,7 +282,8 @@ App.ScenarioChartView = Backbone.View.extend({
             'sort': this.schema['sort'],
             'multidim': this.schema['multidim'],
             'chart_type': this.schema['chart_type'],
-            'custom_properties': this.schema['custom_properties']
+            'custom_properties': this.schema['custom_properties'],
+            'jsonmaps': {}
         };
 
         var multiseries_values = null;
@@ -457,12 +458,16 @@ App.ScenarioChartView = Backbone.View.extend({
             requests.push(whitelist_request);
         }
 
-        if (!App.jsonmaps['europe']) {
+        if (!this.jsonmaps['europe']) {
             var get_map = $.getJSON("../../++resource++scoreboard.highchart.mapdata.europe_rusia_small.geojson")
+            var that = this;
             get_map.done(function(data) {
-                App.jsonmaps['europe'] = data
-            })
+                that.jsonmaps['europe'] = data;
+                chart_data['jsonmaps']['europe'] = data;
+            });
             requests.push(get_map)
+        } else {
+            chart_data['jsonmaps']['europe'] = this.jsonmaps['europe'];
         }
 
         this.requests_in_flight = requests;
