@@ -41,15 +41,15 @@
                 title: {
                     text: unit && unit.short_label || '',
                     style: {
-                        position: 'absolute',
-                        transform: 'rotate(-90deg) translate(-150%, -100%)',
-                        'font-family': 'Segoe UI, Verdana, Arial, sans-serif',
+                        'font-family': 'Segoe UI, Verdana, Arial, sans-serif'
                     }
                 },
                 enabled: true,
                 layout: 'vertical',
                 align: 'left',
-                verticalAlign: 'middle'
+                verticalAlign: 'middle',
+                x: 10,
+                floating: true
             },
             mapNavigation: {
                 enabled: true
@@ -89,6 +89,17 @@
             }]
         });
         App.chart = chartMap;
+
+        var legend = document.querySelector(".highcharts-legend-item");
+        var legend_rect = legend.getBoundingClientRect();
+        var legend_text = document.querySelector(".highcharts-legend-title");
+        var legend_text_rect = legend_text.getBoundingClientRect();
+        var prerotate_x_offset = -(legend_text_rect.width/2 + legend_rect.height/2) - legend_text_rect.height - 10;
+        var prerotate_y_offset = -legend_text_rect.height;
+
+        legend_text.style.position = 'absolute';
+        legend_text.style.transform = "rotate(-90deg) translate("+prerotate_x_offset+"px, "+prerotate_y_offset+"px)";
+
         view.trigger('chart_ready', series, metadata);
     }
 })(App.jQuery);
