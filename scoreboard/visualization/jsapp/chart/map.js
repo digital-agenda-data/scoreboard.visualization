@@ -99,6 +99,8 @@
 
         legend_text.style.position = 'absolute';
         legend_text.style.transform = "rotate(-90deg) translate("+prerotate_x_offset+"px, "+prerotate_y_offset+"px)";
+        legend_text.style["-ms-transform"] = "rotate(-90deg) translate("+prerotate_x_offset+"px, "+prerotate_y_offset+"px)";
+        legend_text.style["-webkit-transform"] = "rotate(-90deg) translate("+prerotate_x_offset+"px, "+prerotate_y_offset+"px)";
 
         view.trigger('chart_ready', series, metadata);
     }
