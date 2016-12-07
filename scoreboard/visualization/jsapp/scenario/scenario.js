@@ -887,7 +887,7 @@ var BaseDialogView = Backbone.View.extend({
                         value: submit_btn.attr('value') });
 
         form.on('submit', function(){
-            App.jQuery.post(action, formData, function(data) {
+            App.jQuery.post(action, formData, function(data, status, xhr) {
                 if(data.indexOf('incorrect-captcha-sol') > -1) {
                     App.jQuery('#captcha_error').text('Invalid recaptcha solution');
                     Recaptcha.reload();
@@ -895,9 +895,21 @@ var BaseDialogView = Backbone.View.extend({
                     var board_url = action.split('add_conversation_form')[0];
                     self.submitted(board_url);
                 }
+            }).fail(function(xhr, status, http_status_message) {
+                    // One of the reasons we get here is that the backend might have redirected us from https to http
+                    // This happend due to Plone redirection and we can't prevent this redirect from being executed by the browser's XhrHttpRequest
+                    // See http://stackoverflow.com/questions/8238727/how-to-prevent-ajax-requests-to-follow-redirects-using-jquery for details
+                    // Until we fix the backend to not redirect us from https to http
+                    // (it involves pound load balancer and some state full behaviour of the backend)
+                    // Because we I can't precisely tell that 'mixed content' occured in the XhrHttpRequest,
+                    // I shall fuzzy match this error knowning that it has the http status and text not yet populated.
+                    if (xhr.state() === 'rejected' && xhr.status === 0 && xhr.responseText === '') {
+                        var board_url = action.split('add_conversation_form')[0];
+                        self.submitted(board_url);
+                    }
             });
-              return false;
-           });
+            return false;
+        });
     },
 
     cancel: function() {
