@@ -101,6 +101,8 @@
         legend_text.style.transform = "rotate(-90deg) translate("+prerotate_x_offset+"px, "+prerotate_y_offset+"px)";
         legend_text.style["-ms-transform"] = "rotate(-90deg) translate("+prerotate_x_offset+"px, "+prerotate_y_offset+"px)";
         legend_text.style["-webkit-transform"] = "rotate(-90deg) translate("+prerotate_x_offset+"px, "+prerotate_y_offset+"px)";
+        var transform_ie = getComputedStyle(legend_text).getPropertyValue('-ms-transform');
+        legend_text.setAttribute('transform', transform_ie);
 
         view.trigger('chart_ready', series, metadata);
     }
