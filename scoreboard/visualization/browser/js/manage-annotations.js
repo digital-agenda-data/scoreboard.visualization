@@ -93,10 +93,11 @@ scoreboard.visualization.annotations_manager = {
         }
     },
 
-    constructCkeditor(div, hasFocus=false) {
+    constructCkeditor: function(div, hasFocus) {
         var self = scoreboard.visualization.annotations_manager;
         var annotation = jQuery(div).html(); // save a copy of the old value
         var indicator = jQuery(div).parent().parent().attr('data-notation');
+        hasFocus = hasFocus === undefined ? false : hasFocus;
         CKEDITOR.inline(indicator, {
             extraPlugins: 'sourcedialog,save,format',
             format_tags: 'p;h3;pre',
