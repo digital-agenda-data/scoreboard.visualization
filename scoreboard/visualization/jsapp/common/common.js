@@ -487,7 +487,7 @@ var format_series = function (data, sort, multidim, category, highlights, animat
     }
     if ( sort && sort.total_stacked ) {
       // sort again all series, based on the total stacked value
-      App.chart_helpers.sort_by_total_stacked(series, sort);
+      App.sort_by_total_stacked(series, sort);
     }
     return series;
 };
@@ -537,7 +537,7 @@ var add_plotLines = function(chart, series, chart_type){
             if (_.chain(chart_type).keys().contains(axis.xOrY).value()){
                 axis.removePlotLine('median');
                 axis.addPlotLine({
-                    value: App.chart_helpers.compute_plotLines(axis.xOrY, series, chart_type[axis.xOrY]),
+                    value: App.compute_plotLines(axis.xOrY, series, chart_type[axis.xOrY]),
                     width: 2,
                     color: 'red',
                     id: 'median'
