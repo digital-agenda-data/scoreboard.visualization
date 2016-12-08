@@ -19,6 +19,11 @@
   </li>
   {{/ if }}
 </ul>
+{{# if this.html_annotation }}
+<div class="annotation_html_box">
+{{{ this.html_annotation }}}
+</div>
+{{/ if }}
 {{/each}}
 <p>
   <a href="{{ indicators_details_url }}">

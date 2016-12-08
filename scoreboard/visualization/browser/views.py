@@ -7,12 +7,10 @@ import xlwt
 from StringIO import StringIO
 from collective.recaptcha.settings import getRecaptchaSettings
 
-from zope.event import notify
 from zope.component import queryUtility
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser import BrowserView
 from eea.app.visualization.zopera import IPropertiesTool
-from eea.cache.event import InvalidateCacheEvent
 from scoreboard.visualization.jsapp import jsapp_html
 from scoreboard.visualization.config import EU, WHITELIST
 from DateTime import DateTime
@@ -43,6 +41,7 @@ class TestsView(BrowserView):
                 CUBE_DIMENSIONS=[],
                 JSAPP_URL=self.JSAPP_URL)
 
+
 class EuropeanUnion(BrowserView):
     """ European Union Countries
     """
@@ -68,7 +67,20 @@ class EuropeanUnion(BrowserView):
         return json.dumps(self.eu)
 
 
-class WhiteList(BrowserView):
+class BaseView(BrowserView):
+    def dataCubes(self, query={'portal_type': 'DataCube'}):
+        ctool = getToolByName(self.context, 'portal_catalog')
+        return ctool(**query)
+
+    def dataSets(self):
+        brains = self.dataCubes()
+        result = [(brain.getId, brain.Title) for brain in brains]
+        result.insert(0, ('', ' - Select Dataset - '))
+
+        return result
+
+
+class WhiteList(BaseView):
     """ Whitelisted indicators
     """
     @property
@@ -97,17 +109,6 @@ class WhiteList(BrowserView):
         settings = self.whitelist.get(self.context.getId(), {})
         return settings.get('timestamp', DateTime().ISO())
 
-    def dataCubes(self, query={'portal_type': 'DataCube'}):
-        ctool = getToolByName(self.context, 'portal_catalog')
-        return ctool(**query)
-
-    def dataSets(self):
-        brains = self.dataCubes()
-        result = [(brain.getId, brain.Title) for brain in brains]
-        result.insert(0, ('', ' - Select Dataset - '))
-
-        return result
-
     def whitelistJSON(self):
         return json.dumps(self.contextualWhitelist())
 
@@ -117,7 +118,6 @@ class WhiteList(BrowserView):
     def whitelistToXLS(self):
         workbook = xlwt.Workbook()
         sheet = workbook.add_sheet('Sheet1')
-        dataset_id = self.context.getId()
         settings = self.contextualWhitelist()
 
         if settings:
@@ -130,7 +130,7 @@ class WhiteList(BrowserView):
                         headers.insert(idx, val)
                     value = elem.get(val)
                     if value:
-                        sheet.write(row+1, cidx, elem.get(val))
+                        sheet.write(row + 1, cidx, elem.get(val))
 
             for idx, val in enumerate(headers):
                 sheet.write(0, idx, val)
@@ -228,6 +228,48 @@ class WhiteList(BrowserView):
         return self.index()
 
 
+class AnnotationsView(BaseView):
+
+    def __call__(self, **kwargs):
+        return self.index()
+
+    @property
+    def annotations(self):
+        stool = getattr(queryUtility(IPropertiesTool), 'scoreboard_properties')
+        data = stool.getProperty('ANNOTATIONS', None)
+        if not data:
+            stool.manage_addProperty('ANNOTATIONS', '{}', 'text')
+            return {}
+        return json.loads(data, object_pairs_hook=OrderedDict)
+
+    def globalAnnotationsJSON(self):
+        return json.dumps(self.annotations)
+
+    def annotationsJSON(self):
+        dataset = self.context.getId()
+        data = self.annotations.get(dataset, {})
+        self.request.response.setHeader("Content-Type", "application/json")
+        return json.dumps(data)
+
+    def datasetsJSON(self):
+        return json.dumps(
+            {x['id']: x for x in self.context.restrictedTraverse('@@datacubes').fetchDatacubes()})
+
+    def saveAnnotation(self):
+        dataset = self.context.getId()
+        indicator = self.request.editorID
+        stool = getattr(queryUtility(IPropertiesTool), 'scoreboard_properties')
+        data = json.loads(stool.getProperty('ANNOTATIONS'))
+        data.setdefault(dataset, {})
+        data[dataset][indicator] = self.request.editabledata
+        if not self.request.editabledata:
+            del data[dataset][indicator]
+        stool.manage_changeProperties(ANNOTATIONS=json.dumps(data, indent=2))
+        if not self.request.editabledata:
+            return "Deleted note for indicator %s." % (indicator)
+        return "Saved note for indicator %s." % (indicator)
+
+
 class CacheView(BrowserView):
 
     @property
@@ -254,7 +296,7 @@ class IndicatorsListing(BrowserView):
         """
         if self._cubeSettings is None:
             self._cubeSettings = queryUtility(
-                    IRegistry).forInterface(IDataCubeSettings, False)
+                IRegistry).forInterface(IDataCubeSettings, False)
         return self._cubeSettings
 
     @property
@@ -268,7 +310,8 @@ class IndicatorsListing(BrowserView):
         last_group = ""
         data = self.context.get_cube().get_dataset_details()
         for indicator in data:
-            group_name = indicator.get("groupName", "")
+            group_name = indicator.get("group_name", [""])[0]
+            indicator['group_name'] = group_name
             if group_name != last_group:
                 last_group = group_name
                 yield {"type": "header", "indicator": indicator}
@@ -282,12 +325,11 @@ class IndicatorsListing(BrowserView):
             "notation": notation,
             "indicator": indicator,
         }
-        
-     
+
         query = getattr(self.cubeSettings, url_type)
         if not query:
             query = getattr(defaults, url_type.upper())
-            
+
         return "%(endpoint)s?%(params)s" % {
             "endpoint": self.defaultSparqlEndpoint,
             "params": urllib.urlencode({
@@ -298,6 +340,7 @@ class IndicatorsListing(BrowserView):
                 "execute": "Execute",
             })
         }
+
 
 class ReCaptchaPubView(BrowserView):
     def __init__(self, context, request):

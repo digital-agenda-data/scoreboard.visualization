@@ -206,7 +206,8 @@ App.chart_library['country_profile'] = function(view, options) {
                     style: {
                         color: '#000000',
                         fontFamily: App.font_family,
-                        fontSize: '11px'
+                        fontSize: '11px',
+                        textOverflow: "none"
                     }
                  }
             },

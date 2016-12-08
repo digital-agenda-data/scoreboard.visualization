@@ -4,7 +4,6 @@
 (function($) {
 "use strict";
 
-
 App.ScenarioChartView = Backbone.View.extend({
 
     className: 'highcharts-chart',
@@ -66,33 +65,27 @@ App.ScenarioChartView = Backbone.View.extend({
     get_meta_data: function(chart_data){
         var meta_data = {};
         chart_data['meta_data'] = meta_data;
-        var requests = [];
 
-        _(this.schema['labels']).forEach(function(label_spec, label_name) {
-            if (_.chain(this.schema.facets).pluck('name').contains(label_spec.facet).value()){
+        _(this.schema['labels']).forEach(function (label_spec, label_name) {
+            if (_.chain(this.schema.facets).pluck('name').contains(label_spec.facet).value()) {
                 var facet_value = this.model.get(label_spec['facet']);
-                if ( typeof facet_value == "object" ) {
+                if (typeof facet_value == "object") {
                     // workaround around multiple values are supported by dimension_labels
                     facet_value = facet_value[0] || "";
                 }
-                var args = {
-                    'dimension': this.dimensions_mapping[label_spec['facet']],
-                    'value': facet_value,
-                    'rev': this.data_revision
-                };
-                var ajax = $.getJSON(this.cube_url + '/dimension_labels', args);
-                ajax.done(function(data) {
-                    meta_data[label_name] = data;
+
+                var facet = _(this.schema.facets).find(function(item3){
+                    return item3['name'] == label_name;
                 });
-                requests.push(ajax);
+                meta_data[label_name] = _(App.cube_metadata[facet['dimension']]).find(function (item2) {
+                    return item2['notation'] == facet_value;
+                });
             }
         }, this);
-
-        return requests;
     },
 
     request_datapoints: function(url, args){
-        var relevant_args = {}
+        var relevant_args = {};
         _(args).each(function(value, key){
             if (value!='any'){
                 var pair = _.object([[key, value]]);
@@ -268,7 +261,7 @@ App.ScenarioChartView = Backbone.View.extend({
                 'text': this.schema['credits'] && this.schema['credits']['text'] || 'European Commission, Digital Scoreboard'
             },
             'xlabels_formatter': function() {
-                var max_length = 15;
+                var max_length = 20;
                 if (this.value.length > max_length){
                     return this.value.substr(0, max_length) + ' ...';
                 }
@@ -405,12 +398,13 @@ App.ScenarioChartView = Backbone.View.extend({
                 }
                 labels_request.done(function(data) {
                     var results = data['options'];
-                    chart_data['series_names'] = _.object(
-                        _(results).pluck('notation'),
-                        _(results).pluck(series_names));
-                    chart_data['series_ending_labels'] = _.object(
-                        _(results).pluck('notation'),
-                        _(results).pluck(series_ending_labels));
+                    chart_data['series_names'] = {};
+                    chart_data['series_ending_labels'] = {};
+                    _(results).forEach(function(item){
+                        var metadata = App.metadata_by_uri(item['uri']);
+                        chart_data['series_names'][metadata['notation']] = metadata[series_names];
+                        chart_data['series_ending_labels'][metadata['notation']] = metadata[series_ending_labels];
+                    });
                 });
                 requests.push(labels_request);
             }
@@ -421,9 +415,7 @@ App.ScenarioChartView = Backbone.View.extend({
             client_filter_options = this.model.get(this.client_filter);
         }
 
-        _(this.get_meta_data(chart_data)).forEach(function(req) {
-            requests.push(req);
-        });
+        this.get_meta_data(chart_data);
 
         this.whitelist_dimensions = _.chain(this.options.filters_schema).where({'type':'whitelist'}).pluck('dimension').value();
         // check if we need whitelist
@@ -433,14 +425,14 @@ App.ScenarioChartView = Backbone.View.extend({
             whitelist_request.done(function(data) {
                 var result = _(data).map(function(obj) {
                     // pick only whitelisted properties and convert to lowercase
-                    var newobj = {}
+                    var newobj = {};
                     _(that.whitelist_dimensions).each(function(dimension){
                         if (obj[dimension]) {
                           newobj[dimension] = obj[dimension].toLowerCase();
                         }
                     });
                     return newobj;
-                })
+                });
                 that.whitelist_data = result;
             });
             requests.push(whitelist_request);
@@ -468,6 +460,7 @@ App.ScenarioChartView = Backbone.View.extend({
 
         var ajax_calls = $.when.apply($, requests);
         ajax_calls.done(_.bind(function() {
+          try {
             var responses = _(arguments).toArray();
             if(requests.length < 2) { responses = [responses]; }
 
@@ -550,13 +543,17 @@ App.ScenarioChartView = Backbone.View.extend({
 
             if ( this.model.get('indicator') && this.model.get('unit-measure') ) {
                 // enable stacking of breakdowns
-                if (this.model.get('unit-measure') == 'pc_' + this.model.get('indicator')) {
+                if (this.model.get('unit-measure').toLowerCase() == 'pc_' + this.model.get('indicator').toLowerCase()) {
                     chart_data['stacked'] = true;
                 }
             }
 
             this.data = chart_data;
             this.render();
+          } catch(err) {
+            console.log(err);
+            that.remove_loading_add_msg('Error occured. Please refresh the page.');
+          }
         }, this)).fail(function(){
             that.remove_loading_add_msg('Error occured. Please refresh the page.');
         });
@@ -745,71 +742,84 @@ App.AnnotationsView = Backbone.View.extend({
             _(this.schema['facets']).pluck('name'),
             _(this.schema['facets']).pluck('dimension')
         );
-        this.model.on('change', this.render, this);
         this.description = $('#parent-fieldname-description').detach();
+        this.model.on('change', this.render, this);
         this.render();
     },
 
     render: function() {
-        var data = [];
-        var requests = [];
         var annotations = this.schema['annotations'] || {};
-        _(annotations['filters']).each(function(filter, key) {
-            var args = {};
-            args['dimension'] = this.dimensions_mapping[filter.name];
-            var facet_values = this.model.get(filter.name);
-            if(!_(facet_values).isArray()){
-                facet_values = [facet_values];
-            }
-            _(facet_values).each(function(value){
-                args['value'] = value;
-                if(! args['value']) {
-                    return;
+        var blocks_order = _(annotations.filters).pluck('name');
+
+        var blocks = _.chain(annotations.filters).sortBy(function(item){
+            return _(blocks_order).indexOf(item['filter_name']);
+        }).map(function(item) {
+
+            var fn = item['name'];
+            var facet_values = this.model.get(fn);
+            var facet = _(this.schema.facets).find(function(item3){
+                return item3['name'] == fn;
+            });
+
+            if(facet) {
+                if(facet_values && !_(facet_values).isArray()){
+                    if (_(facet_values).isObject()) {
+                        // can be dict in case of DESI sliders
+                        facet_values = _.keys(facet_values);
+                    } else {
+                        facet_values = [facet_values];
+                    }
                 }
-                args['rev'] = this.data_revision;
-                var url = this.cube_url + '/dimension_value_metadata';
-                requests.push(
-                    $.getJSON(url, args, function(resp) {
-                        data.push(resp);
-                        _(resp).extend({filter_name: filter.name});
-                    })
-                );
-            }, this);
-        }, this);
-        var ajax_calls = $.when.apply($, requests);
-        ajax_calls.done(_.bind(function() {
-            // handler for metadata (annotations) requests
-            this.$el.empty();
-            var chart_description = this.description.html();
-            var section_title = this.schema['annotations'] &&
-              this.schema['annotations']['title'] ||
-              'Definition and scopes:';
-            if ( this.schema.annotations && this.schema.annotations.notes ) {
-                chart_description = this.schema.annotations.notes;
-            }
-            if(data && data.length > 0) {
-                var blocks_order = _(annotations.filters).pluck('name');
-                var blocks = _.chain(data).sortBy(function(item){
-                    return _(blocks_order).indexOf(item['filter_name']);
-                }).map(function(item){
-                    var facet_name = item['filter_name'];
-                    var facet = _(this.schema.facets).find(function(item){
-                        return item['name'] == facet_name
+                return _(facet_values).map(function(item4){
+                    var found = _(App.cube_metadata[facet['dimension']]).find(function (item2) {
+                        return item2['notation'] == item4;
                     });
-                    return _(item).extend({
-                        "filter_label": facet.label
-                    });
-                }, this).value();
+
+                    if (found) {
+                        return _(found).extend({
+                            "filter_label": facet.label
+                        })
+                    } else {
+                        return null;
+                    }
+                });
+
+            } else {
+                return [];
             }
-            var context = {
-                 "description": chart_description,
-                 "section_title": section_title,
-                 "indicators_details_url": this.cube_url + '/indicators',
-                 "blocks": blocks
-            };
-            this.trigger('metadata_ready', context);
-            this.$el.html(this.template(context));
-        }, this));
+        }, this).reject(function(item) { return !item[0] }).value();
+        // reject nulls in case no metadata was found
+
+        blocks = _(blocks).reduce(function(result, item5){
+            return result.concat(item5);
+        },[]);
+
+        var chart_description = this.description.html();
+        var section_title = this.schema['annotations'] &&
+            this.schema['annotations']['title'] ||
+            'Definition and scopes:';
+        if ( this.schema.annotations && this.schema.annotations.notes ) {
+            chart_description = this.schema.annotations.notes;
+        }
+
+        // check indicator annotations from Plone
+        blocks = _(blocks).map(function(item) {
+            if (App.cube_html_annotations[item['notation']]) {
+                return _(item).extend({'html_annotation': App.cube_html_annotations[item['notation']]});
+            } else {
+                return item;
+            }
+        });
+
+        var context = {
+            "description": chart_description,
+            "section_title": section_title,
+            "indicators_details_url": this.cube_url + '/indicators',
+            "blocks": blocks
+        };
+        this.$el.empty();
+        this.trigger('metadata_ready', context);
+        this.$el.html(this.template(context));
     }
 
 });
@@ -954,6 +964,7 @@ App.ShareOptionsView = Backbone.View.extend({
         'click #highcharts_print': 'highcharts_print',
         'click #highcharts_download': 'highcharts_download',
         'click #highcharts_download_svg': 'highcharts_download_svg',
+        'click #highcharts_download_local': 'highcharts_download_local',
         'click #csv': 'request_csv',
         'click #excel': 'request_excel',
         'click #embed': 'request_embed',
@@ -1093,6 +1104,34 @@ App.ShareOptionsView = Backbone.View.extend({
             App.jQuery('input[name="svg"]', this.svg_form).attr('value', App.chart.getSVG());
             // appendTo body to make it work in Internet Explorer
             this.svg_form.attr('action', App.URL + '/export.svg');
+            this.svg_form.appendTo('body').submit().remove();
+        }
+    },
+
+    highcharts_download_local: function(ev){
+        ev.stopPropagation();
+        var chartdiv = $(".highcharts-container");
+        if (chartdiv && App.chart.options && App.chart.options.exporting) {
+
+           var minwidth = $(chartdiv).width();
+            if (App.chart.options.chart.polar) {
+                minwidth = 1200;
+            } else if (App.chart.options.yAxis[0].title.text) {
+                var ytitle_lines = App.chart.options.yAxis[0].title.text.split('<br>');
+                _(ytitle_lines).each(function(line) {
+                    minwidth =  Math.max(minwidth, 7 * line.length);
+                });
+            }
+            App.chart.options.exporting.sourceWidth = minwidth;
+            App.chart.options.exporting.sourceHeight = minwidth*chartdiv.height()/chartdiv.width();
+            App.chart.options.exporting.scale = 1;
+            var tokens = window.location.pathname.split("/");
+            App.chart.options.exporting.filename = tokens[tokens.length-1];
+            App.chart.exportChartLocal({},{chart:{events:{load: function(event) {}  }}} );
+        } else {
+            App.jQuery('input[name="svg"]', this.svg_form).attr('value', App.chart.getSVG());
+            // appendTo body to make it work in Internet Explorer
+            this.svg_form.attr('action', App.URL + '/svg2png');
             this.svg_form.appendTo('body').submit().remove();
         }
     },

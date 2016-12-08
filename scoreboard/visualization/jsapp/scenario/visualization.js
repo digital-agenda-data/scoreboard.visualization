@@ -94,6 +94,8 @@ App.Visualization = Backbone.View.extend({
             }, this);
         }
 
+        App.cube_metadata = this.get_metadata(options);
+        App.cube_html_annotations = this.get_annotations(options);
 
         if (this.embedded){
             this.filters_box = new App.EmbeddedFiltersBox({
@@ -173,6 +175,38 @@ App.Visualization = Backbone.View.extend({
 
     },
 
+    get_metadata: function(options) {
+
+        var url = options['cube_url'] + '/dimension_metadata';
+        var args = {};
+        args['rev'] = options['data_revision'] || '';
+
+        return JSON.parse( $.ajax({
+            type: "GET",
+            url: url,
+            async: false,
+            cache: true,
+            dataType: 'json',
+            data: args
+        }).responseText);
+    },
+
+    get_annotations: function(options) {
+
+        var url = options['cube_url'] + '/annotations.json';
+        var args = {};
+        //args['rev'] = options['data_revision'] || '';
+
+        return JSON.parse( $.ajax({
+            type: "GET",
+            url: url,
+            async: false,
+            cache: true,
+            dataType: 'json',
+            data: args
+        }).responseText);
+    },
+
     update_hashcfg: function() {
         // do not include all-values and ignore
         var hashcfg = 'chart=' + JSON.stringify(_.pick(this.filters.attributes, this.filters_in_url));
@@ -204,6 +238,21 @@ App.create_visualization = function(container, schema) {
         data_revision: App.DATA_REVISION,
         scenario_url: App.SCENARIO_URL
     });
+};
+
+App.metadata_by_uri = function(uri) {
+    var metadata = null;
+
+    for (var key in App.cube_metadata) {
+        metadata = _(App.cube_metadata[key]).find(function(dimension){
+            return dimension['uri'] == uri;
+        });
+        if(!!metadata){
+            metadata['dimension'] = key;
+            return metadata;
+        }
+    }
+    return null;
 };
 
 

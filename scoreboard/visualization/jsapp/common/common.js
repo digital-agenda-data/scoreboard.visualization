@@ -164,7 +164,8 @@ App.width_m = function() {
 }
 
 App.is_touch_device = function() {
-  return "ontouchstart" in window || navigator.msMaxTouchPoints;
+   return (/Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent) ||
+   (/Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.platform)));
 }
 
 App.font_family = "Lucida Sans Unicode, Candara, Calibri, Futura, Helvetica";
@@ -174,13 +175,24 @@ App.font_family = "Lucida Sans Unicode, Candara, Calibri, Futura, Helvetica";
 Highcharts.wrap(Highcharts.Chart.prototype, 'showCredits', function (proceed, credits) {
     proceed.call(this, credits);
     if (credits.enabled && this.credits) {
-        this.credits.element.onclick = function () {
-            // dynamically create an anchor element and click it
-            // use the settings defined in highcharts (credits.target)
-            var link = document.createElement('a');
-            link.href = credits.href;
-            link.target = credits.target||'_blank';
-            link.click();
+        if (App.is_touch_device()) {
+            this.credits.element.onclick = function () {
+                return false;
+            }
+        } else {
+            this.credits.element.onclick = function () {
+              // dynamically create an anchor element and click it
+              // use the settings defined in highcharts (credits.target)
+              var link = document.createElement('a');
+              if (App.visualization.embedded && App.chart.credits._extra_text) {
+                link.href = App.chart.credits._extra_text.href;
+              } else {
+                link.href = credits.href;
+              }
+              link.target = credits.target||'_blank';
+              document.body.appendChild(link);
+              link.click();
+            }
         }
     }
 });

@@ -3,7 +3,7 @@
   <div metal:fill-slot="main"
     tal:define="normalizeString nocall:context/@@plone/normalizeString;">
     <div class="row">
-      <div class="col-md-12">
+      <div class="heading-wrapper">
         <h1 class="documentFirstHeading"><span id="dataset-title" tal:content="here/getExtended_title"/></h1>
       </div>
     </div>
@@ -41,20 +41,20 @@
 
           <tbody>
             <tal:row tal:repeat="row view/dataset_details">
-                <tr class="groupName" tal:condition="python:row['type'] == 'header'" tal:define="indicator python:row['indicator']" tal:attributes="id python:normalizeString(indicator.get('groupName', ''))">
-                    <td colspan="5" tal:define="groupName indicator/groupName|nothing">
+                <tr class="groupName" tal:condition="python:row['type'] == 'header'" tal:define="indicator python:row['indicator']" tal:attributes="id python:normalizeString(indicator.get('group_name', ''))">
+                    <td colspan="5" tal:define="groupName indicator/group_name|nothing">
                         <tal:block condition="groupName">
                             <span tal:replace="groupName"></span>
                         </tal:block>
                     </td>
                 </tr>
                 <tr tal:condition="python:row['type'] == 'row'" tal:define="indicator python:row['indicator']">
-                    <td class="even" tal:define="longlabel indicator/longlabel|nothing">
+                    <td class="even" tal:define="longlabel indicator/label|nothing">
                         <tal:block condition="longlabel">
                             <span tal:replace="longlabel"></span>
                         </tal:block>
                     </td>
-                    <td class="odd" tal:define="definition indicator/definition|nothing; notes indicator/notes|nothing; notation indicator/notation|indicator/indicator">
+                    <td class="odd" tal:define="definition indicator/definition|nothing; notes indicator/note|nothing; notation indicator/notation|indicator/indicator">
                         <tal:block condition="notation">
                             <strong class="notation">Notation: </strong><span tal:replace="notation"></span>
                         </tal:block>
@@ -77,7 +77,7 @@
                         <a target="_blank"
                           tal:attributes="href python:view.getIndicatorURLData('find_breakdowns_query', indicator);">Find breakdowns</a>
                     </td>
-                    <td class="odd" tal:define="sourcelink indicator/sourcelink|nothing; sourcelabel indicator/sourcelabel|nothing">
+                    <td class="odd" tal:define="sourcelink indicator/source_url|nothing; sourcelabel indicator/source_label|nothing">
                         <a tal:condition="sourcelink" tal:attributes="href sourcelink" tal:content="sourcelabel"></a>
                         <span tal:condition="not:sourcelink" tal:replace="sourcelabel"></span>
                     </td>

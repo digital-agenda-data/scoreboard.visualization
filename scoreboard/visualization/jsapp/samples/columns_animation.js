@@ -95,11 +95,11 @@
       "default_value": [
         "BE","BG","CZ","DK","DE","EE","IE","EL","ES","FR",
         "IT","CY","LV","LT","LU","HU","MT","NL","AT","PL",
-        "PT","RO","SI","SK","FI","SE","UK","EU27", "HR", "IS", "NO"
+        "PT","RO","SI","SK","FI","SE","UK","EU27", "EU28", "HR", "IS", "NO"
       ],
       "dimension": "ref-area",
       "highlights": [
-        "EU27", "EU28"
+        "EU27", "EU28", "EU"
       ],
       "label": "Select the countries",
       "name": "ref-area",
@@ -128,9 +128,6 @@
       "type": "all-values",
       "dimension": "value"
     }
-  ],
-  "highlights": [
-    "EU27"
   ],
   "labels": {
     "breakdown": {
