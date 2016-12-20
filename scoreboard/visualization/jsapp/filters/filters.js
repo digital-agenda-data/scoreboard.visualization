@@ -1,5 +1,6 @@
 /*global App, Backbone, _ */
 /*jshint sub:true */
+import _ from "underscore";
 
 (function($) {
 "use strict";
@@ -31,6 +32,7 @@ App.SelectFilter = Backbone.View.extend({
     },
 
     initialize: function(options) {
+        this.options = options;
         this.cube_url = options['cube_url'];
         this.data_revision = options['data_revision'] || '';
         this.name = options['name'];
@@ -56,7 +58,7 @@ App.SelectFilter = Backbone.View.extend({
             this.loadstate.on('change:' + other_name, this.update, this);
         }, this);
         this.grouper = App.groupers[this.name];
-        if (this.grouper && !_.chain(this.options.filters_schema).pluck('name').contains(this.grouper).value()) {
+        if (this.grouper && !_.chain(options.filters_schema).pluck('name').contains(this.grouper).value()) {
             // grouper not in filter model
             this.grouper = null;
         }
@@ -500,9 +502,9 @@ App.CompositeFilter = App.AllValuesFilter.extend({
         // If we get proper slider settings in the url, save them as an attribute
         // to this view, but sanitize the model's attributes
         if ( typeof this.model.attributes[options.name] == 'undefined' ) {
-          if (this.options.default_value && !_.isArray(this.options.default_value)) {
+          if (options.default_value && !_.isArray(options.default_value)) {
             // copy initial slider values from default value setting
-            this.model.attributes[options.name] = this.options.default_value;
+            this.model.attributes[options.name] = options.default_value;
           }
         }
         if (this.model.attributes[options.name] && !_.isArray(this.model.attributes[options.name])) {

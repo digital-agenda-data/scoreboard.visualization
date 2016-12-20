@@ -1,5 +1,6 @@
 /*global App, Scoreboard, Backbone */
 /*jshint sub:true */
+import _ from "underscore";
 
 (function($) {
 "use strict";
@@ -11,6 +12,7 @@ App.Visualization = Backbone.View.extend({
     embedded_template: App.get_template('scenario_embedded.html'),
 
     initialize: function(options) {
+        this.options = options;
         this.embedded = options['embedded'] !== undefined ? options['embedded'] : false;
         this.viewPortW = $(window).width();
         this.viewPortH = $(window).height();
