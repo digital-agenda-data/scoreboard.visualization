@@ -1,5 +1,6 @@
 /*global App, Backbone, _ */
 /*jshint sub:true */
+import _ from "underscore";
 
 (function($) {
 "use strict";
@@ -9,6 +10,7 @@ App.ScenarioChartView = Backbone.View.extend({
     className: 'highcharts-chart',
 
     initialize: function(options) {
+        this.options = options;
         this.data_revision = options['data_revision'] || '';
         this.cube_url = options['cube_url'];
         this.model.on('change', this.load_chart, this);

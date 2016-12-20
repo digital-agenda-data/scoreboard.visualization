@@ -1,5 +1,9 @@
 /*global App, Backbone, _ */
 /*jshint sub:true */
+import _ from "underscore";
+// import Backbone from "../lib/backbone-1.0.0/backbone"
+import Backbone from "backbone";
+import Highcharts from "highcharts"
 
 (function($) {
 "use strict";

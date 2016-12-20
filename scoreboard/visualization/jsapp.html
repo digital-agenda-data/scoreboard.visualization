@@ -6,24 +6,20 @@
 <!--[if lt IE 8]>
 <script src="http://ajax.cdnjs.com/ajax/libs/json2/20110223/json2.min.js"></script>
 <![endif]-->
-<script src="{{ JSAPP }}/lib/script.js-20120424/script.min.js"></script>
+<!--this is hard to require from webpack, using it old school-->
 <script src="{{ JSAPP }}/lib/jquery-1.8.3/jquery-1.8.3.min.js"></script>
+<!--This is needed right before App is constructed (by the backend; Our webpack produced min.js needs App to exist-->
 <script src="{{ JSAPP }}/lib/handlebars-1.0.rc1/handlebars-1.0.rc.1.js"></script>
-<script src="{{ JSAPP }}/lib/underscore-1.4.4/underscore.js"></script>
-<script src="{{ JSAPP }}/lib/backbone-1.0.0/backbone.js"></script>
-<script src="{{ JSAPP }}/lib/highcharts-4.2.3/js/highcharts.js"></script>
-<script src="{{ JSAPP }}/lib/highcharts-4.2.3/js/highcharts-more.js"></script>
-<script src="{{ JSAPP }}/lib/highcharts-4.2.3/js/modules/exporting.js"></script>
-<script src="{{ JSAPP }}/lib/highcharts-4.2.3/js/modules/offline-exporting.js"></script>
-<script src="{{ JSAPP }}/lib/select2-3.2/select2.js"></script>
-<script src="{{ JSAPP }}/lib/multiple-select-1.1.0/jquery.multiple.select.js"></script>
+<!--this is hard to require from webpack, using it old school-->
 <script src="{{ JSAPP }}/lib/jquery-ui-1.9.2.custom/jquery-ui-1.9.2.custom.min.js"></script>
 <script src="{{ JSAPP }}/lib/qtip-2.0.1/jquery.qtip.min.js"></script>
+<!--TODO get rid of these as we replace the kartograph-->
 <script src="{{ JSAPP }}/lib/raphael-2.1.0/raphael-min.js"></script>
 <script src="{{ JSAPP }}/lib/raphael.export.js"></script>
 <script src="{{ JSAPP }}/lib/chroma/chroma.min.js"></script>
 <script src="{{ JSAPP }}/lib/kartograph-20130524-patched/kartograph.min.js"></script>
-<script src="{{ JSAPP }}/lib/index2.js"></script>
+
+<!--TODO what recaptcha is this? we only have a minified js-->
 <script src="{{ JSAPP }}/lib/recaptcha_ajax.js"></script>
 
 <script>
@@ -55,39 +51,11 @@
   App.jQuery = window.jQuery;
   window.jQuery.noConflict(true);
   App.plone_jQuery = window.jQuery;
-  /*(function($$) {
-    $$(document).tooltip();
-  })(App.jQuery);*/
-
 </script>
 
-{% if not DEBUG %}
-  <script src="{{ JSAPP }}/jsapp.min.js"></script>
-{% else %}
-  <script src="{{ JSAPP }}/common/common.js"></script>
-  <script src="{{ JSAPP }}/filters/filters.js"></script>
-  <script src="{{ JSAPP }}/chart/columns.js"></script>
-  <script src="{{ JSAPP }}/chart/country_profile.js"></script>
-  <script src="{{ JSAPP }}/chart/lines.js"></script>
-  <script src="{{ JSAPP }}/chart/scatter.js"></script>
-  <script src="{{ JSAPP }}/chart/bubbles.js"></script>
-  <script src="{{ JSAPP }}/chart/polar.js"></script>
-  <script src="{{ JSAPP }}/chart/country_profile_polar.js"></script>
-  <script src="{{ JSAPP }}/chart/map.js"></script>
-  <script src="{{ JSAPP }}/scenario/scenario.js"></script>
-  <script src="{{ JSAPP }}/scenario/visualization.js"></script>
-  <script src="{{ JSAPP }}/samples/country_profile_bar.js"></script>
-  <script src="{{ JSAPP }}/samples/country_profile_table.js"></script>
-  <script src="{{ JSAPP }}/editor/editor.js"></script>
-  <script src="{{ JSAPP }}/editor/chart_type.js"></script>
-  <script src="{{ JSAPP }}/editor/structure.js"></script>
-  <script src="{{ JSAPP }}/editor/layout.js"></script>
-  <script src="{{ JSAPP }}/editor/facets.js"></script>
-  <script src="{{ JSAPP }}/editor/axes.js"></script>
-  <script src="{{ JSAPP }}/editor/series.js"></script>
-  <script src="{{ JSAPP }}/editor/format.js"></script>
-  <script src="{{ JSAPP }}/editor/annotations.js"></script>
-  <script src="{{ JSAPP }}/editor/advanced.js"></script>
-{% endif %}
+<script src="{{ JSAPP }}/jsapp.min.js"></script>
+<!--{% if not DEBUG %}-->
+  <!--<script src="{{ JSAPP }}/jsapp.min.js"></script>-->
+<!--{% endif %}-->
 <script type="text/javascript">var addthis_config = addthis_config||{};addthis_config.data_use_cookies = false;addthis_config.data_use_flash = false;</script>
 <script type="text/javascript" src="https://s7.addthis.com/js/250/addthis_widget.js#username=xa-4cb32783294785a7"></script>

@@ -1,5 +1,6 @@
 /*global App, _, chroma, Kartograph */
 /*jshint sub:true */
+import _ from "underscore";
 
 (function($) {
 "use strict";

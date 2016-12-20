@@ -1,5 +1,6 @@
 /*global $, App, _, Highcharts, Backbone */
 /*jshint sub:true */
+import _ from "underscore";
 
 (function() {
 "use strict";
