@@ -13,7 +13,7 @@ require("highcharts/modules/exporting")(Highcharts);
 require("highcharts/modules/offline-exporting")(Highcharts);
 require("highcharts/modules/map")(Highcharts);
 // with our jQuery globally available, multiple-select will upgrade it.
-require("multiple-select");
+require("./lib/multiple-select-1.1.0/jquery.multiple.select");  // Can't find 1.1.0 on npm. 1.2.0, that we can find on npm has some changes that require us to adapt our styles
 require("select2");
 
 // This is much harder to augment, need to use the jquery factory + require js
