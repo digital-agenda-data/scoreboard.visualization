@@ -75,10 +75,10 @@
         "unit-measure": "unit-measure"
       },
       "dimension": "time-period",
-      "label": "Period",
+      "label": "DESI Period",
       "name": "time-period",
-      "sortBy": "order_in_codelist",
-      "sortOrder": "asc",
+      "sortBy": "notation",
+      "sortOrder": "reverse",
       "type": "select"
     },
     {
