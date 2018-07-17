@@ -7,7 +7,6 @@
     xmlns:browser="http://namespaces.zope.org/browser"
     i18n_domain="scoreboard.visualization">
 
-  <includeDependencies package="." />
   <five:registerPackage package="." initialize=".initialize" />
 
   <!-- Include the sub-packages that use their own configure.zcml files. -->
