@@ -996,7 +996,9 @@ App.ShareOptionsView = Backbone.View.extend({
         'click #excel': 'request_excel',
         'click #embed': 'request_embed',
         'click #view_comments': 'request_forum',
-        'click #comment': 'request_comment'
+        'click #comment': 'request_comment',
+        'click #share_twitter': 'share_twitter',
+        'click #share_facebook': 'share_facebook',
     },
 
     template: App.get_template('scenario/share.html'),
@@ -1089,7 +1091,7 @@ App.ShareOptionsView = Backbone.View.extend({
         }
         App.jQuery('html, body').animate({ scrollTop: App.jQuery("#the-chart").offset().top }, 1);
     },
-    
+
     highcharts_zoom_reset: function(ev){
         ev.stopPropagation();
         if (App.chart.options.chart.zoomType) {
@@ -1104,7 +1106,7 @@ App.ShareOptionsView = Backbone.View.extend({
         //App.chart.yAxis[0].setExtremes(null, null);
         App.jQuery('html, body').animate({ scrollTop: App.jQuery("#the-chart").offset().top }, 1);
     },
-    
+
     highcharts_download: function(ev){
         ev.stopPropagation();
         var chartdiv = $(".highcharts-container");
@@ -1222,15 +1224,27 @@ App.ShareOptionsView = Backbone.View.extend({
         }));
     },
 
+    share_twitter: function(ev) {
+      ev.preventDefault();
+      let url = 'https://twitter.com/intent/tweet?text=' + encodeURI(document.title) + '&url=' + encodeURI(window.location.href) + '&related=';
+      window.open(url , '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=300,width=600');
+      return false;
+    },
+
+    share_facebook: function(ev) {
+      ev.preventDefault();
+      let url = "https://www.facebook.com/sharer.php?u=" + encodeURI(window.location.href);
+      window.open(url , '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=300,width=600');
+      return false;
+    },
+
     render: function() {
         this.$el.html(this.template({
             'related': this.related.html(),
-            'zoomEnabled': App.is_touch_device()
+            'zoomEnabled': App.is_touch_device(),
+            'shareEmail': 'mailto:?subject=' + document.title
         }));
         App.jQuery(this.form).appendTo(this.$el);
-        if ( window.addthis) {
-            window.addthis.toolbox('.addthis_toolbox', {}, {url: this.url});
-        }
     },
 
     update_url: function(new_url) {

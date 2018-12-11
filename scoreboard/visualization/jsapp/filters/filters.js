@@ -581,7 +581,7 @@ App.CompositeFilter = App.AllValuesFilter.extend({
                         .css('left',(i/vals*100)+'%');
                     $(this).append(el);
                 }
-                 
+
             });
             var norm_value = (100 / sliders.length).toFixed(1);
             var span_id = slider_id.split('-slider')[0] + '-normalized';
@@ -624,7 +624,7 @@ App.CompositeFilter = App.AllValuesFilter.extend({
         }
 
         for(var slider in sliders_values) {
-            total += sliders_values[slider]; 
+            total += sliders_values[slider];
         }
 
         _(sliders).each(function(slider, slider_idx){
@@ -691,7 +691,7 @@ App.CompositeFilter = App.AllValuesFilter.extend({
         var breakdown_normalized_values = [];
         var breakdown_index;
 
-        // Order the sliders values and normalized values as the order of the 
+        // Order the sliders values and normalized values as the order of the
         // breakdown list
         _.each(attributes[this.name], function(item, item_idx) {
             breakdown_sliders_values.splice(item_idx, 0, sliders_values[item]);
@@ -723,7 +723,6 @@ App.CompositeFilter = App.AllValuesFilter.extend({
             'filters-applied': filters_applied
         };
         if (App.visualization.share) {
-            // can happen if addthis not loaded properly
             App.visualization.share.chart_ready(this.current_series, metadata);
         }
     },
