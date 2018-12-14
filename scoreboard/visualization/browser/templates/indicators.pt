@@ -1,13 +1,13 @@
 <html metal:use-macro="here/main_template/macros/master"
   i18n:domain="plone">
-  <div metal:fill-slot="main"
+  <div metal:fill-slot="main" id="indicators-content"
     tal:define="normalizeString nocall:context/@@plone/normalizeString;">
     <div class="row">
       <div class="heading-wrapper">
         <h1 class="documentFirstHeading"><span id="dataset-title" tal:content="here/getExtended_title"/></h1>
       </div>
     </div>
-
+    <div class="main-content">
     <div class="row">
       <div class="dataset-manage bootstrap col-md-12">
         <ul class="nav nav-tabs">
@@ -20,7 +20,7 @@
     </div>
 
     <div class="row">
-      <div class="col-md-12 white-area rounded-top use-top-padding">
+      <div class="col-md-12 use-top-padding">
         <p id="dataset-description" tal:content="structure here/getSummary" />
         <p>The following table provides methodological information about the source, the scope and the definition of each indicator. For more details, click on the links in the table or explore the whole database.</p>
         <div id="indicators-toc" class="listing-description"> </div>
@@ -28,15 +28,15 @@
     </div>
 
     <div class="row">
-      <div class="col-md-12 white-area no-top-bottom use-bottom-padding rounded-bottom">
+      <div class="col-md-12 use-bottom-padding">
         <table class="list_indicators">
           <thead>
               <tr>
                   <th style="width:20%">Indicator</th>
                   <th style="width:40%">Definition and scope</th>
-                  <th style="width:8%">Time coverage</th>
-                  <th style="width:12%">Explore more using SPARQL queries</th>
-                  <th style="width:20%">Source</th></tr>
+                  <th style="width:12%">Time coverage</th>
+                  <th style="width:16%">Explore more using SPARQL queries</th>
+                  <th style="width:12%">Source</th></tr>
           </thead>
 
           <tbody>
@@ -77,7 +77,7 @@
                         <a target="_blank"
                           tal:attributes="href python:view.getIndicatorURLData('find_breakdowns_query', indicator);">Find breakdowns</a>
                     </td>
-                    <td class="odd" tal:define="sourcelink indicator/source_url|nothing; sourcelabel indicator/source_label|nothing">
+                    <td class="even" tal:define="sourcelink indicator/source_url|nothing; sourcelabel indicator/source_label|nothing">
                         <a tal:condition="sourcelink" tal:attributes="href sourcelink" tal:content="sourcelabel"></a>
                         <span tal:condition="not:sourcelink" tal:replace="sourcelabel"></span>
                     </td>
@@ -95,5 +95,6 @@
       </div>
     </div>
 
+  </div>
   </div>
 </html>
