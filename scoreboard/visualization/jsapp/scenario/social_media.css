@@ -1,11 +1,10 @@
 .social-media-icons {
   display: flex;
-  justify-content: space-between;
-  padding-left: 1.5rem;
+  justify-content: space-around;
 }
 
 .social-media-icons img {
-  max-width: 50%;
+  max-width: 70%;
   transition: transform .2s, box-shadow .3s;
   border-radius: 50%;
 }
@@ -13,4 +12,8 @@
 .social-media-icons img:hover {
   transform: scale(1.5);
   box-shadow: 0 0 11px rgba(33,33,33,.5);
+}
+
+.share-this {
+  margin-bottom: .5em;
 }
