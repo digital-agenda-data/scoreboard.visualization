@@ -465,7 +465,7 @@ describe('ScenarioChartViewParameters', function() {
     "use strict";
 
     beforeEach(function() {
-        this.sandbox = sinon.sandbox.create();
+        this.sandbox = sinon.createSandbox();
         this.sandbox.useFakeServer();
         this.model = new Backbone.Model();
         this.scenario_chart = new sinon.spy();
@@ -792,7 +792,7 @@ describe('ScenarioChartView', function() {
     "use strict";
 
     beforeEach(function() {
-        this.sandbox = sinon.sandbox.create();
+        this.sandbox = sinon.createSandbox();
         this.sandbox.useFakeServer();
     });
 
@@ -1000,7 +1000,7 @@ describe('AnnotationsView', function() {
     "use strict";
 
     beforeEach(function() {
-        this.sandbox = sinon.sandbox.create();
+        this.sandbox = sinon.createSandbox();
         this.sandbox.useFakeServer();
         this.model = new Backbone.Model();
         App.cube_metadata = {

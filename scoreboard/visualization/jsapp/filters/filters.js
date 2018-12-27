@@ -30,6 +30,13 @@ App.SelectFilter = Backbone.View.extend({
         'change select': 'on_selection_change'
     },
 
+    // As of Backbone 1.1, options passed into the Backbone.View constructor
+    // are no longer automatically attached to the view instance as this.options.
+    constructor: function(options) {
+        this.options = options || {};
+        Backbone.View.apply(this, arguments);
+    },
+
     initialize: function(options) {
         this.cube_url = options['cube_url'];
         this.data_revision = options['data_revision'] || '';
@@ -355,6 +362,13 @@ App.SelectFilter = Backbone.View.extend({
 
 App.DatasetSelectFilter = App.SelectFilter.extend({
 
+  // As of Backbone 1.1, options passed into the Backbone.View constructor
+  // are no longer automatically attached to the view instance as this.options.
+  constructor: function(options) {
+      this.options = options || {};
+      Backbone.View.apply(this, arguments);
+  },
+
   initialize: function(){
       App.SelectFilter.prototype.initialize.apply(this, arguments);
       this.default_value = this.model.get(this.name);
@@ -494,6 +508,13 @@ App.CompositeFilter = App.AllValuesFilter.extend({
         'sliderValuesUpdated': 'update_normalized',
         'sliderNormalizeUpdated': 'update_chart'
     }).extend(App.SelectFilter.prototype.events),
+
+    // As of Backbone 1.1, options passed into the Backbone.View constructor
+    // are no longer automatically attached to the view instance as this.options.
+    constructor: function(options) {
+        this.options = options || {};
+        Backbone.View.apply(this, arguments);
+    },
 
     initialize: function(options) {
         this.composite_values = {};
@@ -814,6 +835,13 @@ App.FiltersBox = Backbone.View.extend({
         'composite': App.CompositeFilter,
         'all-values': App.AllValuesFilter,
         'whitelist': App.WhitelistSelectFilter
+    },
+
+    // As of Backbone 1.1, options passed into the Backbone.View constructor
+    // are no longer automatically attached to the view instance as this.options.
+    constructor: function(options) {
+        this.options = options || {};
+        Backbone.View.apply(this, arguments);
     },
 
     initialize: function(options) {

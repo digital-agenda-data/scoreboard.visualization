@@ -8,7 +8,15 @@ App.ScenarioChartView = Backbone.View.extend({
 
     className: 'highcharts-chart',
 
+    // As of Backbone 1.1, options passed into the Backbone.View constructor
+    // are no longer automatically attached to the view instance as this.options.
+    constructor: function(options) {
+        this.options = options || {};
+        Backbone.View.apply(this, arguments);
+    },
+
     initialize: function(options) {
+        this.options = this.options || options;
         this.data_revision = options['data_revision'] || '';
         this.cube_url = options['cube_url'];
         this.model.on('change', this.load_chart, this);
@@ -574,6 +582,13 @@ App.GraphControlsView = Backbone.View.extend({
         'click #toolbar #next': 'on_next'
     },
 
+    // As of Backbone 1.1, options passed into the Backbone.View constructor
+    // are no longer automatically attached to the view instance as this.options.
+    constructor: function(options) {
+        this.options = options || {};
+        Backbone.View.apply(this, arguments);
+    },
+
     initialize: function(options) {
         this.chart = options['chart']
         _(this.chart).extend(Backbone.Events);
@@ -734,6 +749,13 @@ App.AnnotationsView = Backbone.View.extend({
 
     template: App.get_template('scenario/annotations.html'),
 
+    // As of Backbone 1.1, options passed into the Backbone.View constructor
+    // are no longer automatically attached to the view instance as this.options.
+    constructor: function(options) {
+        this.options = options || {};
+        Backbone.View.apply(this, arguments);
+    },
+
     initialize: function(options) {
         this.data_revision = options['data_revision'] || '';
         this.cube_url = options['cube_url'];
@@ -834,6 +856,13 @@ var BaseDialogView = Backbone.View.extend({
     events: {
         'click #btn-submit': 'submit',
         'click #btn-cancel': 'cancel'
+    },
+
+    // As of Backbone 1.1, options passed into the Backbone.View constructor
+    // are no longer automatically attached to the view instance as this.options.
+    constructor: function(options) {
+        this.options = options || {};
+        Backbone.View.apply(this, arguments);
     },
 
     initialize: function() {
@@ -971,6 +1000,13 @@ App.ShareOptionsView = Backbone.View.extend({
     },
 
     template: App.get_template('scenario/share.html'),
+
+    // As of Backbone 1.1, options passed into the Backbone.View constructor
+    // are no longer automatically attached to the view instance as this.options.
+    constructor: function(options) {
+        this.options = options || {};
+        Backbone.View.apply(this, arguments);
+    },
 
     initialize: function(options) {
         this.url = App.SCENARIO_URL;
