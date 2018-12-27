@@ -188,7 +188,7 @@
         "y-unit-measure": "y-unit-measure"
       },
       "dimension": "time-period",
-      "label": "Period",
+      "label": "DESI Period",
       "multidim_common": true,
       "name": "time-period",
       "sortBy": "notation",
