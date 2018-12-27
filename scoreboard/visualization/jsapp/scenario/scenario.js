@@ -887,7 +887,7 @@ var BaseDialogView = Backbone.View.extend({
                         value: submit_btn.attr('value') });
 
         form.on('submit', function(){
-            App.jQuery.post(action, formData, function(data) {
+            App.jQuery.post(action, formData, function(data, status, xhr) {
                 var board_url = action.split('add_conversation_form')[0];
                 self.submitted(board_url);
             }).fail(function(xhr, status, http_status_message) {

@@ -38,7 +38,7 @@
       "sortOrder": "asc",
       "default_value": "DESI_SLIDERS",
       "ignore_values": [
-        "DESI", 
+        "DESI",
         "DESI_1_CONN",
         "DESI_1A1_FBBC",
         "DESI_1A2_FBBTU",

@@ -11,7 +11,6 @@ js_bundles = [
         'input': [
             'common/common.js',
             'filters/filters.js',
-            'chart/common.js',
             'chart/columns.js',
             'chart/country_profile.js',
             'chart/lines.js',
