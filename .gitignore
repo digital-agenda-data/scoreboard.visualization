@@ -6,3 +6,4 @@
 *.log
 scoreboard/visualization/jsapp/jsapp.min.js
 *.swp
+.idea/
