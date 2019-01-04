@@ -5,7 +5,7 @@
     <script tal:attributes="src string:${portal_url}/++resource++scoreboard.visualization.manage-whitelist.js"></script>
   </tal:js>
   <div metal:fill-slot="main">
-  <h1>Manage whitelist</h1>
+    <h1 class="documentFirstHeading">Manage whitelist</h1>
     <div class="whitelist-content"
      tal:define="datasets view/dataSets">
       <div class="whitelist-manage bootstrap" tal:define="msg view/msg">
@@ -37,7 +37,7 @@
       </div>
       <br/>
       <div class="whitelist">
-        <table id="whitelist-table" class="white-area">
+        <table id="whitelist-table">
           <thead>
           </thead>
           <tbody>
