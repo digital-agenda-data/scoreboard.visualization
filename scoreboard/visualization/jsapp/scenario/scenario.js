@@ -3,7 +3,6 @@
 
 (function($) {
 "use strict";
-
 App.ScenarioChartView = Backbone.View.extend({
 
     className: 'highcharts-chart',
@@ -534,7 +533,6 @@ App.ScenarioChartView = Backbone.View.extend({
                             + ['(left side)', '(right side)'][n];
                     }
                 }
-
                 return {
                     'label': chart_data['series_names'][value],
                     'ending_label': chart_data['series_ending_labels'][value],
@@ -1237,12 +1235,12 @@ App.ShareOptionsView = Backbone.View.extend({
       window.open(url , '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=300,width=600');
       return false;
     },
-
     render: function() {
+        var email_url = 'mailto:?subject=' + encodeURIComponent(document.title) + '&body=' + encodeURIComponent(this.url);
         this.$el.html(this.template({
             'related': this.related.html(),
             'zoomEnabled': App.is_touch_device(),
-            'shareEmail': 'mailto:?subject=' + document.title
+            'shareEmail': email_url
         }));
         App.jQuery(this.form).appendTo(this.$el);
     },
