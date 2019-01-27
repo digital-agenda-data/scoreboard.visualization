@@ -15,10 +15,6 @@
     },
     "category_facet": "ref-area",
     "chart_type": "columns",
-    "credits": {
-        "text": "European Commission, Digital Scoreboard",
-        "link": "http://ec.europa.eu/digital-agenda/en/graphs/"
-    },
     "facets": [
     {
         "constraints": {},
@@ -98,7 +94,8 @@
             "unit-measure": "unit-measure",
             "time-period": "time-period"
         },
-        "default_value": ["EU27", "#random"],
+        "default_value": ["EU", "#random"],
+        "ignore_values": ["AL", "ASS", "BA", "BIH", "CH", "EU_AVERAGE", "EU_HARMONISED", "IL", "JP", "MD", "ME", "MK", "OTHER", "RS", "SL", "SP", "TR", "US", "XK"],
         "dimension": "ref-area",
         "highlights": ["EU27", "EU28", "EU"],
         "label": "Select the countries",
@@ -146,7 +143,7 @@
     },
     "multiple_series": "breakdown",
     "series-legend-label": "long",
-    "series-point-label": "long",
+    "series-point-label": "none",
     "sort": {
         "by": "value",
         "each_series": false,

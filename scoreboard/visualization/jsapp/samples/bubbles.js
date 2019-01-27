@@ -219,7 +219,7 @@
         "on_client": true,
         "label": "Country / Countries",
         "dimension": "ref-area",
-        "ignore_values": ["EU27", "EU28", "EU"],
+        "ignore_values": ["EU27", "EU28", "EU", "AL", "ASS", "BA", "BIH", "CH", "EU_AVERAGE", "EU_HARMONISED", "IL", "JP", "MD", "ME", "MK", "OTHER", "RS", "SL", "SP", "TR", "US", "XK"],
         "default_value": ["BE", "BG", "CZ", "DK", "DE", "EE",
         "IE", "EL", "ES", "FR", "IT", "CY", "LV", "LT", "LU",
         "HU", "MT", "NL", "AT", "PL", "PT", "RO", "SI", "SK",
