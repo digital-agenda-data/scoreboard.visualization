@@ -864,7 +864,6 @@ var BaseDialogView = Backbone.View.extend({
     },
 
     initialize: function() {
-        _(this).bindAll();
         this.form_action = this.options.form_action;
     },
 
