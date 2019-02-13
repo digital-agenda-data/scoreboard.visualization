@@ -996,6 +996,7 @@ App.ShareOptionsView = Backbone.View.extend({
         'click #comment': 'request_comment',
         'click #share_twitter': 'share_twitter',
         'click #share_facebook': 'share_facebook',
+        'click #share_linkedin': 'share_linkedin',
     },
 
     template: App.get_template('scenario/share.html'),
@@ -1231,6 +1232,13 @@ App.ShareOptionsView = Backbone.View.extend({
     share_facebook: function(ev) {
       ev.preventDefault();
       let url = "https://www.facebook.com/sharer.php?u=" + encodeURI(window.location.href);
+      window.open(url , '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=300,width=600');
+      return false;
+    },
+
+    share_linkedin: function(ev) {
+      ev.preventDefault();
+      let url = 'https://www.linkedin.com/shareArticle?mini=true&url=' + encodeURI(window.location.href) + '&title=' + encodeURI(document.title) + '&source=LinkedIn';
       window.open(url , '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=300,width=600');
       return false;
     },
