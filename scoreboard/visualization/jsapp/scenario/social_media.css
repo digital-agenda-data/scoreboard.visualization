@@ -17,3 +17,16 @@
 .share-this {
   margin-bottom: .5em;
 }
+
+@media screen and (max-width: 1125px) and (min-width: 993px){
+  .social-media-icons img {
+    max-width: 90% ;
+  }
+}
+
+@media screen and (max-width: 991px){
+  .social-media-icons img {
+    max-width: 40% ;
+  }
+}
+
