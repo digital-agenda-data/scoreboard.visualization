@@ -9,7 +9,7 @@ describe('modular filters', function() {
     describe('SelectFilter', function() {
 
         beforeEach(function() {
-            this.sandbox = sinon.sandbox.create();
+            this.sandbox = sinon.createSandbox();
         });
 
         var NoAjaxSelectFilter = App.SelectFilter.extend({
@@ -279,7 +279,7 @@ describe('modular filters', function() {
     });
 
     describe('CompositeFilter', function() {
-        this.sandbox = sinon.sandbox.create();
+        this.sandbox = sinon.createSandbox();
         this.sandbox.useFakeServer();
         var server = this.sandbox.server;
         App.visualization = sinon.mock();
@@ -366,7 +366,7 @@ describe('modular filters', function() {
         "use strict";
 
         beforeEach(function() {
-            this.sandbox = sinon.sandbox.create();
+            this.sandbox = sinon.createSandbox();
             this.sandbox.useFakeServer();
         });
 
@@ -619,7 +619,7 @@ describe('modular filters', function() {
         "use strict";
 
         beforeEach(function() {
-            this.sandbox = sinon.sandbox.create();
+            this.sandbox = sinon.createSandbox();
             this.sandbox.useFakeServer();
             this.model = new Backbone.Model();
 

@@ -43,25 +43,26 @@
     },
     {
       "constraints": {
-        "indicator-group": "indicator-group",
-        "indicator": "indicator"
+        "indicator": "indicator",
+        "indicator-group": "indicator-group"
       },
-      "default_value": "#random",
-      "dimension": "breakdown-group",
-      "include_wildcard": true,
-      "label": "Breakdown group",
-      "name": "breakdown-group",
-      "position": "upper-left",
-      "sortBy": "order_in_codelist",
-      "sortOrder": "asc",
-      "type": "all-values"
-    },
-    {
-      "constraints": {
-        "indicator-group": "indicator-group",
-        "indicator": "indicator"
-      },
-      "default_value": ["1M_websites", "HH_total", "IND_TOTAL", "RURAL_POP", "TOTAL", "TOTAL_FBB", "TOTAL_MBB", "TOTAL_MOB", "TOTAL_POP","TOTAL_POPHH", "TOTAL_TEL", "ent_all_xfin", "orgclass_total", "tot_ict_products", "total_offers8plus"],
+      "default_value": [
+        "1M_websites",
+        "HH_total",
+        "IND_TOTAL",
+        "RURAL_POP",
+        "TOTAL",
+        "TOTAL_FBB",
+        "TOTAL_MBB",
+        "TOTAL_MOB",
+        "TOTAL_POP",
+        "TOTAL_POPHH",
+        "TOTAL_TEL",
+        "ent_all_xfin",
+        "orgclass_total",
+        "tot_ict_products",
+        "total_offers8plus"
+      ],
       "dimension": "breakdown",
       "label": "Breakdown",
       "name": "breakdown",
@@ -72,9 +73,9 @@
     },
     {
       "constraints": {
-        "indicator-group": "indicator-group",
+        "breakdown": "breakdown",
         "indicator": "indicator",
-        "breakdown": "breakdown"
+        "indicator-group": "indicator-group"
       },
       "default_value": "#random",
       "dimension": "unit-measure",
@@ -87,19 +88,51 @@
     },
     {
       "constraints": {
-        "indicator-group": "indicator-group",
-        "indicator": "indicator",
         "breakdown": "breakdown",
+        "indicator": "indicator",
+        "indicator-group": "indicator-group",
         "unit-measure": "unit-measure"
       },
       "default_value": [
-        "BE","BG","CZ","DK","DE","EE","IE","EL","ES","FR",
-        "IT","CY","LV","LT","LU","HU","MT","NL","AT","PL",
-        "PT","RO","SI","SK","FI","SE","UK","EU27", "EU28", "HR", "IS", "NO"
+        "AT",
+        "BE",
+        "BG",
+        "CY",
+        "CZ",
+        "DE",
+        "DK",
+        "EE",
+        "EL",
+        "ES",
+        "EU",
+        "FI",
+        "FR",
+        "HR",
+        "HU",
+        "IE",
+        "IS",
+        "IT",
+        "LI",
+        "LT",
+        "LU",
+        "LV",
+        "MT",
+        "NL",
+        "NO",
+        "PL",
+        "PT",
+        "RO",
+        "SE",
+        "SI",
+        "SK",
+        "UK"
       ],
+      "ignore_values": ["AL", "ASS", "BA", "BIH", "CH", "EU_AVERAGE", "EU_HARMONISED", "IL", "JP", "MD", "ME", "MK", "OTHER", "RS", "SL", "SP", "TR", "US", "XK"],
       "dimension": "ref-area",
       "highlights": [
-        "EU27", "EU28", "EU"
+        "EU27",
+        "EU28",
+        "EU"
       ],
       "label": "Select the countries",
       "name": "ref-area",
@@ -109,10 +142,22 @@
       "type": "multiple_select"
     },
     {
+      "constraints": {},
+      "default_value": "#random",
+      "dimension": "breakdown-group",
+      "include_wildcard": true,
+      "label": "Breakdown group",
+      "name": "breakdown-group",
+      "position": "upper-left",
+      "sortBy": "order_in_codelist",
+      "sortOrder": "asc",
+      "type": "all-values"
+    },
+    {
       "constraints": {
-        "indicator-group": "indicator-group",
-        "indicator": "indicator",
         "breakdown": "breakdown",
+        "indicator": "indicator",
+        "indicator-group": "indicator-group",
         "unit-measure": "unit-measure"
       },
       "dimension": "time-period",
@@ -124,9 +169,9 @@
       "type": "all-values"
     },
     {
+      "dimension": "value",
       "name": "value",
-      "type": "all-values",
-      "dimension": "value"
+      "type": "all-values"
     }
   ],
   "labels": {
@@ -141,48 +186,43 @@
     }
   },
   "multiple_series": "time-period",
-  "credits": {
-    "text": "European Commission, Digital Scoreboard",
-    "link": "http://ec.europa.eu/digital-agenda/en/graphs/"
-  },
-  "sort": {
-    "by": "value",
-    "order": -1,
-    "each_series": true
-  },
-  "tooltips": {
-    "unit-measure": true,
-    "flag": true,
-    "note": true
-  },
+  "plotlines": {},
   "series-ending-label": "long",
   "series-legend-label": "none",
   "series-point-label": "none",
+  "sort": {
+    "by": "value",
+    "each_series": true,
+    "order": -1
+  },
   "titles": {
+    "subtitle": [],
     "title": [
       {
-        "prefix": null,
-        "suffix": null,
         "facet_name": "indicator",
-        "format": "label"
+        "format": "label",
+        "prefix": null,
+        "suffix": null
       },
       {
         "facet_name": "breakdown",
+        "format": "label",
         "prefix": ", ",
-        "suffix": null,
-        "format": "label"
+        "suffix": null
       }
     ],
-    "subtitle": [],
-    "xAxisTitle": [],
     "yAxisTitle": [
       {
-        "prefix": null,
-        "suffix": null,
         "facet_name": "unit-measure",
-        "format": "short_label"
+        "format": "short_label",
+        "prefix": null,
+        "suffix": null
       }
     ]
   },
-  "plotlines": {}
+  "tooltips": {
+    "flag": true,
+    "note": true,
+    "unit-measure": true
+  }
 }

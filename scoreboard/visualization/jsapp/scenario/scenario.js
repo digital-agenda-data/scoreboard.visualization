@@ -3,12 +3,19 @@
 
 (function($) {
 "use strict";
-
 App.ScenarioChartView = Backbone.View.extend({
 
     className: 'highcharts-chart',
 
+    // As of Backbone 1.1, options passed into the Backbone.View constructor
+    // are no longer automatically attached to the view instance as this.options.
+    constructor: function(options) {
+        this.options = options || {};
+        Backbone.View.apply(this, arguments);
+    },
+
     initialize: function(options) {
+        this.options = this.options || options;
         this.data_revision = options['data_revision'] || '';
         this.cube_url = options['cube_url'];
         this.model.on('change', this.load_chart, this);
@@ -526,7 +533,6 @@ App.ScenarioChartView = Backbone.View.extend({
                             + ['(left side)', '(right side)'][n];
                     }
                 }
-
                 return {
                     'label': chart_data['series_names'][value],
                     'ending_label': chart_data['series_ending_labels'][value],
@@ -572,6 +578,13 @@ App.GraphControlsView = Backbone.View.extend({
         'click #toolbar #prev': 'on_prev',
         'click #toolbar #play': 'on_auto_change',
         'click #toolbar #next': 'on_next'
+    },
+
+    // As of Backbone 1.1, options passed into the Backbone.View constructor
+    // are no longer automatically attached to the view instance as this.options.
+    constructor: function(options) {
+        this.options = options || {};
+        Backbone.View.apply(this, arguments);
     },
 
     initialize: function(options) {
@@ -734,6 +747,13 @@ App.AnnotationsView = Backbone.View.extend({
 
     template: App.get_template('scenario/annotations.html'),
 
+    // As of Backbone 1.1, options passed into the Backbone.View constructor
+    // are no longer automatically attached to the view instance as this.options.
+    constructor: function(options) {
+        this.options = options || {};
+        Backbone.View.apply(this, arguments);
+    },
+
     initialize: function(options) {
         this.data_revision = options['data_revision'] || '';
         this.cube_url = options['cube_url'];
@@ -836,8 +856,14 @@ var BaseDialogView = Backbone.View.extend({
         'click #btn-cancel': 'cancel'
     },
 
+    // As of Backbone 1.1, options passed into the Backbone.View constructor
+    // are no longer automatically attached to the view instance as this.options.
+    constructor: function(options) {
+        this.options = options || {};
+        Backbone.View.apply(this, arguments);
+    },
+
     initialize: function() {
-        _(this).bindAll();
         this.form_action = this.options.form_action;
     },
 
@@ -967,10 +993,20 @@ App.ShareOptionsView = Backbone.View.extend({
         'click #excel': 'request_excel',
         'click #embed': 'request_embed',
         'click #view_comments': 'request_forum',
-        'click #comment': 'request_comment'
+        'click #comment': 'request_comment',
+        'click #share_twitter': 'share_twitter',
+        'click #share_facebook': 'share_facebook',
+        'click #share_linkedin': 'share_linkedin',
     },
 
     template: App.get_template('scenario/share.html'),
+
+    // As of Backbone 1.1, options passed into the Backbone.View constructor
+    // are no longer automatically attached to the view instance as this.options.
+    constructor: function(options) {
+        this.options = options || {};
+        Backbone.View.apply(this, arguments);
+    },
 
     initialize: function(options) {
         this.url = App.SCENARIO_URL;
@@ -1053,7 +1089,7 @@ App.ShareOptionsView = Backbone.View.extend({
         }
         App.jQuery('html, body').animate({ scrollTop: App.jQuery("#the-chart").offset().top }, 1);
     },
-    
+
     highcharts_zoom_reset: function(ev){
         ev.stopPropagation();
         if (App.chart.options.chart.zoomType) {
@@ -1068,7 +1104,7 @@ App.ShareOptionsView = Backbone.View.extend({
         //App.chart.yAxis[0].setExtremes(null, null);
         App.jQuery('html, body').animate({ scrollTop: App.jQuery("#the-chart").offset().top }, 1);
     },
-    
+
     highcharts_download: function(ev){
         ev.stopPropagation();
         var chartdiv = $(".highcharts-container");
@@ -1186,15 +1222,34 @@ App.ShareOptionsView = Backbone.View.extend({
         }));
     },
 
+    share_twitter: function(ev) {
+      ev.preventDefault();
+      let url = 'https://twitter.com/intent/tweet?text=' + encodeURI(document.title) + '&url=' + encodeURI(window.location.href) + '&related=';
+      window.open(url , '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=300,width=600');
+      return false;
+    },
+
+    share_facebook: function(ev) {
+      ev.preventDefault();
+      let url = "https://www.facebook.com/sharer.php?u=" + encodeURI(window.location.href);
+      window.open(url , '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=300,width=600');
+      return false;
+    },
+
+    share_linkedin: function(ev) {
+      ev.preventDefault();
+      let url = 'https://www.linkedin.com/shareArticle?mini=true&url=' + encodeURI(window.location.href) + '&title=' + encodeURI(document.title) + '&source=LinkedIn';
+      window.open(url , '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=300,width=600');
+      return false;
+    },
     render: function() {
+        var email_url = 'mailto:?subject=' + encodeURIComponent(document.title) + '&body=' + encodeURIComponent(this.url);
         this.$el.html(this.template({
             'related': this.related.html(),
-            'zoomEnabled': App.is_touch_device()
+            'zoomEnabled': App.is_touch_device(),
+            'shareEmail': email_url
         }));
         App.jQuery(this.form).appendTo(this.$el);
-        if ( window.addthis) {
-            window.addthis.toolbox('.addthis_toolbox', {}, {url: this.url});
-        }
     },
 
     update_url: function(new_url) {

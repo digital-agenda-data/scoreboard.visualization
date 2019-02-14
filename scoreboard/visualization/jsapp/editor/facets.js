@@ -101,9 +101,9 @@ App.FacetEditorField = Backbone.View.extend({
                     object.push(random);
                     if (this.model.get('type') == 'multiple_select' &&
                         this.model.get('dimension') == 'ref-area'){
-                        var eu27 = { 'label': '#eu',
-                                     'value': '#eu27' };
-                        object.push(eu27);
+                        var eu28 = { 'label': '#eu',
+                                     'value': '#eu28' };
+                        object.push(eu28);
                     }
                 }, this))
             .value();

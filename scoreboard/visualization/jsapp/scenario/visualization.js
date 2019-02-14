@@ -10,6 +10,13 @@ App.Visualization = Backbone.View.extend({
     template: App.get_template('scenario.html'),
     embedded_template: App.get_template('scenario_embedded.html'),
 
+    // As of Backbone 1.1, options passed into the Backbone.View constructor
+    // are no longer automatically attached to the view instance as this.options.
+    constructor: function(options) {
+        this.options = options || {};
+        Backbone.View.apply(this, arguments);
+    },
+
     initialize: function(options) {
         this.embedded = options['embedded'] !== undefined ? options['embedded'] : false;
         this.viewPortW = $(window).width();
