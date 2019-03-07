@@ -28,9 +28,9 @@
         <table id="annotations-table" class="list_indicators">
           <thead>
             <tr class="whitelist-head-row">
-              <th width="30%">Indicator</th>
-              <th width="50%">Annotation</th>
-              <th width="20%">Operations</th>
+              <th width="50%">Indicator</th>
+              <th width="25%">Annotation</th>
+              <th width="25%">Operations</th>
             </tr>
           </thead>
           <tbody>
