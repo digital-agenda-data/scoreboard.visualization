@@ -17,7 +17,8 @@
         <div id="message" style="display: none;position:fixed;top:0;right:0" class="alert" role="alert"></div>
         <br/>
         <div class="input-group">
-          <select id="datasets" name="datasets">
+          <label class="label-select-file-upload" for="datasets">Select Dataset</label>
+          <select class="form-control form-select" id="datasets" name="datasets">
             <option tal:repeat="dataset datasets" tal:attributes="value python: dataset[0]" tal:content="python: dataset[1]" >
             </option>
           </select>

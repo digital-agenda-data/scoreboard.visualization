@@ -1,5 +1,5 @@
 <input type="text" name="title-part-prefix" placeholder="prefix" class="col-md-1 col-sm-1" value="{{ prefix }}"/>
-<select name="title-part">
+<select name="title-part" class="form-control form-select">
   <option value="">--</option>
 {{# facets }}
   <option value="{{ value }}"
@@ -7,7 +7,7 @@
     >{{ label }}</option>
 {{/ facets }}
 </select>
-<select name="title-part-format">
+<select name="title-part-format" class="form-control form-select">
 {{# format_options }}
   <option value="{{ value }}"
     {{# if selected }}selected{{/ if }}
