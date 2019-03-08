@@ -1,17 +1,28 @@
 .social-media-icons {
   display: flex;
-  justify-content: space-around;
+  width: 60%;
+  justify-content: space-between;
 }
 
 .social-media-icons img {
-  max-width: 70%;
-  transition: transform .2s, box-shadow .3s;
-  border-radius: 50%;
+  width: 2.5rem;
+}
+
+.social-media-icons a {
+  width: auto;
+}
+
+.social-media-icons a:hover {
+  outline-offset: 0;
 }
 
 .social-media-icons img:hover {
-  transform: scale(1.5);
   box-shadow: 0 0 11px rgba(33,33,33,.5);
+}
+
+#mail-share img {
+  background-color: #FFF;
+  width: 2.45rem;
 }
 
 .share-this {
