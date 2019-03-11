@@ -3,7 +3,6 @@
 
 (function($) {
 "use strict";
-
 App.ScenarioChartView = Backbone.View.extend({
 
     className: 'highcharts-chart',
@@ -534,7 +533,6 @@ App.ScenarioChartView = Backbone.View.extend({
                             + ['(left side)', '(right side)'][n];
                     }
                 }
-
                 return {
                     'label': chart_data['series_names'][value],
                     'ending_label': chart_data['series_ending_labels'][value],
@@ -866,7 +864,6 @@ var BaseDialogView = Backbone.View.extend({
     },
 
     initialize: function() {
-        _(this).bindAll();
         this.form_action = this.options.form_action;
     },
 
@@ -999,6 +996,7 @@ App.ShareOptionsView = Backbone.View.extend({
         'click #comment': 'request_comment',
         'click #share_twitter': 'share_twitter',
         'click #share_facebook': 'share_facebook',
+        'click #share_linkedin': 'share_linkedin',
     },
 
     template: App.get_template('scenario/share.html'),
@@ -1238,11 +1236,18 @@ App.ShareOptionsView = Backbone.View.extend({
       return false;
     },
 
+    share_linkedin: function(ev) {
+      ev.preventDefault();
+      let url = 'https://www.linkedin.com/shareArticle?mini=true&url=' + encodeURI(window.location.href) + '&title=' + encodeURI(document.title) + '&source=LinkedIn';
+      window.open(url , '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=300,width=600');
+      return false;
+    },
     render: function() {
+        var email_url = 'mailto:?subject=' + encodeURIComponent(document.title) + '&body=' + encodeURIComponent(this.url);
         this.$el.html(this.template({
             'related': this.related.html(),
             'zoomEnabled': App.is_touch_device(),
-            'shareEmail': 'mailto:?subject=' + document.title
+            'shareEmail': email_url
         }));
         App.jQuery(this.form).appendTo(this.$el);
     },

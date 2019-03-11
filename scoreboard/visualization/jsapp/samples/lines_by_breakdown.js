@@ -17,10 +17,6 @@
   "axis-vertical-title": "short",
   "category_facet": "time-period",
   "chart_type": "lines",
-  "credits": {
-    "text": "European Commission, Digital Scoreboard",
-    "link": "http://ec.europa.eu/digital-agenda/en/graphs/"
-  },
   "facets": [
     {
       "constraints": {},
@@ -92,7 +88,8 @@
         "unit-measure": "unit-measure"
       },
       "dimension": "ref-area",
-      "default_value": "EU27",
+      "default_value": "EU",
+      "ignore_values": ["AL", "ASS", "BA", "BIH", "CH", "EU_AVERAGE", "EU_HARMONISED", "IL", "JP", "MD", "ME", "MK", "OTHER", "RS", "SL", "SP", "TR", "US", "XK"],
       "label": "Country",
       "name": "ref-area",
       "sortBy": "label",
