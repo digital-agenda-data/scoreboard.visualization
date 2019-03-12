@@ -1,10 +1,12 @@
 <ul class="share-actions">
-  <li id="highcharts_zoom_in" class="zoom btn btn-sm btn-comments">
-    <a><span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span> Enable zoom</a>
-  </li>
-  <li id="highcharts_zoom_reset" class="zoom btn btn-sm btn-comments" style="display:none">
-    <a><span class="glyphicon glyphicon-zoom-out" aria-hidden="true"></span> Disable zoom</a>
-  </li>
+  {{# if zoomEnabled }}
+    <li id="highcharts_zoom_in" class="zoom btn btn-sm btn-comments">
+      <a><span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span> Enable zoom</a>
+    </li>
+    <li id="highcharts_zoom_reset" class="zoom btn btn-sm btn-comments" style="display:none">
+      <a><span class="glyphicon glyphicon-zoom-out" aria-hidden="true"></span> Disable zoom</a>
+    </li>
+  {{/ if }}
   <li class="print btn btn-sm btn-print">
     <a id="highcharts_print"><span class="glyphicon glyphicon-print" aria-hidden="true"></span> Print chart</a>
   </li>
