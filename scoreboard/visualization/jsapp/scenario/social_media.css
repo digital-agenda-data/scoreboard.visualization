@@ -1,7 +1,6 @@
 .social-media-icons {
   display: flex;
   width: 80%;
-  justify-content: space-between;
 }
 
 .social-media-icons img {
@@ -10,6 +9,7 @@
 
 .social-media-icons a {
   width: auto;
+  margin-right: .5rem;
 }
 
 .social-media-icons a:hover {
