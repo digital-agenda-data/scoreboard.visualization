@@ -147,6 +147,12 @@ App.Visualization = Backbone.View.extend({
                 cube_url: options['cube_url'],
                 scenario_url: App.SCENARIO_URL
             });
+
+            this.datasets = new Scoreboard.Views.DatasetNavigationView({
+                el:  this.$el.find('#datacube-navigation'),
+                cube_url: window.location.href.split('#')[0],
+                selected_url: window.location.href.split('#')[0]
+            });
         }
 
         var chart_type = options['schema']['chart_type'];
