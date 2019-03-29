@@ -171,6 +171,7 @@ App.chart_library['scatter'] = function(view, options) {
     }
 
     App.chart = new Highcharts.Chart(chartOptions);
+    App.open_credits(App.chart);
     // hide zoom button on mobile devices (default zoom in is enough)
     App.jQuery('#highcharts_zoom_in').hide();
 
