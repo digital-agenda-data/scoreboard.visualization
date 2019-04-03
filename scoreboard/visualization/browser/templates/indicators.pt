@@ -37,6 +37,7 @@
           </thead>
           <tbody>
             <tal:row tal:repeat="row view/dataset_details">
+              <tr class="spacer" tal:condition="python:row['type'] == 'header'"></tr>
               <tr class="groupName" tal:condition="python:row['type'] == 'header'" tal:define="indicator python:row['indicator']" tal:attributes="id python:normalizeString(indicator.get('group_name', ''))">
                 <td colspan="5" tal:define="groupName indicator/group_name|nothing">
                   <tal:block condition="groupName">
@@ -44,6 +45,7 @@
                   </tal:block>
                 </td>
               </tr>
+              <tr class="spacer" tal:condition="python:row['type'] == 'header'"></tr>
               <tr tal:condition="python:row['type'] == 'row'" tal:define="indicator python:row['indicator']">
                 <td class="even" tal:define="longlabel indicator/label|nothing">
                   <tal:block condition="longlabel">
