@@ -32,7 +32,7 @@
          <br/>
          <div class="input-group">
           <input type="submit" class="btn btn-sm btn-primary btn-import-xls" name="form.submitted" value="Import XLS" />
-          <input type="submit" class="btn btn-sm btn-default btn-export-xls" name="export" value="Export XLS" />
+          <input type="submit" class="btn btn-sm btn-primary btn-export-xls" name="export" value="Export XLS" />
          </div>
       </form>
       </div>
