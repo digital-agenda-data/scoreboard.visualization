@@ -77,11 +77,12 @@
                     <strong>Explore more using SPARQL queries: </strong>
                     <a target="_blank"
                        tal:attributes="href python:view.getIndicatorURLData('find_countries_query', indicator);">
-                         Find countries
+                      countries
                     </a>
+                    <span>,</span>
                     <a target="_blank"
                        tal:attributes="href python:view.getIndicatorURLData('find_breakdowns_query', indicator);">
-                      Find breakdowns
+                      breakdowns
                     </a>
                   </div>
                   <div tal:condition="python: sourcelink or sourcelabel">
