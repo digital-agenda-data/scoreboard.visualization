@@ -246,6 +246,7 @@ App.chart_library['columns'] = function(view, options) {
     App.disable_legend(chartOptions, options);
     App.override_zoom();
     App.chart = new Highcharts.Chart(chartOptions);
+    App.open_credits(App.chart);
     var metadata = {
         'chart-title': options.titles.title,
         'chart-subtitle': options.titles.subtitle,

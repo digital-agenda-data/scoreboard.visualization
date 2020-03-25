@@ -1,12 +1,12 @@
-<label>{{ title }}</label>
-<select name="facet" class="col-md-3 col-sm-3 col-xs-3">
+<label class="label-select-file-upload">{{ title }}</label>
+<select name="facet" class="col-md-3 col-sm-3 col-xs-3 form-control form-select">
 {{# facet_options }}
   <option value="{{ value }}"
     {{# if selected }}selected{{/ if }}
     >{{ label }}</option>
 {{/ facet_options }}
 </select>
-<select name="field" class="col-md-2 col-sm-2 col-xs-2">
+<select name="field" class="col-md-2 col-sm-2 col-xs-2 form-control form-select">
 {{# field_options }}
   <option value="{{ value }}"
     {{# if selected }}selected{{/ if }}

@@ -835,6 +835,7 @@ App.AnnotationsView = Backbone.View.extend({
             "description": chart_description,
             "section_title": section_title,
             "indicators_details_url": this.cube_url + '/indicators',
+            "metadata_details_url": this.cube_url + '/#',
             "blocks": blocks
         };
         this.$el.empty();

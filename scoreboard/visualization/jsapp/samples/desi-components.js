@@ -31,8 +31,8 @@
     },
     {
       "constraints": {},
-      "default_value": ["DESI"],
-      "ignore_values": ["desi_sliders", "DESI_SLIDERS"],
+      "default_value": ["desi"],
+      "ignore_values": ["desi_sliders"],
       "dimension": "indicator",
       "label": "Indicator",
       "name": "indicator",
@@ -44,7 +44,7 @@
       "constraints": {
         "indicator": "indicator"
       },
-      "default_value": ["DESI_TOTALS"],
+      "default_value": ["desi_totals"],
       "dimension": "breakdown-group",
       "label": "Breakdown group",
       "name": "breakdown-group",

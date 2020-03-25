@@ -1,40 +1,35 @@
-<ul>
+<ul class="share-actions">
   {{# if zoomEnabled }}
-  <li class="zoom">
-    <a id="highcharts_zoom_in" class="btn btn-sm btn-comments"><span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span> Enable zoom</a>
-  </li>
-  <li class="zoom">
-    <a id="highcharts_zoom_reset" style="display:none" class="btn btn-sm btn-comments"><span class="glyphicon glyphicon-zoom-out" aria-hidden="true"></span> Disable zoom</a>
-  </li>
-  {{/ if }}
-  <li class="print">
-    <a id="highcharts_print" class="btn btn-sm btn-print"><span class="glyphicon glyphicon-print" aria-hidden="true"></span> Print chart</a>
-  </li>
-  <li class="print">
-    <a href="javascript:window.print()" class="btn btn-sm btn-print"><span class="glyphicon glyphicon-print" aria-hidden="true"></span> Print page</a>
-  </li>
-  <li class="export">
-    <a id="highcharts_download_local" class="btn btn-sm btn-export"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Download image</a>
-  </li>
-  <!--
-    <li class="export">
-      <a id="highcharts_download_svg" class="btn btn-sm btn-export"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Download image (.svg)</a>
+    <li id="highcharts_zoom_in" class="zoom">
+      <a class="btn-secondary">Enable zoom</a>
     </li>
-  -->
-  <li class="export">
-    <a id="csv" href="#" class="btn btn-sm btn-export"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Export CSV</a>
+    <li id="highcharts_zoom_reset" class="zoom" style="display:none">
+      <a class="btn-secondary">Disable zoom</a>
+    </li>
+  {{/ if }}
+  <li id="highcharts_print" >
+    <a class="btn-secondary">Print chart</a>
   </li>
-  <li class="export">
-    <a id="excel" href="#" class="btn btn-sm btn-export"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Export XLS</a>
+  <li id="print-page" onclick="window.print()">
+    <a class="btn-secondary">Print page</a>
   </li>
-  <li class="embed">
-    <a id="embed" href="#" class="btn btn-sm btn-export"><span class="glyphicon glyphicon-link" aria-hidden="true"></span> Embedded URL</a>
+  <li id="highcharts_download_local">
+    <a class="btn-secondary">Download image</a>
   </li>
-  <li class="comment">
-    <a id="view_comments" href="#" class="btn btn-sm btn-comments"><span class="glyphicon glyphicon-comment" aria-hidden="true"></span> View comments</a>
+  <li id="csv">
+    <a class="btn-secondary">Export CSV</a>
   </li>
-  <li class="comment">
-    <a id="comment" href="#" class="btn btn-sm btn-comments"><span class="glyphicon glyphicon-comment" aria-hidden="true"></span> Submit comment</a>
+  <li id="excel">
+    <a class="btn-secondary">Export XLS</a>
+  </li>
+  <li id="embed">
+    <a class="btn-secondary">Embedded URL</a>
+  </li>
+  <li id="view_comments">
+    <a class="btn-secondary">View comments</a>
+  </li>
+  <li id="comment">
+    <a class="btn-secondary">Submit comment</a>
   </li>
   <li class="vspacer">
     <br/>
@@ -44,14 +39,9 @@
 <p class="share-this">Share this page</p>
 <div class="social-media-icons">
   <a href="#" id="share_facebook">
-    <img id="fb-share" src="./++resource++scoreboard-jsapp/fb-icon.png" alt="facebook-icon" /></a>
-  <a href="#" id="share_twitter"><img id="twitter-share" src="./++resource++scoreboard-jsapp/twitter-icon.png" alt="twitter-icon" /></a>
-  <a id="mail-share" href="{{ shareEmail }}"><img src="./++resource++scoreboard-jsapp/mail-icon.png" alt="mail-icon" /></a>
+    <img id="fb-share" src="./++resource++scoreboard-jsapp/fb-icon.svg" alt="facebook-icon" /></a>
+  <a href="#" id="share_twitter"><img id="twitter-share" src="./++resource++scoreboard-jsapp/twitter-icon.svg" alt="twitter-icon" /></a>
+  <a id="mail-share" href="{{ shareEmail }}"><img src="./++resource++scoreboard-jsapp/mail-icon.svg" alt="mail-icon" /></a>
   <a href="#" id="share_linkedin">
-    <img id="linkedin-share" src="./++resource++scoreboard-jsapp/linkedin-icon.png" alt="linkedin-icon.png" /></a>
+    <img id="linkedin-share" src="./++resource++scoreboard-jsapp/linkedin-icon.jpg" alt="linkedin-icon" /></a>
 </div>
-
-
-
-
-

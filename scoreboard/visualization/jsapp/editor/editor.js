@@ -34,7 +34,10 @@ App.EditForm = Backbone.View.extend({
 
     on_cancel: function(evt) {
         evt.preventDefault();
-        App.window.location.href = this.options['object_url'];
+        var href = window.location.href.substr(
+            0, window.location.href.lastIndexOf('/')
+        );
+        App.window.location.href = href;
     },
 
     save_form: function() {

@@ -46,7 +46,7 @@
       "name": "x-indicator",
       "sortBy": "inner_order",
       "sortOrder": "asc",
-      "ignore_values": ["DESI_SLIDERS"],
+      "ignore_values": ["desi_sliders"],
       "type": "select"
     },
     {
@@ -121,7 +121,7 @@
       "position": "upper-right",
       "sortBy": "inner_order",
       "sortOrder": "asc",
-      "ignore_values": ["DESI_SLIDERS"],
+      "ignore_values": ["desi_sliders"],
       "type": "select"
     },
     {

@@ -577,10 +577,11 @@ App.CompositeFilter = App.AllValuesFilter.extend({
                 var opt = $(this).data().uiSlider.options;
                 var vals = opt.max - opt.min;
                 for (var i = 0; i <= vals; i++) {
-                    var el = $('<label class="slider-step">' + i + '</label>')
+                    var el = $('<label class="slider-step" style="display: none">' + i + '</label>')
                         .css('left',(i/vals*100)+'%');
                     $(this).append(el);
                 }
+               $($(this).children("label")[opt.value]).show();
 
             });
             var norm_value = (100 / sliders.length).toFixed(1);
@@ -607,6 +608,12 @@ App.CompositeFilter = App.AllValuesFilter.extend({
         // Save the current slider's value
         var sliders = this.$el.find('.composite-slider');
         var sliders_values = sliders.data('slidersvalues');
+        var slider_labels = $("#" + data.slider_id).children(".composite-slider").children("label");
+
+        // Hide old label, show new label
+        $(slider_labels[sliders_values[data.slider_id]]).hide();
+        $(slider_labels[data.slider_value]).show();
+
         sliders_values[data.slider_id] = data.slider_value;
         sliders.data('slidersvalues', sliders_values);
         this.composite_values[data.slider_id] = data.slider_value;

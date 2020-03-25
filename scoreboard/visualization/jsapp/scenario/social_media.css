@@ -1,32 +1,30 @@
 .social-media-icons {
   display: flex;
-  justify-content: space-around;
+  width: 80%;
 }
 
 .social-media-icons img {
-  max-width: 70%;
-  transition: transform .2s, box-shadow .3s;
-  border-radius: 50%;
+  width: 2.49rem;
+}
+
+.social-media-icons a {
+  width: auto;
+  margin-right: .5rem;
+}
+
+.social-media-icons a:hover {
+  outline-offset: 0;
 }
 
 .social-media-icons img:hover {
-  transform: scale(1.5);
   box-shadow: 0 0 11px rgba(33,33,33,.5);
+}
+
+#mail-share img {
+  background-color: #FFF;
+  width: 2.45rem;
 }
 
 .share-this {
   margin-bottom: .5em;
 }
-
-@media screen and (max-width: 1125px) and (min-width: 993px){
-  .social-media-icons img {
-    max-width: 90% ;
-  }
-}
-
-@media screen and (max-width: 991px){
-  .social-media-icons img {
-    max-width: 40% ;
-  }
-}
-
