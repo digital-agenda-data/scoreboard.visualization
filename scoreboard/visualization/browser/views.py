@@ -75,7 +75,6 @@ class BaseView(BrowserView):
     def dataSets(self):
         brains = self.dataCubes()
         result = [(brain.getId, brain.Title) for brain in brains]
-        result.insert(0, ('', ' - Select Dataset - '))
 
         return result
 

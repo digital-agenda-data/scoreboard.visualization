@@ -1,6 +1,6 @@
 <div class="editor-structure-field row">
-    <label class="col-md-3 col-sm-6">{{ name }}:</label>
-    <select class="col-md-9 col-sm-6" name="type">
+    <label class="col-md-3 col-sm-6 label-select-file-upload">{{ name }}:</label>
+    <select class="col-md-9 col-sm-6 form-control form-select" name="type">
     {{# type_options }}
     <option value="{{ value }}"
       {{# if selected }}selected{{/ if }}

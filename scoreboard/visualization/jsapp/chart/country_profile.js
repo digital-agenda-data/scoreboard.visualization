@@ -294,6 +294,7 @@ App.chart_library['country_profile'] = function(view, options) {
 
         App.set_default_chart_options(chartOptions);
         App.chart = new Highcharts.Chart(chartOptions);
+        App.open_credits(App.chart);
     }
     // hide zoom button on mobile devices
     App.jQuery('#highcharts_zoom_in').hide();

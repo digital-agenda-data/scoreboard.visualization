@@ -1,11 +1,11 @@
-<label class="multiple_select {{ filter_name }}">{{ filter_label }}</label>
+<label class="multiple_select {{ filter_name }} label-select-file-upload">{{ filter_label }}</label>
 <br>
-<select name="{{ filter_name }}" multiple="multiple" class="multiple_select {{ filter_name }}">
+<select name="{{ filter_name }}" multiple="multiple" class="multiple_select {{ filter_name }} form-control form-select">
 {{# dimension_options }}
 <option {{# if selected }} selected="selected" {{/ if }}
         value="{{ notation }}">{{ label }}</option>
 {{/ dimension_options }}
 </select>
 <br />
-<input type="button" id="{{ filter_name }}-add-all" value="Add All"/>
-<input type="button" id="{{ filter_name }}-clear" value="Remove All"/>
+<input type="button" id="{{ filter_name }}-add-all" class="btn btn-primary" value="Add All"/>
+<input type="button" id="{{ filter_name }}-clear" class="btn btn-primary" value="Remove All"/>

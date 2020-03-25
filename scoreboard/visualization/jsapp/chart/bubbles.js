@@ -191,6 +191,7 @@ App.chart_library['bubbles'] = function(view, options) {
     }
 
     App.chart = new Highcharts.Chart(chartOptions);
+    App.open_credits(App.chart);
     App.jQuery('#highcharts_zoom_in').hide();
 
     var metadata = {

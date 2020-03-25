@@ -16,15 +16,15 @@
   {{/ if }}
 
   <div class="editor-facet-field">
-    <label>Choose how the values of the filter are be sorted</label>
-    <select name="sort-by">
+    <label class="label-select-file-upload">Choose how the values of the filter are be sorted</label>
+    <select name="sort-by" class="form-control form-select">
     {{# sort_by_options }}
       <option value="{{ value }}"
         {{# if selected }}selected{{/ if }}
         >{{ label }}</option>
     {{/ sort_by_options }}
     </select>
-    <select name="sort-order">
+    <select name="sort-order" class="form-control form-select">
     {{# sort_order_options }}
       <option value="{{ value }}"
         {{# if selected }}selected{{/ if }}
@@ -34,9 +34,9 @@
   </div>
 
   <div class="editor-facet-field">
-    <label>Choose the default value of this filter</label>
+    <label class="label-select-file-upload">Choose the default value of this filter</label>
     {{# if options_received}}
-    <select name="default_value" multiple>
+    <select class="form-control form-select" name="default_value" multiple>
     {{# facet_options }}
       <option value="{{ value }}"
         {{# if default }}selected{{/ if }}
@@ -51,9 +51,9 @@
 {{/unless}}
 
 <div class="editor-facet-field">
-  <label>Choose values that will be hidden in the selection list</label>
+  <label class="label-select-file-upload">Choose values that will be hidden in the selection list</label>
   {{# if options_received}}
-  <select name="ignore_values" multiple>
+  <select class="form-control form-select" name="ignore_values" multiple>
   {{# facet_options }}
     <option value="{{ value }}"
       {{# if ignore }}selected{{/ if }}
@@ -68,9 +68,9 @@
 
 {{# if is_category_facet }}
 <div class="editor-facet-field">
-  <label>Choose highlighted values</label>
+  <label class="label-select-file-upload">Choose highlighted values</label>
   {{# if options_received}}
-      <select name="highlights" multiple>
+      <select name="highlights" class="form-control form-select" multiple>
         {{# highlights_options }}
           <option value="{{ value }}"
             {{# if highlight }}selected{{/ if }}
