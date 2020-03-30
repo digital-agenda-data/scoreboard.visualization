@@ -1053,7 +1053,7 @@ App.ShareOptionsView = Backbone.View.extend({
         App.jQuery(this.$el.find('form')).append(
             App.jQuery('<input>', {
                 'name': 'format',
-                'value': 'xls',
+                'value': 'xlsx',
                 'type': 'hidden'
             }
         )).submit();
