@@ -205,6 +205,7 @@ App.chart_library['country_profile_polar'] = function(view, options) {
     App.disable_legend(chartOptions, options);
     App.override_zoom();
     App.chart = new Highcharts.Chart(chartOptions);
+    App.open_credits(App.chart);
     // add tooltips on x-labels using jQuery
     // cannot use labels.formatter because it breaks the png export
     /*

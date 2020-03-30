@@ -171,32 +171,6 @@ App.is_touch_device = function() {
 App.font_family = "Lucida Sans Unicode, Candara, Calibri, Futura, Helvetica";
 
 
-// Plugin to add support for credits.target in Highcharts.
-Highcharts.wrap(Highcharts.Chart.prototype, 'showCredits', function (proceed, credits) {
-    proceed.call(this, credits);
-    if (credits.enabled && this.credits) {
-        if (App.is_touch_device()) {
-            this.credits.element.onclick = function () {
-                return false;
-            }
-        } else {
-            this.credits.element.onclick = function () {
-              // dynamically create an anchor element and click it
-              // use the settings defined in highcharts (credits.target)
-              var link = document.createElement('a');
-              if (App.visualization.embedded && App.chart.credits._extra_text) {
-                link.href = App.chart.credits._extra_text.href;
-              } else {
-                link.href = credits.href;
-              }
-              link.target = credits.target||'_blank';
-              document.body.appendChild(link);
-              link.click();
-            }
-        }
-    }
-});
-
 ///////////////////
 // chart helpers //
 ///////////////////
@@ -672,6 +646,21 @@ var title_formatter = function(parts, meta_data) {
     return title;
 };
 
+var open_credits = function(chart) {
+  var enabled = chart.options.credits.enabled;
+  var href = chart.options.credits.href;
+  chart.credits.on('click', function() {
+    if(enabled && href) {
+      if (App.is_touch_device()) {
+        return false;
+      }
+      else {
+        window.open(href,'_blank');
+      }
+    }
+  })
+}
+
 // chart helpers;
 App.sort_by_total_stacked = sort_by_total_stacked;
 App.format_series = format_series;
@@ -681,5 +670,6 @@ App.disable_legend = disable_legend;
 App.override_zoom = override_zoom;
 App.set_default_chart_options = set_default_chart_options;
 App.title_formatter = title_formatter;
+App.open_credits = open_credits;
 
 })(App.jQuery);

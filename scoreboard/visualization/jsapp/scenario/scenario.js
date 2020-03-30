@@ -835,6 +835,7 @@ App.AnnotationsView = Backbone.View.extend({
             "description": chart_description,
             "section_title": section_title,
             "indicators_details_url": this.cube_url + '/indicators',
+            "metadata_details_url": this.cube_url + '/#',
             "blocks": blocks
         };
         this.$el.empty();
@@ -1052,7 +1053,7 @@ App.ShareOptionsView = Backbone.View.extend({
         App.jQuery(this.$el.find('form')).append(
             App.jQuery('<input>', {
                 'name': 'format',
-                'value': 'xls',
+                'value': 'xlsx',
                 'type': 'hidden'
             }
         )).submit();

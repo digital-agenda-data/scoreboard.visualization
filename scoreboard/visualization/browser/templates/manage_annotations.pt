@@ -9,32 +9,35 @@
   <!--link rel="stylesheet" type="text/css" tal:attributes="href string:${portal_url}/++resource++scoreboard.visualization.external/ckeditor/contents.css"-->
   </metal:style>
   <div metal:fill-slot="main">
-    <h1>Manage annotations</h1>
-    <textarea id="datacubes" style="display: none" tal:content="python:view.datasetsJSON()"></textarea>
-    <textarea id="global_annotations" style="display: none" tal:content="python:view.globalAnnotationsJSON()"></textarea>
-    <div tal:define="datasets view/dataSets">
-      <div id="message" style="display: none;position:fixed;top:0;right:0" class="alert" role="alert"></div>
-      <br/>
-      <div class="input-group">
-        <select id="datasets" name="datasets">
-          <option tal:repeat="dataset datasets" tal:attributes="value python: dataset[0]" tal:content="python: dataset[1]" >
-          </option>
-        </select>
+    <h1 class="documentFirstHeading">Manage annotations</h1>
+    <div class="main-content">
+      <textarea id="datacubes" style="display: none" tal:content="python:view.datasetsJSON()"></textarea>
+      <textarea id="global_annotations" style="display: none" tal:content="python:view.globalAnnotationsJSON()"></textarea>
+      <div tal:define="datasets view/dataSets">
+        <div id="message" style="display: none;position:fixed;top:0;right:0" class="alert" role="alert"></div>
+        <br/>
+        <div class="input-group">
+          <label class="label-select-file-upload" for="datasets">Select Dataset</label>
+          <select class="form-control form-select" id="datasets" name="datasets">
+            <option tal:repeat="dataset datasets" tal:attributes="value python: dataset[0]" tal:content="python: dataset[1]" >
+            </option>
+          </select>
+        </div>
       </div>
-    </div>
-    <br/>
-    <div class="container white-area">
-      <table id="annotations-table" class="list_indicators">
-        <thead>
-          <tr class="whitelist-head-row">
-            <th width="30%">Indicator</th>
-            <th width="50%">Annotation</th>
-            <th width="20%">Operations</th>
-          </tr>
-        </thead>
-        <tbody>
-        </tbody>
-      </table>
+      <br/>
+      <div class="container">
+        <table id="annotations-table" class="list_indicators">
+          <thead>
+            <tr class="whitelist-head-row">
+              <th width="50%">Indicator</th>
+              <th width="25%">Annotation</th>
+              <th width="25%">Operations</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </html>

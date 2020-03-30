@@ -131,7 +131,7 @@ App.chart_library['map'] = function(view, options) {
     var max_value = _.chain(series).pluck('data').
                       first().pluck('y').max().value();
     var colorscale = new chroma.ColorScale({
-        colors: chroma.brewer['YlOrBr'],
+        colors: chroma.brewer['Blues'],
         limits: [0, max_value]
     });
     var unit = options['meta_data']['unit-measure'];
