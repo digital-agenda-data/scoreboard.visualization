@@ -1,6 +1,5 @@
 /*global App, Backbone, _ */
 /*jshint sub:true */
-
 (function($) {
 "use strict";
 App.ScenarioChartView = Backbone.View.extend({
@@ -60,16 +59,15 @@ App.ScenarioChartView = Backbone.View.extend({
             } else {
                 this.scenario_chart(this, this.data, this.data.meta_data);
             }
-
         }
     },
 
-    chart_ready: function(){
+    chart_ready: function() {
         this.$el.removeClass('loading-small');
         $("#sharerWrap").show();
     },
 
-    get_meta_data: function(chart_data){
+    get_meta_data: function(chart_data) {
         var meta_data = {};
         chart_data['meta_data'] = meta_data;
 
@@ -91,7 +89,7 @@ App.ScenarioChartView = Backbone.View.extend({
         }, this);
     },
 
-    request_datapoints: function(url, args){
+    request_datapoints: function(url, args) {
         var relevant_args = {};
         _(args).each(function(value, key){
             if (value!='any'){
@@ -1055,8 +1053,14 @@ App.ShareOptionsView = Backbone.View.extend({
                 'name': 'format',
                 'value': 'xlsx',
                 'type': 'hidden'
-            }
-        )).submit();
+            })
+        ).append(
+            App.jQuery('<input>', {
+                'name': 'chart_subtitle',
+                'value': App.jQuery('.highcharts-subtitle tspan').text(),
+                'type': 'hidden'
+            })
+        ).submit();
     },
 
     request_embed: function(ev){

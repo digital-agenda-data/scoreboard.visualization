@@ -5,7 +5,6 @@
 "use strict";
 
 App.chart_library['columns'] = function(view, options) {
-
     var container = view.el
     $(container).addClass('high-chart');
     var series = App.format_series(
@@ -247,6 +246,8 @@ App.chart_library['columns'] = function(view, options) {
     App.override_zoom();
     App.chart = new Highcharts.Chart(chartOptions);
     App.open_credits(App.chart);
+
+
     var metadata = {
         'chart-title': options.titles.title,
         'chart-subtitle': options.titles.subtitle,
@@ -279,6 +280,7 @@ App.chart_library['columns'] = function(view, options) {
             App.chart_controls.update_data(series);
         };
     }
+
 };
 
 })();
