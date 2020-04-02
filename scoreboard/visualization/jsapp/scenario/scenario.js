@@ -1039,6 +1039,54 @@ App.ShareOptionsView = Backbone.View.extend({
         this.render();
     },
 
+    get_url_filters_label: function() {
+        var result = {
+            'chart_subtitle': App.jQuery('.highcharts-subtitle tspan').text(),
+            'filters': {}
+        }
+
+        var selected_vales = App.visualization.filters_box.model.attributes;
+        var filters = App.visualization.filters_box.filters;
+
+        filters.forEach(function(item) {
+            var sel_vals;
+            var option_labels = item.options_labels;
+
+            if(item.name == 'breakdown-group') {
+                sel_vals = 'any'
+            }
+            else if(typeof selected_vales[item.name] == 'string') {
+                sel_vals = selected_vales[item.name];
+            }
+            else {
+                sel_vals = {};
+                for(var i in selected_vales[item.name]) {
+                    var cc = selected_vales[item.name][i];
+                    if(cc == 'LI') cc = 'LT';
+
+                    if(cc == 'IS') sel_vals[cc] = 'Iceland'
+                    else if(cc == 'NO') sel_vals[cc] = 'Norway'
+                    else try{
+                        sel_vals[cc] = option_labels[cc].label;
+                    }
+                    catch (err) {console.log(cc, option_labels)}
+                }
+            }
+
+            var fl;
+            if(item.name == 'ref-area') fl = 'Country';
+            else if(item.name == 'time-period') fl = 'Time Period';
+            else fl = item.label;
+
+            result['filters'][item.name] = {
+                'filter-label': fl,
+                'label-col': sel_vals
+            }
+        })
+
+        return JSON.stringify(result);
+    },
+
     request_csv: function(ev){
         ev.preventDefault();
         App.jQuery('input[name="format"]', this.form).remove();
@@ -1047,6 +1095,8 @@ App.ShareOptionsView = Backbone.View.extend({
 
     request_excel: function(ev){
         ev.preventDefault();
+        var extra_info = this.get_url_filters_label();
+
         App.jQuery('input[name="format"]', this.form).remove();
         App.jQuery(this.$el.find('form')).append(
             App.jQuery('<input>', {
@@ -1056,8 +1106,8 @@ App.ShareOptionsView = Backbone.View.extend({
             })
         ).append(
             App.jQuery('<input>', {
-                'name': 'chart_subtitle',
-                'value': App.jQuery('.highcharts-subtitle tspan').text(),
+                'name': 'chart_filter_labels',
+                'value': extra_info,
                 'type': 'hidden'
             })
         ).submit();
