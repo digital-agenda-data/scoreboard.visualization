@@ -1,6 +1,5 @@
 /*global App, Backbone, _ */
 /*jshint sub:true */
-
 (function($) {
 "use strict";
 App.ScenarioChartView = Backbone.View.extend({
@@ -60,16 +59,15 @@ App.ScenarioChartView = Backbone.View.extend({
             } else {
                 this.scenario_chart(this, this.data, this.data.meta_data);
             }
-
         }
     },
 
-    chart_ready: function(){
+    chart_ready: function() {
         this.$el.removeClass('loading-small');
         $("#sharerWrap").show();
     },
 
-    get_meta_data: function(chart_data){
+    get_meta_data: function(chart_data) {
         var meta_data = {};
         chart_data['meta_data'] = meta_data;
 
@@ -1053,7 +1051,13 @@ App.ShareOptionsView = Backbone.View.extend({
         App.jQuery(this.$el.find('form')).append(
             App.jQuery('<input>', {
                 'name': 'format',
-                'value': 'xls',
+                'value': 'xlsx',
+                'type': 'hidden'
+            })
+        ).append(
+            App.jQuery('<input>', {
+                'name': 'chart_filter_labels',
+                'value': App.jQuery('.highcharts-subtitle tspan').text(),
                 'type': 'hidden'
             }
         )).submit();
