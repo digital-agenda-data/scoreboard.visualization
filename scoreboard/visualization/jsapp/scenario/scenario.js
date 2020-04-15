@@ -1039,54 +1039,6 @@ App.ShareOptionsView = Backbone.View.extend({
         this.render();
     },
 
-    get_url_filters_label: function() {
-        var result = {
-            'chart_subtitle': App.jQuery('.highcharts-subtitle tspan').text(),
-            'filters': {}
-        }
-
-        var selected_vales = App.visualization.filters_box.model.attributes;
-        var filters = App.visualization.filters_box.filters;
-
-        filters.forEach(function(item) {
-            var sel_vals;
-            var option_labels = item.options_labels;
-
-            if(item.name == 'breakdown-group') {
-                sel_vals = 'any'
-            }
-            else if(typeof selected_vales[item.name] == 'string') {
-                sel_vals = selected_vales[item.name];
-            }
-            else {
-                sel_vals = {};
-                for(var i in selected_vales[item.name]) {
-                    var cc = selected_vales[item.name][i];
-                    if(cc == 'LI') cc = 'LT';
-
-                    if(cc == 'IS') sel_vals[cc] = 'Iceland'
-                    else if(cc == 'NO') sel_vals[cc] = 'Norway'
-                    else try{
-                        sel_vals[cc] = option_labels[cc].label;
-                    }
-                    catch (err) {console.log(cc, option_labels)}
-                }
-            }
-
-            var fl;
-            if(item.name == 'ref-area') fl = 'Country';
-            else if(item.name == 'time-period') fl = 'Time Period';
-            else fl = item.label;
-
-            result['filters'][item.name] = {
-                'filter-label': fl,
-                'label-col': sel_vals
-            }
-        })
-
-        return JSON.stringify(result);
-    },
-
     request_csv: function(ev){
         ev.preventDefault();
         App.jQuery('input[name="format"]', this.form).remove();
@@ -1095,28 +1047,46 @@ App.ShareOptionsView = Backbone.View.extend({
 
     request_excel: function(ev){
         ev.preventDefault();
-        var extra_info = this.get_url_filters_label();
 
         App.jQuery('input[name="format"]', this.form).remove();
-        App.jQuery(this.$el.find('form')).append(
+        this.form.append(
             App.jQuery('<input>', {
                 'name': 'format',
                 'value': 'xlsx',
                 'type': 'hidden'
             })
-        ).append(
-            App.jQuery('<input>', {
-                'name': 'chart_filter_labels',
-                'value': App.jQuery('.highcharts-subtitle tspan').text(),
-                'type': 'hidden'
-            })
-        ).append(
-            App.jQuery('<input>', {
-                'name': 'chart_filter_labels',
-                'value': extra_info,
-                'type': 'hidden'
-            })
-        ).submit();
+        );
+
+        // duplicate chart title and subtitle
+        // because they might be dynamically set at runtime, e.g. animated columns
+        App.jQuery('input[name="chart_title"]', this.form).remove();
+        var chart_title = App.visualization.chart_view.data.titles.title
+        if (App.chart && App.chart.title) {
+            chart_title = App.chart.title.textStr
+        }
+        this.form.append(App.jQuery('<input>', {
+            'name': 'chart_title',
+            'value': chart_title,
+            'type': 'hidden'
+        }));
+        var chart_subtitle = App.visualization.chart_view.data.titles.subtitle
+        if (App.chart && App.chart.subtitle) {
+            chart_subtitle = App.chart.subtitle.textStr
+        }
+        App.jQuery('input[name="chart_subtitle"]', this.form).remove();
+        this.form.append(App.jQuery('<input>', {
+            'name': 'chart_subtitle',
+            'value': chart_subtitle,
+            'type': 'hidden'
+        }));
+        App.jQuery('input[name="cube_url"]', this.form).remove();
+        this.form.append(App.jQuery('<input>', {
+            'name': 'cube_url',
+            'value': App.visualization.options.cube_url,
+            'type': 'hidden'
+        }));
+
+        this.form.submit()
     },
 
     request_embed: function(ev){
@@ -1254,12 +1224,12 @@ App.ShareOptionsView = Backbone.View.extend({
     },
 
     metadata_ready: function(annotations){
-        App.jQuery('input[name="annotations"]', this.form).remove();
-        App.jQuery(this.form).append(App.jQuery('<input>', {
-            'name': 'annotations',
-            'value': JSON.stringify(annotations),
-            'type': 'hidden'
-        }));
+        // App.jQuery('input[name="annotations"]', this.form).remove();
+        // App.jQuery(this.form).append(App.jQuery('<input>', {
+        //     'name': 'annotations',
+        //     'value': JSON.stringify(annotations),
+        //     'type': 'hidden'
+        // }));
     },
 
     chart_ready: function(series, metadata, chart_type){
