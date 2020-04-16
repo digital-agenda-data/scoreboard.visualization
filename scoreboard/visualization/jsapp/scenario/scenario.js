@@ -1,6 +1,5 @@
 /*global App, Backbone, _ */
 /*jshint sub:true */
-
 (function($) {
 "use strict";
 App.ScenarioChartView = Backbone.View.extend({
@@ -60,16 +59,15 @@ App.ScenarioChartView = Backbone.View.extend({
             } else {
                 this.scenario_chart(this, this.data, this.data.meta_data);
             }
-
         }
     },
 
-    chart_ready: function(){
+    chart_ready: function() {
         this.$el.removeClass('loading-small');
         $("#sharerWrap").show();
     },
 
-    get_meta_data: function(chart_data){
+    get_meta_data: function(chart_data) {
         var meta_data = {};
         chart_data['meta_data'] = meta_data;
 
@@ -91,7 +89,7 @@ App.ScenarioChartView = Backbone.View.extend({
         }, this);
     },
 
-    request_datapoints: function(url, args){
+    request_datapoints: function(url, args) {
         var relevant_args = {};
         _(args).each(function(value, key){
             if (value!='any'){
@@ -1049,14 +1047,46 @@ App.ShareOptionsView = Backbone.View.extend({
 
     request_excel: function(ev){
         ev.preventDefault();
+
         App.jQuery('input[name="format"]', this.form).remove();
-        App.jQuery(this.$el.find('form')).append(
+        this.form.append(
             App.jQuery('<input>', {
                 'name': 'format',
                 'value': 'xlsx',
                 'type': 'hidden'
-            }
-        )).submit();
+            })
+        );
+
+        // duplicate chart title and subtitle
+        // because they might be dynamically set at runtime, e.g. animated columns
+        App.jQuery('input[name="chart_title"]', this.form).remove();
+        var chart_title = App.visualization.chart_view.data.titles.title
+        if (App.chart && App.chart.title) {
+            chart_title = App.chart.title.textStr
+        }
+        this.form.append(App.jQuery('<input>', {
+            'name': 'chart_title',
+            'value': chart_title,
+            'type': 'hidden'
+        }));
+        var chart_subtitle = App.visualization.chart_view.data.titles.subtitle
+        if (App.chart && App.chart.subtitle) {
+            chart_subtitle = App.chart.subtitle.textStr
+        }
+        App.jQuery('input[name="chart_subtitle"]', this.form).remove();
+        this.form.append(App.jQuery('<input>', {
+            'name': 'chart_subtitle',
+            'value': chart_subtitle,
+            'type': 'hidden'
+        }));
+        App.jQuery('input[name="cube_url"]', this.form).remove();
+        this.form.append(App.jQuery('<input>', {
+            'name': 'cube_url',
+            'value': App.visualization.options.cube_url,
+            'type': 'hidden'
+        }));
+
+        this.form.submit()
     },
 
     request_embed: function(ev){
@@ -1194,12 +1224,12 @@ App.ShareOptionsView = Backbone.View.extend({
     },
 
     metadata_ready: function(annotations){
-        App.jQuery('input[name="annotations"]', this.form).remove();
-        App.jQuery(this.form).append(App.jQuery('<input>', {
-            'name': 'annotations',
-            'value': JSON.stringify(annotations),
-            'type': 'hidden'
-        }));
+        // App.jQuery('input[name="annotations"]', this.form).remove();
+        // App.jQuery(this.form).append(App.jQuery('<input>', {
+        //     'name': 'annotations',
+        //     'value': JSON.stringify(annotations),
+        //     'type': 'hidden'
+        // }));
     },
 
     chart_ready: function(series, metadata, chart_type){
