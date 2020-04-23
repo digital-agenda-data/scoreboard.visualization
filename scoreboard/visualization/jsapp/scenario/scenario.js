@@ -988,7 +988,6 @@ App.ShareOptionsView = Backbone.View.extend({
         'click #highcharts_download': 'highcharts_download',
         'click #highcharts_download_svg': 'highcharts_download_svg',
         'click #highcharts_download_local': 'highcharts_download_local',
-        'click #csv': 'request_csv',
         'click #excel': 'request_excel',
         'click #embed': 'request_embed',
         'click #view_comments': 'request_forum',
@@ -1039,23 +1038,8 @@ App.ShareOptionsView = Backbone.View.extend({
         this.render();
     },
 
-    request_csv: function(ev){
-        ev.preventDefault();
-        App.jQuery('input[name="format"]', this.form).remove();
-        this.$el.find('form').submit();
-    },
-
     request_excel: function(ev){
         ev.preventDefault();
-
-        App.jQuery('input[name="format"]', this.form).remove();
-        this.form.append(
-            App.jQuery('<input>', {
-                'name': 'format',
-                'value': 'xlsx',
-                'type': 'hidden'
-            })
-        );
 
         // duplicate chart title and subtitle
         // because they might be dynamically set at runtime, e.g. animated columns
