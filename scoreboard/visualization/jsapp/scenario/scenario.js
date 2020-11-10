@@ -547,7 +547,10 @@ App.ScenarioChartView = Backbone.View.extend({
 
             if ( this.model.get('indicator') && this.model.get('unit-measure') ) {
                 // enable stacking of breakdowns
-                if (this.model.get('unit-measure').toLowerCase() == 'pc_' + this.model.get('indicator').toLowerCase()) {
+                if (
+                    this.model.get('unit-measure').toLowerCase() == 'pc_' + this.model.get('indicator').toLowerCase() ||
+                    this.model.get('indicator').toLowerCase().startsWith('desi')
+                ) {
                     chart_data['stacked'] = true;
                 }
             }
