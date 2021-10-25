@@ -15,7 +15,8 @@
   {{/ if }}
   {{# if this.source_definition }}
   <li>
-    <strong>Source: </strong>{{{ this.source_definition }}}&nbsp;[<a target="_blank" href="{{ this.source_url }}">More&nbsp;information</a>]
+    <strong>Source: </strong>{{{ this.source_definition }}}&nbsp;
+    {{# if this.source_url }}[<a target="_blank" href="{{ this.source_url }}">More&nbsp;information</a>]{{/ if }}
   </li>
   {{/ if }}
 </ul>
