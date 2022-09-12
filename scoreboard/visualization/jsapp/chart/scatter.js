@@ -26,7 +26,16 @@ App.chart_library['scatter'] = function(view, options) {
     // TODO: use dataLabels.format = "{point.name}"
     _(init_series).each(function(item){
         item['dataLabels']['formatter'] = function(){
+            if (options['series-point-label'] == 'long') {
+                return item.name;
+            }
             return this.point.name;
+        }
+        var color_cfg = options['custom_properties']['colors']
+        if (color_cfg) {
+            var default_color = color_cfg['default'] || App.COUNTRY_COLOR[item['code']] || "#777";
+            var color = color_cfg[item['code']] || default_color;
+            item['color'] = color;
         }
     });
 
@@ -78,6 +87,8 @@ App.chart_library['scatter'] = function(view, options) {
         xAxis: [{
             startOnTick: false,
             endOnTick: false,
+            min: options['custom_properties']['xaxis-min-value'] || null,
+            max: options['custom_properties']['xaxis-max-value'] || null,
             title: {
                 enabled: true,
                 text: options.titles.xAxisTitle,
@@ -98,6 +109,8 @@ App.chart_library['scatter'] = function(view, options) {
         yAxis: {
             startOnTick: false,
             endOnTick: false,
+            min: options['custom_properties']['yaxis-min-value'] || null,
+            max: options['custom_properties']['yaxis-max-value'] || null,
             title: {
                 text: options.titles.yAxisTitle,
                 style: {

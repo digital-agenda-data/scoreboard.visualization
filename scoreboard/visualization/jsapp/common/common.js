@@ -40,7 +40,8 @@ var country_data = [
     {code: 'GB',   color: '#D000C4', label: "United Kingdom"},
     {code: 'UK',   color: '#D000C4', label: "United Kingdom"}, // duplicate GB
     {code: 'EU27', color: '#63b8ff', label: "European Union"},
-    {code: 'EU28', color: '#63b8ff', label: "European Union 28"}
+    {code: 'EU28', color: '#63b8ff', label: "European Union 28"},
+    {code: 'EU', color: '#63b8ff', label: "European Union"}
 ];
 
 var predefined_colors = [
@@ -505,15 +506,18 @@ var compute_plotLines = function compute_plotLines(coord, series, axis_type){
     } else return 0;
 };
 
-var add_plotLines = function(chart, series, chart_type){
+var add_plotLines = function(chart, series, plot_type){
+    // Example plot_type: {"x": "values", "y": "values", "color": 'grey'}
+    var _color = plot_type['color'] || 'red'
     _.chain([chart.xAxis, chart.yAxis]).each(function(item){
         _(item).each(function(axis){
-            if (_.chain(chart_type).keys().contains(axis.xOrY).value()){
+            var xOrY = axis.coll[0]
+            if (_.chain(plot_type).keys().contains(xOrY).value()){
                 axis.removePlotLine('median');
                 axis.addPlotLine({
-                    value: App.compute_plotLines(axis.xOrY, series, chart_type[axis.xOrY]),
+                    value: App.compute_plotLines(xOrY, series, plot_type[xOrY]),
                     width: 2,
-                    color: 'red',
+                    color: _color,
                     id: 'median'
                 });
             }

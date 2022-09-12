@@ -25,6 +25,9 @@ App.chart_library['bubbles'] = function(view, options) {
     // formatter is lost after stringify
     _(init_series).each(function(item){
         item['dataLabels']['formatter'] = function(){
+            if (options['series-point-label'] == 'long') {
+                return item.name;
+            }
             return this.point.name;
         }
         item['dataLabels']['x'] = 0;

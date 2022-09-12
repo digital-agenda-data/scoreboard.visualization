@@ -76,7 +76,7 @@ App.chart_library['columns'] = function(view, options) {
     var chartOptions = {
         chart: {
             renderTo: container,
-            type: 'column',
+            type: options['custom_properties']['chart_type'] || 'column',
             zoomType: App.is_touch_device()?null:'x',
             panning: true,
             pinchType: 'x',
