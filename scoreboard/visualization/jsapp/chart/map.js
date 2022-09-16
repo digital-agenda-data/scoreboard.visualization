@@ -107,7 +107,7 @@ App.chart_library['map'] = function(view, options) {
     var legendHeight = 20;
     var viewPortHeight = _.min([$(window).height()-100, 845]);
     if ( App.visualization.embedded ) {
-        viewPortHeight = _.min([$(window).height(), 470]) - 20;
+        viewPortHeight = _.min([$(window).height(), 1400]) - 20;
         is_embedded = true;
     }
 
