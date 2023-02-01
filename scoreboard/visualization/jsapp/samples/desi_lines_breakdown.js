@@ -48,9 +48,7 @@
       },
       "default_value": "#random",
       "dimension": "breakdown-group",
-      "ignore_values": [
-        "desi_totals"
-      ],
+      "ignore_values": [],
       "label": "Breakdown group",
       "name": "breakdown-group",
       "sortBy": "order_in_codelist",
