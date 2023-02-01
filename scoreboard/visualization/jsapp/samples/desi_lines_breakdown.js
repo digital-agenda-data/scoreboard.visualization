@@ -17,62 +17,61 @@
   "axis-vertical-title": "short",
   "category_facet": "time-period",
   "chart_type": "lines",
-  "credits": {
-    "text": "European Commission, Digital Scoreboard",
-    "link": "http://ec.europa.eu/digital-agenda/en/graphs/"
-  },
   "facets": [
     {
       "constraints": {},
+      "default_value": "#random",
       "dimension": "indicator-group",
       "include_wildcard": true,
       "label": "Indicator group",
       "name": "indicator-group",
       "sortBy": "order_in_codelist",
       "sortOrder": "asc",
-      "default_value": "#random",
       "type": "all-values"
     },
     {
-      "constraints": {
-      },
+      "constraints": {},
+      "default_value": "#random",
       "dimension": "indicator",
-      "ignore_values": ["DESI_SLIDERS"],
+      "ignore_values": [
+        "desi_sliders"
+      ],
       "label": "Indicator",
       "name": "indicator",
       "sortBy": "order_in_codelist",
       "sortOrder": "asc",
-      "default_value": "#random",
       "type": "select"
     },
     {
       "constraints": {
         "indicator": "indicator"
       },
+      "default_value": "#random",
       "dimension": "breakdown-group",
+      "ignore_values": [
+        "desi_totals"
+      ],
       "label": "Breakdown group",
       "name": "breakdown-group",
       "sortBy": "order_in_codelist",
       "sortOrder": "asc",
-      "default_value": "#random",
-      "ignore_values": ["DESI_TOTALS"],
-      "type": "select"
+      "type": "hidden_select"
     },
     {
       "constraints": {
-        "indicator": "indicator",
-        "breakdown-group": "breakdown-group"
+        "breakdown-group": "breakdown-group",
+        "indicator": "indicator"
       },
+      "default_value": "#random",
       "dimension": "unit-measure",
       "label": "Unit of measure",
       "name": "unit-measure",
-      "default_value": "#random",
-      "type": "select"
+      "type": "hidden_select"
     },
     {
       "constraints": {
-        "indicator": "indicator",
         "breakdown-group": "breakdown-group",
+        "indicator": "indicator",
         "unit-measure": "unit-measure"
       },
       "dimension": "breakdown",
@@ -84,24 +83,25 @@
     },
     {
       "constraints": {
-        "indicator": "indicator",
         "breakdown-group": "breakdown-group",
+        "indicator": "indicator",
         "unit-measure": "unit-measure"
       },
+      "default_value": "EU",
       "dimension": "ref-area",
-      "default_value": "EU28",
       "label": "Country",
       "name": "ref-area",
+      "position": "upper-right",
       "sortBy": "label",
       "sortOrder": "asc",
       "type": "select"
     },
     {
       "constraints": {
-        "indicator": "indicator",
         "breakdown-group": "breakdown-group",
-        "unit-measure": "unit-measure",
-        "ref-area": "ref-area"
+        "indicator": "indicator",
+        "ref-area": "ref-area",
+        "unit-measure": "unit-measure"
       },
       "dimension": "time-period",
       "label": "Time period",
@@ -109,62 +109,62 @@
       "type": "all-values"
     },
     {
+      "dimension": "value",
       "name": "value",
-      "type": "all-values",
-      "dimension": "value"
+      "type": "all-values"
     }
   ],
   "height": 450,
   "labels": {
+    "breakdown-group": {
+      "facet": "breakdown-group"
+    },
     "indicator": {
-        "facet": "indicator"
+      "facet": "indicator"
     },
     "unit-measure": {
-        "facet": "unit-measure"
-    },
-    "breakdown-group": {
-        "facet": "breakdown-group"
+      "facet": "unit-measure"
     }
   },
   "multiple_series": "breakdown",
-  "series-legend-label": "long",
   "series-ending-label": "none",
+  "series-legend-label": "long",
   "series-point-label": "none",
   "sort": {
     "by": "category",
-    "order": 1,
-    "each_series": true
+    "each_series": true,
+    "order": 1
   },
   "titles": {
-    "title": [
-      {
-        "facet_name": "indicator",
-        "prefix": null,
-        "suffix": null,
-        "format": "label"
-      },
-      {
-        "facet_name": "breakdown-group",
-        "prefix": ", by ",
-        "suffix": null,
-        "format": "label"
-      }
-    ],
     "subtitle": [
       {
         "facet_name": "time-period",
+        "format": "label",
         "prefix": null,
-        "suffix": null,
-        "format": "label"
+        "suffix": null
+      }
+    ],
+    "title": [
+      {
+        "facet_name": "indicator",
+        "format": "label",
+        "prefix": null,
+        "suffix": null
+      },
+      {
+        "facet_name": "breakdown-group",
+        "format": "label",
+        "prefix": ", by ",
+        "suffix": null
       }
     ],
     "xAxisTitle": [],
     "yAxisTitle": [
       {
         "facet_name": "unit-measure",
+        "format": "short_label",
         "prefix": null,
-        "suffix": null,
-        "format": "short_label"
+        "suffix": null
       }
     ]
   },
